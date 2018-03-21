@@ -4,9 +4,9 @@ We use [GitHub](https://github.com) and [BitBucket](https://bitbucket.org/produc
 
 ## Commits
 
-- Keep your commits atomic, focused on small set of related changes (e.g. fix, irreducible feature or improvement);
-- Write grammatically correct (i.e. start with a capital) commit messages in [imperative, present tense](https://stackoverflow.com/questions/3580013/should-i-use-past-or-present-tense-in-git-commit-messages);
-- Prefer concise commits over gigantic ones. When writing a concise commit message is difficult, it may indicate too many unrelated changes.
+- Keep your commits atomic, focused on small set of related changes (e.g. fix, irreducible feature or improvement).
+- When writing a concise commit message is difficult, it may indicate too many unrelated changes;
+- Write grammatically correct (i.e. start with a capital) commit messages in [imperative, present tense](https://stackoverflow.com/questions/3580013/should-i-use-past-or-present-tense-in-git-commit-messages).
 
 ## Branches
 

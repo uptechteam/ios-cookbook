@@ -32,6 +32,16 @@ Don't forget to wait till CI is green before merging the PR.
 ![](https://nyu-cds.github.io/effective-code-reviews/fig/code-review-best-practices-figure-01.gif)  
 Ideally, your Pull Request shouldn't exceed 400 lines of code. Beyond 200 lines and the effectiveness of a review drops significantly. By the time you’re at more than 400 they become almost pointless.
 
+<details>
+  <summary>To get number of lines without storyboards and nibs</summary>
+
+  Use following shell alias:
+
+```
+alias prsize="git diff --shortstat develop ':!*.xib' ':!*.storyboard' ':!*.pbxproj' ':!*.json' ':!*.plist'"
+```
+</details>
+
 #### 2. Provide context
 Ensure that your commit messages explain what you are trying to achieve and why. Link to any related tickets, or the specification. It’ll help the reviewer and you’ll get fewer issues coming back.
 

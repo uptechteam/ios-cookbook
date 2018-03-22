@@ -76,7 +76,7 @@ If it really makes sense to open another, it's okay to base your next pull reque
 
 </details>
 
--
+---
 
 P.S. There are times when pull requests are quite large, or it is referencing existing code not found in the PR, or you for some other reason do not have a good enough context to review anything else than code style and typos. In these cases, we encourage you to go through the pull request together with the submitter, either physically or virtually
 

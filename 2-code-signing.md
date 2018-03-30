@@ -9,7 +9,7 @@ When we want to distribute the application build, usually we have two options wh
 
 In both cases we have a bunch of problems:
 
-- we have have separate code signing identities for every member. This results in dozens of profiles including a lot of duplicates;
+- we have separate code signing identities for every member. This results in dozens of profiles including a lot of duplicates;
 - maximum amount of distribution certificates are limited by 3;
 - we need to manually renew and download lates provisioning profile every time we add a new device or certificate expires;
 - setting up a CI machine requires spending a lot of time.

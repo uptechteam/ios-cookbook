@@ -1,11 +1,12 @@
 # CI/CD
 
-We tend to use [fastlane](https://fastlane.tools) and [CircleCI](https://circleci.com) for the continous integration.
+Continous Integration is an improtant part of our development process. It allows us to move fast and be confident in our code. We tend to use [fastlane](https://fastlane.tools) and [CircleCI](https://circleci.com) for the continous integration.
 
 ## Workflow
-Usually, we have three types of application configuration: Development, Staging and Production.
 
-- we use a development configuration while building locally on our machines;
+Usually, we have three types of application configurations: Development, Staging and Production.
+
+- we use a Development configuration when we build locally on our machines;
 - we deploy a Staging build on every merge to the `develop` branch;
 - we deploy a Production build on every merge to the `master` branch.
 
@@ -38,14 +39,20 @@ Usually basic setup is not enough, as we have several application configurations
 
 Whoa, a lot of Ruby code! Don't be afraid, it's pretty easy to follow. In addition, setting up the fastlane on the project makes you feel like a cool dev-ops 😎 
 
-Code signing part is described in the [code signing chapter](). If you use match there will be no problems, just grant your CI machine SSH access to the certificates repo.
+Code signing part is described in the [code signing chapter](2-code-signing.md). If you use match there will be no problems, just grant your CI machine SSH access to the certificates repo.
 
 ### 3. Configure the CircleCI
 
 CircleCI uses `yml` files for configuration. `config.yml` consists of the **jobs**. Their role is to setup the CI machine before running the fastlane. 
 
-Here is a basic configuration file example - [config.yml](resources/circle-config.yml). It consists of three jobs: `build-and-test`, `deploy_staging` and `deploy_production`. As you can see, "jobs" are just list of instructions to pre-install dependencies, restore cache or select the Xcode version.
+Here is a basic configuration file example - [config.yml](resources/circle-config.yml). It consists of three jobs: `build-and-test`, `deploy_staging` and `deploy_production`. As you can see, "jobs" are just list of instructions, such as pre-install dependencies, restore cache or select the Xcode version.
 
-At the very bottom of config.yml lays description of our `build-test-and-deploy` workflow. It states, that we will run `build-and-test` job on push to the every branch **except** `develop` or `master`; we will run `deploy_staging` job on every push to the `develop` and finally we will run `deploy_production` on the push to the `master`.
+At the very bottom of config.yml lays description of our `build-test-and-deploy` workflow. It states, that we will run `build-and-test` job on push to the every branch **except** `develop` or `master`; we will run `deploy_staging` job on every push to the `develop` only and finally we will run `deploy_production` on the push to the `master` only.
 
 Please, refer to the [config.yml documentation](https://circleci.com/docs/2.0/) for more information about structure of the configuration file.
+
+### 4. PROFIT 🚀
+
+- we automated part of our workflow;
+- our code is always buildable and tests are green;
+- the latest executable build is always available to download.

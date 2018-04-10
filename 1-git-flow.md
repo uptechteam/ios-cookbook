@@ -22,7 +22,7 @@ In our workflow we have several branches:
 
 We use Pull Requests to merge any change to the `develop` or `master` branch. Sometimes it's ok to push a hotfix directly into the `develop` when the sky is falling, otherwise, please, use Pull Requests. This rule enforces [collective code ownership](https://martinfowler.com/bliki/CodeOwnership.html).
 
-Don't forget to wait till CI is green before merging the PR.
+Don't forget to wait till [CI](3-ci.md) is green before merging the PR.
 
 ## Code Review
 

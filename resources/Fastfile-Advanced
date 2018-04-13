@@ -1,0 +1,202 @@
+default_platform(:ios)
+
+platform :ios do
+  before_all do
+    setup_circle_ci
+    ENV["SLACK_URL"] = ""
+  end
+
+  lane :test_and_staging do |options|
+    test(build_configuration: "staging")
+    deploy_staging
+  end
+
+  lane :test_and_production do
+    test(build_configuration: "production")
+    deploy_production
+  end
+
+  desc "Runs all the tests"
+  lane :test do |options|
+    scheme = get_scheme(build_configuration: options[:build_configuration])
+    run_tests(
+      scheme: scheme,
+      device: 'iPhone 6s',
+      skip_slack: true,
+      output_types: "junit",
+      output_files: "results.xml"
+    )
+  end
+
+  lane :deploy_staging do
+    # Fetch provisioning profiles
+    match(
+      git_url: certificates_repo_url,
+      type: "adhoc",
+      readonly: true
+    )
+
+    # Bump build number before the build
+    build_number = get_build_number(xcodeproj: "AwesomeProject.xcodeproj").to_i + 1
+    increment_build_number(build_number: build_number)
+
+    # Build the project
+    scheme = get_scheme(build_configuration: "staging")
+    build_ios_app(
+      scheme: scheme,
+      export_method: "ad-hoc"
+    )
+
+    # Deploy to your builds distributor
+    changelog = changelog_from_git_commits(merge_commit_filtering: "exclude_merges")
+    hockey(
+      api_token: "api_token",
+      notes: changelog
+    )
+
+    # Commit bump build number, add a tag and push
+    original_commit = last_git_commit
+    clean_build_artifacts
+    commit_version_bump(
+      xcodeproj: "AwesomeProject.xcodeproj",
+      message: "Bump build number #{build_number} [ci skip]"
+    )
+    add_git_tag(
+      grouping: "builds",
+      prefix: "v",
+      build_number: build_number
+    )
+
+    push_to_git_remote(
+      remote: "origin",
+      local_branch: "develop",
+      remote_branch: "develop",
+      tags: true
+    )
+
+    version = get_version_number(xcodeproj: "AwesomeProject.xcodeproj")
+    slack(
+      message: "New Staging iOS build *#{version}* (#{build_number}) has been submitted to HockeyApp!",
+      use_webhook_configured_username_and_icon: true,
+      success: true,
+      default_payloads: [],
+      payload: {
+        "Git Commit": original_commit[:message],
+        "Git Author": original_commit[:author]
+      }
+    )
+  end
+
+  lane :deploy_production do
+    # Fetch provisioning profiles
+    match(
+      git_url: certificates_repo_url,
+      type: "adhoc",
+      readonly: true
+    )
+
+    # Build the project
+    scheme = get_scheme(build_configuration: "production")
+    build_ios_app(
+      scheme: scheme,
+      export_method: "ad-hoc"
+    )
+
+    changelog = changelog_from_git_commits(merge_commit_filtering: "exclude_merges")
+    hockey(
+      api_token: "api_token",
+      notes: changelog
+    )
+
+    version = get_version_number(xcodeproj: "AwesomeProject.xcodeproj")
+    build_number = get_build_number(xcodeproj: "AwesomeProject.xcodeproj")
+    slack(
+      message: "New Production iOS build *#{version}* (#{build_number}) has been submitted to HockeyApp!",
+      use_webhook_configured_username_and_icon: true,
+      success: true,
+      default_payloads: [],
+      payload: {
+        "Git Commit": last_git_commit[:message],
+        "Git Author": last_git_commit[:author]
+      }
+    )
+  end
+
+  desc "Fetches certificates and profiles from the ios-certificates repository by HTTPS"
+  lane :sync_profiles do
+    match(
+      git_url: certificates_repo_url,
+      type: "development",
+      readonly: true
+    )
+
+    match(
+      git_url: certificates_repo_url,
+      type: "adhoc",
+      readonly: true
+    )
+
+    match(
+      git_url: certificates_repo_url,
+      type: "appstore",
+      readonly: true
+    )
+  end
+
+  lane :add_device do
+    device_name = prompt(text: "Enter the device name: ")
+    device_udid = prompt(text: "Enter the device UDID: ")
+    device_hash = {}
+    device_hash[device_name] = device_udid
+    register_devices(devices: device_hash)
+    match(
+      git_url: certificates_repo_url,
+      type: "development",
+      force_for_new_devices: true
+    )
+    match(
+      git_url: certificates_repo_url,
+      type: "adhoc",
+      force_for_new_devices: true
+    )
+  end
+
+  error do |lane, exception, options|
+    slack_train_crash
+
+    slack(
+      message: "*#{lane}* lane crashed: #{exception}",
+      use_webhook_configured_username_and_icon: true,
+      success: false,
+      default_payloads: [:last_git_commit_message, :git_author]
+    )
+  end
+
+  private_lane :get_scheme do |options|
+    build_configuration = options[:build_configuration]
+    if !build_configuration 
+      UI.build_failure!("No build configuration was passed!")
+    end
+
+    case build_configuration
+    when "development"
+      "AwesomeProject Development"
+    when "staging"
+      "AwesomeProject Staging"
+    when "production"
+      "AwesomeProject Production"
+    else
+      UI.build_failure!("Couldn't recognize passed build configuration!")
+    end
+  end
+
+  # we don't want to use ssh on the local machines
+  def certificates_repo_url
+    if is_ci?
+      return "git@provider.com:certificates_repo_url.git"
+    else
+      return "https://provider.com/certificates_repo_url.git"
+    end
+  end
+
+end

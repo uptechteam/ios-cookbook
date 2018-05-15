@@ -12,6 +12,22 @@ It's easier to test the code that doesn't keep state, but instead only defines t
 
 To write useful and conscious tests, think of what edge cases you can cover with them. If you mock so much of your logic that it makes testing conditions too unrealistic, maybe it's better to reconsider app design than keep writing mocks.
 
+### RX Testing
+
+We use RxTest framework for testing reactive code.
+
+Use TestScheduler to simulate the events at certain moments of time:
+```
+let testScheduler = TestScheduler(initialClock: 0)
+
+testScheduler.createColdObservable([next(201, ())])
+    .asObservable()
+    .bind(to: viewModel.testableObserver)
+    .disposed(by: disposeBag)
+
+let events = testScheduler.start { viewModel.testableObservable }.events
+```
+
 ## UI Tests
 
 UI tests help a lot with testing View Controllers and coordination, but take much more time to write and run than unit tests. Consider writing UI tests for long-term projects, projects with complicated UI design and navigation.

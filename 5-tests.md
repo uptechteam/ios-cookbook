@@ -18,7 +18,7 @@ It's easier to test the code that doesn't keep state, but instead only defines t
 
 To write useful and conscious tests, think of what edge cases you can cover with them. If you mock so much of your logic that it makes testing conditions too unrealistic, maybe it's better to reconsider app design than keep writing mocks.
 
-Test class should be named like `TestingClassNameTests`, every test file should be located near main class.
+Test class should be named like `TestingClassNameTests`, put every test file in the same directory that contains the main class.
 
 ### RX Testing
 

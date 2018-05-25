@@ -4,6 +4,8 @@ We test our code.
 
 Although we don't aim for 100% code coverage, we keep it at a reasonable level. Ultimately, you decide by yourself what part of a specific project it is crucial to cover with tests and what kind of tests you need.
 
+Test class should be named like `TestingClassNameTests`, put every test file in the same directory that contains the main class.
+
 Name of tests should be like `func test_WhatWeTesting()`, for example:
 ```
 func test_isLoadingState()
@@ -18,16 +20,14 @@ It's easier to test the code that doesn't keep state, but instead only defines t
 
 To write useful and conscious tests, think of what edge cases you can cover with them. If you mock so much of your logic that it makes testing conditions too unrealistic, maybe it's better to reconsider app design than keep writing mocks.
 
-Test class should be named like `TestingClassNameTests`, put every test file in the same directory that contains the main class.
-
 ### RX Testing
 
 We use RxTest framework for testing reactive code.
 
-###### 1. Using
+#### 1. Using
 Use `TestScheduler` to simulate the events at certain moments of time:
 
-```
+```swift
 let testScheduler = TestScheduler(initialClock: 0)
 
 testScheduler.createColdObservable([next(201, "String")])
@@ -41,31 +41,34 @@ let events = testScheduler.start { viewModel.testableObservable }.events
 XCTAsserEqual(events, expectedEvents)
 ```
 
-###### 3. Best practice
-To test `Void` type, it's comparing two debug string:
-```
-XCTAsserEqual(events.map { $0.debugDescription }, expectedEvents.map { $0.debugDescription })
+#### 3. Best practices
+
+##### 1) To test `Void` type, it's comparing two debug string:
+
+```swift
+XCTAsserEqual(events.debugDescription, expectedEvents.debugDescription)
 ```
 
-If you use the specific scheduler, you should inject it in VM:
-```
+##### 2) If you use the specific scheduler, you should inject it in VM:
+
+```swift
 class ViewModel {
-  let userName: Observable<String>
-  let lastUpdatedUserName: Observable<Date> 
-  init(
-    authService: AuthServiceProtocol,
-    scheduler: SchedulerType = ConcurrentDispatchQueueScheduler.init(qos: .background)
-  ) {
-    let userName = authService.currentUser
-      .observeOn(scheduler)
-      .map { $0.name }
-      .share(replay: 1, scope: .whileConnected)
-      
-    let lastUpdatedUserName = userName.map { _ in Date() }
+let userName: Observable<String>
+let lastUpdatedUserName: Observable<Date> 
+init(
+authService: AuthServiceProtocol,
+scheduler: SchedulerType = ConcurrentDispatchQueueScheduler.init(qos: .background)
+) {
+let userName = authService.currentUser
+.observeOn(scheduler)
+.map { $0.name }
+.share(replay: 1, scope: .whileConnected)
 
-    self.userName = userName
-    self.lastUpdatedUserName = lastUpdatedUserName
-  }
+let lastUpdatedUserName = userName.map { _ in Date() }
+
+self.userName = userName
+self.lastUpdatedUserName = lastUpdatedUserName
+}
 }
 
 // Usage in tests:
@@ -73,29 +76,30 @@ let testScheduler = TestScheduler(initialClock: 0)
 let viewModel = ViewModel(authService: testAuthService, scheduler: testScheduler)
 ```
 
-Also, if we want to test `Date` type, we should inject a closure which will return the date:
-```
+##### 3) Also, if we want to test `Date` type, we should inject a closure which will return the date:
+
+```swift
 typealias DateProducer = () -> Date
 
 class ViewModel {
-  let userName: Observable<String>
-  let lastUpdatedUserName: Observable<Date> 
-  
-  init(
-    authService: AuthServiceProtocol,
-    scheduler: SchedulerType = ConcurrentDispatchQueueScheduler.init(qos: .background),
-    dateProducer: @escaping DateProducer = { Date() }
-  ) {
-    let userName = authService.currentUser
-      .observeOn(scheduler)
-      .map { $0.name }
-      .share(replay: 1, scope: .whileConnected)
+let userName: Observable<String>
+let lastUpdatedUserName: Observable<Date> 
 
-    let lastUpdatedUserName = userName.map { _ in dateProducer() }
+init(
+authService: AuthServiceProtocol,
+scheduler: SchedulerType = ConcurrentDispatchQueueScheduler.init(qos: .background),
+dateProducer: @escaping DateProducer = { Date() }
+) {
+let userName = authService.currentUser
+.observeOn(scheduler)
+.map { $0.name }  
+.share(replay: 1, scope: .whileConnected)
 
-    self.userName = userName
-    self.lastUpdatedUserName = lastUpdatedUserName
-  }
+let lastUpdatedUserName = userName.map { _ in dateProducer() }
+
+self.userName = userName
+self.lastUpdatedUserName = lastUpdatedUserName
+}
 }
 
 // Usage in tests:
@@ -104,7 +108,6 @@ let date = Date()
 let dateProducer = { return date }
 let viewModel = ViewModel(authService: testAuthService, scheduler: testScheduler, dateProducer: dateProducer)
 ```
-
 
 ## UI Tests
 

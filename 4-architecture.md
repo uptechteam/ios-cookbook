@@ -24,10 +24,33 @@ Our needs satisfy fine-tuned for our purposes [Model-View-ViewModel](https://en.
 Entire application is divided into modules, each module represents a screen.
 Typical module consists of following parts.
 
+### Props
+
+Immutable struct that contains all content needed for screen to be displayed.
+It is important to transmit entire view state using this object. View cannot enter invalid state because of incorrect configuration order.
+Props object should conform to `Equatable`, so it is required to contain only equatable value type properties.
+
+```swift
+struct TeamChatProps: Equatable {
+    struct Message: Equatable {
+        let body: String
+        let senderName: String
+        let senderAvatarUrl: URL
+        let createdAt: Date
+    }
+
+    let messages: [Message]
+    let title: String
+}
+```
+
 ### View
 
-`UIView` subclass and optional `.xib` interface builder file with layout (depends on screen complexity, but mostly on developer's preferance of view implementation). We recommend using interface builder wherever it is possible. 
-All views are required to implement `render(props:)` method, which restores state of view from props object. More details about props below.
+`UIView` subclass and optional `.xib` interface builder file with layout. 
+We recommend using interface builder for views wherever it is possible. 
+
+All views are required to implement `render(props:)` method, which restores state of view from props object.
+
 ```swift
 final class TeamChatView: UIView {
     @IBOutlet private weak var tableView: UITableView!
@@ -55,7 +78,5 @@ final class TeamChatView: UIView {
 
 ### ViewController
 
-`UIViewController` subclass, module's entrance point. ViewController doesn't contain any business logic, unlike with MVC. It strongly references to ViewModel and View objects. In most cases ViewController instantiates View and ViewModel by itself, but it can also support injecting them using initializer. A typical ViewController has a `bindViewModel()` method that binds View outputs to ViewModel inputs and ViewModel outputs to View inputs with reactive framework.
-
-### Props
+`UIViewController` subclass, module's entrance point. View controller doesn't contain any business logic, unlike with MVC. It strongly references to view model and view objects. In most cases view controller instantiates view and view model by itself, but it can also support injecting them using initializer. A typical view controller has a `bindViewModel()` method that binds view outputs to view model inputs and view model outputs to view inputs with reactive framework.
 

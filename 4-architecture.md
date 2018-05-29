@@ -76,7 +76,72 @@ final class TeamChatView: UIView, NibInstantiatable {
 }
 ```
 
-### ViewController
+### View Model
+
+Plain old Swift object, performs all business logic of module.
+
+```swift
+final class TeamChatViewModel {
+    struct Inputs {
+        let viewWillAppear: Observable<Void>
+    }
+
+    struct Outputs {
+        let props: Observable<TeamChatProps>
+        let alert: Observable<String>
+    }
+
+    private let networkProvider: NetworkProviderProtocol
+
+    init(networkProvider: NetworkProviderProtocol = Dependencies.shared.networkProvider) {
+        self.networkProvider = networkProvider
+    }
+
+    func makeOutputs(from inputs: Inputs) {
+        let alertSubject = PublishSubject<String>()
+        let isLoadingMessages = BehaviorSubject<Bool>(value: false)
+
+        let messages = inputs.viewWillAppear
+            .flatMapLatest { () -> Observable<[Messages]> in
+                isLoadingMessages.onNext(true)
+                return self.networkProvider.request(TeamMessagesTarget())
+                    .catchError { error in
+                        alertSubject.onNext(error.localizedDescription)
+                        return .empty()
+                    }
+                    .do(onCompleted: { isLoadingMessages.onNext(false) })
+            }
+            .startWith([])
+            .share(replay: 1, scope: .forever)
+
+        let props = Observable.combineLatest(messages, isLoadingMessages) { ($0, $1) }
+            .map { messages, isLoadingMessages -> TeamChatProps in
+                // It is important to use separated models for domain and props messages to decouple view from business logic
+                let propsMessages = messages
+                    .map { message -> TeamChatProps.Message in
+                        return TeamChatProps.Message(
+                            body: message.body,
+                            senderName: message.sender.name,
+                            senderAvatarUrl: message.sender.avatarUrl,
+                            createdAt: message.createdAt
+                        )
+                    }
+
+                let title = isLoadingMessages ? "Loading" : "Team Chat"
+
+                return TeamChatProps(
+                    messages: propsMessages,
+                    title: title
+                )
+            }
+
+        self.props = props
+        self.alert = alertSubject
+    }
+}
+```
+
+### View Controller
 
 `UIViewController` subclass, module's entrance point. 
 
@@ -101,18 +166,20 @@ final class TeamChatViewController: UIViewController {
     }
 
     private func bindViewModel() {
-        viewModel.props
+        let inputs = TeamChatViewModel.Inputs(
+            viewWillAppear: self.rx.viewWillAppear
+        )
+
+        let outputs = viewModel.makeOutputs(from: inputs)
+
+        outputs.props
             .observeOn(MainScheduler.instance)
             .bind { [weak self] in self?.render(props: $0) }
             .disposed(by: disposeBag)
 
-        viewModel.alert
+        outputs.alert
             .observeOn(MainScheduler.instance)
             .bind { [weak self] in self?.showAlertController(message: $0) }
-            .disposed(by: disposeBag)
-
-        self.rx.viewWillAppear
-	    .bind(to: viewModel.viewWillAppearObserver)
             .disposed(by: disposeBag)
     }
 

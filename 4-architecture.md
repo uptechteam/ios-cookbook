@@ -78,7 +78,13 @@ final class TeamChatView: UIView, NibInstantiatable {
 
 ### View Model
 
-Plain old Swift object, performs all business logic of module.
+Plain old Swift object, performs all business logic of module through transorming reactive inputs into reactive outputs.
+
+Inputs are sequences of events from view layer, that trigger network, services etc.
+Outputs are sequences of events for view layer. Outputs contain cold observable sequence of props and hot observable sequences of other events. This includes alerts, triggers for navigation to other screens etc.
+To reuse functionality between different view models, we move use cases to service objects.
+
+When screen functionality grows view model becomes complex and hard to maintain. To scale it linearly we implement Redux-like state inside view model. More info about it (here)[].
 
 ```swift
 final class TeamChatViewModel {

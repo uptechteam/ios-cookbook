@@ -21,13 +21,14 @@ However we have a number of reasons to use same architecture for every project w
 ## MVVM
 
 Our needs satisfy fine-tuned for our purposes [Model-View-ViewModel](https://en.wikipedia.org/wiki/Model–view–viewmodel) architecture.
+
 Entire application is divided into modules, each module represents a screen.
 Typical module consists of following parts.
 
 ### Props
 
 Immutable struct that contains all content needed for screen to be displayed.
-It is important to transmit entire view state using this object. View cannot enter invalid state because of incorrect configuration order.
+It is important to transmit entire view state using this object. This way view cannot enter invalid state because of incorrect configuration order.
 Props object should conform to `Equatable`, so it is required to contain only equatable value type properties.
 
 ```swift
@@ -47,12 +48,11 @@ struct TeamChatProps: Equatable {
 ### View
 
 `UIView` subclass and optional `.xib` interface builder file with layout. 
-We recommend using interface builder for views wherever it is possible. 
 
 All views are required to implement `render(props:)` method, which restores state of view from props object.
 
 ```swift
-final class TeamChatView: UIView {
+final class TeamChatView: UIView, NibInstantiatable {
     @IBOutlet private weak var tableView: UITableView!
     @IBOutlet private weak var titleLabel: UILabel!
     private let dataSource = TeamChatDataSource()
@@ -78,5 +78,46 @@ final class TeamChatView: UIView {
 
 ### ViewController
 
-`UIViewController` subclass, module's entrance point. View controller doesn't contain any business logic, unlike with MVC. It strongly references to view model and view objects. In most cases view controller instantiates view and view model by itself, but it can also support injecting them using initializer. A typical view controller has a `bindViewModel()` method that binds view outputs to view model inputs and view model outputs to view inputs with reactive framework.
+`UIViewController` subclass, module's entrance point. 
 
+View controller doesn't contain any business logic, unlike with MVC. It strongly references to view model and view objects. In most cases view controller instantiates view and view model by itself, but it can also support injecting them using initializer. 
+
+A typical view controller has a `bindViewModel()` method that binds view outputs to view model inputs and view model outputs to view inputs with reactive framework.
+
+```swift
+final class TeamChatViewController: UIViewController {
+    private lazy var teamChatView = TeamChatView.instantiateFromNib()
+    private lazy var viewModel = TeamChatViewModel()
+    private let disposeBag = DisposeBag()
+
+    override func loadView() {
+        self.view = teamChatView
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        bindViewModel()
+    }
+
+    private func bindViewModel() {
+        viewModel.props
+            .observeOn(MainScheduler.instance)
+            .bind { [weak self] in self?.render(props: $0) }
+            .disposed(by: disposeBag)
+
+        viewModel.alert
+            .observeOn(MainScheduler.instance)
+            .bind { [weak self] in self?.showAlertController(message: $0) }
+            .disposed(by: disposeBag)
+
+        self.rx.viewWillAppear
+	    .bind(to: viewModel.viewWillAppearObserver)
+            .disposed(by: disposeBag)
+    }
+
+    private func render(props: TeamChatProps) {
+        teamChatView.render(props: props)
+    }
+}
+```

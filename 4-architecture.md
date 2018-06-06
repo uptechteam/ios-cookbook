@@ -6,7 +6,7 @@ However we have a number of reasons to use same architecture for every project w
 
 ## Why?
 
-- Have a completed solution for new projects, nobody wants to create a bicycle every single time
+- Have a completed solution for new projects
 - Decrease development time by reusing estabilished principles and techniques of solving similair (or not) problems
 - Create consistent codebase to lower the barier to entry for switching developers between existing projects
 
@@ -27,8 +27,9 @@ Typical module consists of following parts.
 
 ### Props
 
-Immutable struct that contains all content needed for screen to be displayed.
+Immutable struct that contains all content needed for module to be displayed.
 It is important to transmit entire view state using this object. This way view cannot enter invalid state because of incorrect configuration order.
+Props must operate only with plain models created specifically for describing state of view. This means you cannot pass domain models (e.g. Message model initialized from JSON response) to view. You must create separated model inside module's props naming scope or outside (e.g. MessageProps) if you reuse view between different screens. This quality enables implementing view (and reducing QA cycle time) separately from business logic.
 Props object should conform to `Equatable`, so it is required to contain only equatable value type properties.
 
 ```swift
@@ -50,6 +51,8 @@ struct TeamChatProps: Equatable {
 `UIView` subclass and optional `.xib` interface builder file with layout. 
 
 All views are required to implement `render(props:)` method, which restores state of view from props object.
+This method must always bring view to same state for same props (view state must not depend on previous calls).
+If you implement animations, your view can rely on it's previous state to make a proper transition. For example, UITableView's data source may require previous rendered sections array to differentiate between it and current sections and do animated batch updates.
 
 ```swift
 final class TeamChatView: UIView, NibInstantiatable {
@@ -78,10 +81,10 @@ final class TeamChatView: UIView, NibInstantiatable {
 
 ### View Model
 
-Plain old Swift object, performs all business logic of module through transorming reactive inputs into reactive outputs.
+This object performs all business logic of module through transforming reactive inputs into reactive outputs.
 
 Inputs are sequences of events from view layer, that trigger network, services etc.
-Outputs are sequences of events for view layer. Outputs contain cold observable sequence of props and hot observable sequences of other events. This includes alerts, triggers for navigation to other screens etc.
+Outputs are sequences of events for view layer. Outputs contain cold observable sequence of props and hot observable sequences of triggers. This triggers include alerts, navigation to other screens etc.
 To reuse functionality between different view models, we move use cases to service objects.
 
 When screen functionality grows view model becomes complex and hard to maintain. To scale it linearly we implement Redux-like state inside view model. More info about it (here)[].
@@ -121,8 +124,8 @@ final class TeamChatViewModel {
             .share(replay: 1, scope: .forever)
 
         let props = Observable.combineLatest(messages, isLoadingMessages) { ($0, $1) }
+            // Function here shows how module's state transforms to view content.
             .map { messages, isLoadingMessages -> TeamChatProps in
-                // It is important to use separated models for domain and props messages to decouple view from business logic
                 let propsMessages = messages
                     .map { message -> TeamChatProps.Message in
                         return TeamChatProps.Message(
@@ -194,3 +197,15 @@ final class TeamChatViewController: UIViewController {
     }
 }
 ```
+
+In cases where module requires some local dependencies (e.g. profile details screen require profile id to fetch info), view controller has custom initializer that passes it's arguments to view model initializer.
+```swift
+// ProfileDetailsViewController.swift
+...
+
+init(profileId: String) {
+    viewModel = ProfileDetailsViewModel(profileId: profileId)
+    super.init(nibName: nil, bundle: nil)
+}
+```
+

@@ -22,14 +22,23 @@ However we have a number of reasons to use same architecture for every project w
 
 Our needs satisfy fine-tuned for our purposes [Model-View-ViewModel](https://en.wikipedia.org/wiki/Model–view–viewmodel) architecture.
 
+Architecture is heavily dependent on [RxSwift](https://github.com/ReactiveX/RxSwift) framework, but may be easily used with any other reactive framework. 
+
 Entire application is divided into modules, each module represents a screen.
 Typical module consists of following parts.
+- 📦 [Props](#props)
+- 🎆 [View](#view)
+- 🚦 [View Model](#viewmodel)
+- 🚃 [View Controller](#viewcontroller)
 
-### Props
+### Props <a id="props"></a>
 
 Immutable struct that contains all content needed for module to be displayed.
+
 It is important to transmit entire view state using this object. This way view cannot enter invalid state because of incorrect configuration order.
-Props must operate only with plain models created specifically for describing state of view. This means you cannot pass domain models (e.g. Message model initialized from JSON response) to view. You must create separated model inside module's props naming scope or outside (e.g. MessageProps) if you reuse view between different screens. This quality enables implementing view (and reducing QA cycle time) separately from business logic.
+
+Props must operate only with plain models created specifically for describing state of view. This means you cannot pass domain models (e.g. `Message` model initialized from JSON response) to view. You must create separated model inside module's props naming scope or outside (e.g. `MessageProps`) if you reuse view between different screens. This quality enables implementing view (and reducing QA cycle time) separately from business logic.
+
 Props object should conform to `Equatable`, so it is required to contain only equatable value type properties.
 
 ```swift
@@ -46,9 +55,11 @@ struct TeamChatProps: Equatable {
 }
 ```
 
-### View
+### View <a id="view"></a>
 
-`UIView` subclass and optional `.xib` interface builder file with layout. 
+`UIView` subclass and `.xib` interface builder file with layout. 
+
+This module's part is completely optional, everything from it can be easily moved to view controller and functionality will remain same. However, we recommend implementing view separately from view controller to avoid uncontrollable growth of view controller's codebase.
 
 All views are required to implement `render(props:)` method, which restores state of view from props object.
 This method must always bring view to same state for same props (view state must not depend on previous calls).
@@ -79,7 +90,7 @@ final class TeamChatView: UIView, NibInstantiatable {
 }
 ```
 
-### View Model
+### View Model <a id="viewmodel"></a>
 
 This object performs all business logic of module through transforming reactive inputs into reactive outputs.
 
@@ -150,7 +161,7 @@ final class TeamChatViewModel {
 }
 ```
 
-### View Controller
+### View Controller <a id="viewcontroller"></a>
 
 `UIViewController` subclass, module's entrance point. 
 

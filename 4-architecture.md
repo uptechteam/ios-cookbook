@@ -30,6 +30,7 @@ Typical module consists of following parts.
 - 🎆 [View](#view)
 - 🚦 [View Model](#viewmodel)
 - 🚃 [View Controller](#viewcontroller)
+- 🛠 [Services](#services)
 
 ### Props <a id="props"></a>
 
@@ -59,7 +60,7 @@ struct TeamChatProps: Equatable {
 
 `UIView` subclass and `.xib` interface builder file with layout. 
 
-This module's part is completely optional, everything from it can be easily moved to view controller and functionality will remain same. However, we recommend implementing view separately from view controller to avoid uncontrollable growth of view controller's codebase.
+From responsibilities division point of view view controller is same part of view layer as view itself, so this module's part is completely optional. Everything from it can be easily moved to view controller and functionality will remain same. However, we recommend implementing view separately from view controller to avoid uncontrollable growth of view controller's codebase.
 
 All views are required to implement `render(props:)` method, which restores state of view from props object.
 This method must always bring view to same state for same props (view state must not depend on previous calls).
@@ -94,8 +95,9 @@ final class TeamChatView: UIView, NibInstantiatable {
 
 This object performs all business logic of module through transforming reactive inputs into reactive outputs.
 
-Inputs are sequences of events from view layer, that trigger network, services etc.
+Inputs are sequences of events from view layer, that trigger network, services etc. Example sequences: `viewWillAppear`, `buyButtonTap`, `messageSelect`.
 Outputs are sequences of events for view layer. Outputs contain cold observable sequence of props and hot observable sequences of triggers. This triggers include alerts, navigation to other screens etc.
+
 To reuse functionality between different view models, we move use cases to service objects.
 
 When screen functionality grows view model becomes complex and hard to maintain. To scale it linearly we implement Redux-like state inside view model. More info about it (here)[].
@@ -209,7 +211,7 @@ final class TeamChatViewController: UIViewController {
 }
 ```
 
-In cases where module requires some local dependencies (e.g. profile details screen require profile id to fetch info), view controller has custom initializer that passes it's arguments to view model initializer.
+In cases where module requires some local dependencies (e.g. profile details screen require profile id to fetch info), view controller has custom initializer that passes it's arguments to view model.
 ```swift
 // ProfileDetailsViewController.swift
 ...
@@ -220,3 +222,48 @@ init(profileId: String) {
 }
 ```
 
+### Services <a id="services"></a>
+
+Services are objects, that share logic between view models. 
+
+If any functionality duplicates in different modules, you should move it into service. Example: `UserService` shares a logic of fetching and caching `User` model.
+
+```swift
+final class UserService: UserServiceProtocol {
+    private let networkProvider: NetworkProviderProtocol
+    private let storage: StorageProtocol
+
+    init(
+        networkProvider: NetworkProviderProtocol = Dependencies.shared.networkProvider,
+        storage: StorageProtocol = UserDefaults.standard
+    ) {
+        self.networkProvider = networkProvider
+        self.storage = storage
+    }
+
+    func fetchUser() -> Observable<User> {
+        let key = "com.example.user"
+        
+        let fromCache = Observable.deferred { () -> Observable<User> in
+            guard
+                let data = self.storage[key] as Data?,
+                let userFromCache = try? JSONDecoder().decode(User.self, from: data)
+            else {
+                return .empty()
+            }
+
+            return .just(userFromCache)
+        }
+
+        let fromNetwork = networkProvider.request(UserTarget())
+            .do(onNext: { user in
+                self.storage[key] = try? JSONEncoder().encode(user)
+            })
+
+        return fromCache.concat(fromNetwork)
+    }
+}
+```
+
+In most cases services are sets of independent methods, but they can also have their own state.
+Example: MessagesService manages a queue of pending messages and sends them one by one in background. 

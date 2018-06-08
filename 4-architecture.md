@@ -20,7 +20,7 @@ However we have a number of reasons to use same architecture for every project w
 
 ## MVVM
 
-Our needs satisfy fine-tuned for our purposes [Model-View-ViewModel](https://en.wikipedia.org/wiki/Model–view–viewmodel) architecture.
+Our needs satisfy fine-tuned [Model-View-ViewModel](https://en.wikipedia.org/wiki/Model–view–viewmodel) architecture.
 
 Architecture is heavily dependent on [RxSwift](https://github.com/ReactiveX/RxSwift) framework, but may be easily used with any other reactive framework. 
 
@@ -60,7 +60,7 @@ struct TeamChatProps: Equatable {
 
 `UIView` subclass and `.xib` interface builder file with layout. 
 
-From responsibilities division point of view view controller is same part of view layer as view itself, so this module's part is completely optional. Everything from it can be easily moved to view controller and functionality will remain same. However, we recommend implementing view separately from view controller to avoid uncontrollable growth of view controller's codebase.
+From responsibilities division point of view view controller is same part of view layer as view itself, so this module's part is completely optional. Everything from it can be easily moved to view controller and functionality will remain same. However, we recommend implementing view separately from view controller to avoid growth of view controller's codebase.
 
 All views are required to implement `render(props:)` method, which restores state of view from props object.
 This method must always bring view to same state for same props (view state must not depend on previous calls).
@@ -93,7 +93,7 @@ final class TeamChatView: UIView, NibInstantiatable {
 
 ### View Model <a id="viewmodel"></a>
 
-This object performs all business logic of module through transforming reactive inputs into reactive outputs.
+This object performs all business logic of module through transforming reactive inputs into outputs.
 
 Inputs are sequences of events from view layer, that trigger network, services etc. Example sequences: `viewWillAppear`, `buyButtonTap`, `messageSelect`.
 Outputs are sequences of events for view layer. Outputs contain cold observable sequence of props and hot observable sequences of triggers. This triggers include alerts, navigation to other screens etc.
@@ -266,4 +266,112 @@ final class UserService: UserServiceProtocol {
 ```
 
 In most cases services are sets of independent methods, but they can also have their own state.
-Example: MessagesService manages a queue of pending messages and sends them one by one in background. 
+Example: `MessagesService` manages a queue of pending messages and sends them one by one in background. 
+
+```swift
+final class MessagesService: MessagesServiceProtocol {
+    private let networkProvider: NetworkProviderProtocol
+
+    private let sendMessageSubject = PublishSubject<LocalMessage>()
+
+    init(networkProvider: NetworkProviderProtocol = Dependencies.shared.networkProvider) {
+        self.networkProvider = networkProvider
+    }
+
+    func setupSending() -> Observable<Void> {
+        enum Action {
+            case addMessageToQueue(LocalMessage)
+            case markAsSent(LocalMessage)
+            case markAsFailed(LocalMessage, Error)
+        }
+
+        enum SendingStatus: Equatable {
+            case pending
+            case sent
+            case failed(Error)
+        }
+
+        typealias State = [LocalMessage: SendingStatus]
+        let initialState = State()
+
+        func reduce(state: State, action: Action) -> State {
+            var state = state
+
+            switch action {
+            case let .addMessageToQueue(message):
+                state[message] = .pending
+
+            case let .markAsSent(message):
+                state[message] = .sent
+
+            case let .markAsFailed(message, error):
+                state[message] = .failed(error)
+            }
+
+            return state
+        }
+
+        let dispatchAction = PublishSubject<Action>()
+        let sendMessageAction = sendMessageSubject.map(Action.addMessageToQueue)
+
+        let state = Observable.merge([dispatchAction, sendMessageAction])
+            .scan(initialState, accumulator: reduce)
+            .startWith(initialState)
+            .share(replay: 1, scope: .forever)
+
+        return state
+            .map { state -> LocalMessage? in
+                return state
+                    .filter { $0.value == .pending }
+                    .map { $0.key }
+                    .sorted()
+                    .first
+            }
+            .flatMapLatest { message -> Observable<Action> in
+                guard let message = message else {
+                    return .empty()
+                }
+
+                return self.networkProvider.request(SendMessageTarget(message: message))
+                    .map(Action.markAsSent)
+                    .catchError { error in .just(Action.markAsFailed(error)) }
+            }
+            .do(onNext: dispatchAction.onNext)
+            .map { _ in () }
+            .ignoreElements()
+    }
+
+    func send(message: LocalMessage) -> Observable<Void> {
+        return Observable.just(message)
+            .do(onNext: sendMessageSubject.onNext)
+            .map { _ in () }
+    }
+}
+```
+
+You might want to setup sending messages in object that will live for entire app lifecycle, e.g. `AppDelegate`.
+
+```swift
+// AppDelegate.swift
+class AppDelegate: UIResponder, UIApplicationDelegate {
+    ...
+    private let disposeBag = DisposeBag()
+
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        ...
+        setupSendingMessages()
+
+        return true
+    }
+
+    ...
+    func setupSendingMessages() {
+        Dependencies.shared.messagesService.setupSending()
+            .subscribe()
+            .disposed(by: disposeBag)
+    }
+}
+```
+
+And call send message method from any view model to add message to the pending queue.
+

@@ -7,7 +7,7 @@ However we have a number of reasons to use same architecture for every project w
 ## Why?
 
 - Have a completed solution for new projects
-- Decrease development time by reusing estabilished principles and techniques of solving similair (or not) problems
+- Decrease development time by reusing estabilished principles and techniques of solving similair problems
 - Create consistent codebase to lower the barier to entry for switching developers between existing projects
 
 ## Requirements
@@ -20,7 +20,7 @@ However we have a number of reasons to use same architecture for every project w
 
 ## MVVM
 
-Our needs satisfy fine-tuned [Model-View-ViewModel](https://en.wikipedia.org/wiki/Model–view–viewmodel) architecture.
+Our needs satisfy fine-tuned for our purposes [Model-View-ViewModel](https://en.wikipedia.org/wiki/Model–view–viewmodel) architecture.
 
 Architecture is heavily dependent on [RxSwift](https://github.com/ReactiveX/RxSwift) framework, but may be easily used with any other reactive framework. 
 
@@ -30,7 +30,7 @@ Typical module consists of following parts.
 - 🎆 [View](#view)
 - 🚦 [View Model](#viewmodel)
 - 🚃 [View Controller](#viewcontroller)
-- 🛠 [Services](#services)
+- 🔀 [Navigation](#navigation)
 
 ### Props <a id="props"></a>
 
@@ -60,7 +60,7 @@ struct TeamChatProps: Equatable {
 
 `UIView` subclass and `.xib` interface builder file with layout. 
 
-From responsibilities division point of view view controller is same part of view layer as view itself, so this module's part is completely optional. Everything from it can be easily moved to view controller and functionality will remain same. However, we recommend implementing view separately from view controller to avoid growth of view controller's codebase.
+This module's part is completely optional, everything from it can be easily moved to view controller and functionality will remain same. However, we recommend implementing view separately from view controller to avoid growth of view controller's code base.
 
 All views are required to implement `render(props:)` method, which restores state of view from props object.
 This method must always bring view to same state for same props (view state must not depend on previous calls).
@@ -79,6 +79,7 @@ final class TeamChatView: UIView, NibInstantiatable {
 
     func render(props: TeamChatProps) {
         if props.title != self.props?.title {
+            titleLabel.text = props.title
             titleLabel.text = props.title
         }    
 
@@ -172,8 +173,6 @@ View controller doesn't contain any business logic, unlike with MVC. It strongly
 A typical view controller has a `bindViewModel()` method that binds view outputs to view model inputs and view model outputs to view inputs with reactive framework.
 
 ```swift
-final class TeamChatViewController: UIViewController {
-    private lazy var teamChatView = TeamChatView.instantiateFromNib()
     private lazy var viewModel = TeamChatViewModel()
     private let disposeBag = DisposeBag()
 
@@ -211,7 +210,7 @@ final class TeamChatViewController: UIViewController {
 }
 ```
 
-In cases where module requires some local dependencies (e.g. profile details screen require profile id to fetch info), view controller has custom initializer that passes it's arguments to view model.
+In cases where module requires some local dependencies (e.g. profile details screen require profile id to fetch info), view controller has custom initializer that passes it's arguments to view model initializer.
 ```swift
 // ProfileDetailsViewController.swift
 ...
@@ -222,156 +221,65 @@ init(profileId: String) {
 }
 ```
 
-### Services <a id="services"></a>
+### Navigation <a id="navigation"></a>
 
-Services are objects, that share logic between view models. 
+Since all view logic is inside view, view controllers are thin and navigation can be handled by them directly. This keeps architecture lightweight, since separate modules are represented by their view controllers and can be integrated to existing code base easily. 
 
-If any functionality duplicates in different modules, you should move it into service. Example: `UserService` shares a logic of fetching and caching `User` model.
-
+To proceed navigation, view model triggers it's view controller with hot observable output.
 ```swift
-final class UserService: UserServiceProtocol {
-    private let networkProvider: NetworkProviderProtocol
-    private let storage: StorageProtocol
+// TeamChatViewModel.swift
 
-    init(
-        networkProvider: NetworkProviderProtocol = Dependencies.shared.networkProvider,
-        storage: StorageProtocol = UserDefaults.standard
-    ) {
-        self.networkProvider = networkProvider
-        self.storage = storage
-    }
-
-    func fetchUser() -> Observable<User> {
-        let key = "com.example.user"
-        
-        let fromCache = Observable.deferred { () -> Observable<User> in
-            guard
-                let data = self.storage[key] as Data?,
-                let userFromCache = try? JSONDecoder().decode(User.self, from: data)
-            else {
-                return .empty()
-            }
-
-            return .just(userFromCache)
-        }
-
-        let fromNetwork = networkProvider.request(UserTarget())
-            .do(onNext: { user in
-                self.storage[key] = try? JSONEncoder().encode(user)
-            })
-
-        return fromCache.concat(fromNetwork)
-    }
+enum TeamChatRoute {
+  case messageDetails(Message)
 }
-```
 
-In most cases services are sets of independent methods, but they can also have their own state.
-Example: `MessagesService` manages a queue of pending messages and sends them one by one in background. 
-
-```swift
-final class MessagesService: MessagesServiceProtocol {
-    private let networkProvider: NetworkProviderProtocol
-
-    private let sendMessageSubject = PublishSubject<LocalMessage>()
-
-    init(networkProvider: NetworkProviderProtocol = Dependencies.shared.networkProvider) {
-        self.networkProvider = networkProvider
-    }
-
-    func setupSending() -> Observable<Void> {
-        enum Action {
-            case addMessageToQueue(LocalMessage)
-            case markAsSent(LocalMessage)
-            case markAsFailed(LocalMessage, Error)
-        }
-
-        enum SendingStatus: Equatable {
-            case pending
-            case sent
-            case failed(Error)
-        }
-
-        typealias State = [LocalMessage: SendingStatus]
-        let initialState = State()
-
-        func reduce(state: State, action: Action) -> State {
-            var state = state
-
-            switch action {
-            case let .addMessageToQueue(message):
-                state[message] = .pending
-
-            case let .markAsSent(message):
-                state[message] = .sent
-
-            case let .markAsFailed(message, error):
-                state[message] = .failed(error)
-            }
-
-            return state
-        }
-
-        let dispatchAction = PublishSubject<Action>()
-        let sendMessageAction = sendMessageSubject.map(Action.addMessageToQueue)
-
-        let state = Observable.merge([dispatchAction, sendMessageAction])
-            .scan(initialState, accumulator: reduce)
-            .startWith(initialState)
-            .share(replay: 1, scope: .forever)
-
-        return state
-            .map { state -> LocalMessage? in
-                return state
-                    .filter { $0.value == .pending }
-                    .map { $0.key }
-                    .sorted()
-                    .first
-            }
-            .flatMapLatest { message -> Observable<Action> in
-                guard let message = message else {
-                    return .empty()
-                }
-
-                return self.networkProvider.request(SendMessageTarget(message: message))
-                    .map(Action.markAsSent)
-                    .catchError { error in .just(Action.markAsFailed(error)) }
-            }
-            .do(onNext: dispatchAction.onNext)
-            .map { _ in () }
-            .ignoreElements()
-    }
-
-    func send(message: LocalMessage) -> Observable<Void> {
-        return Observable.just(message)
-            .do(onNext: sendMessageSubject.onNext)
-            .map { _ in () }
-    }
-}
-```
-
-You might want to setup sending messages in object that will live for entire app lifecycle, e.g. `AppDelegate`.
-
-```swift
-// AppDelegate.swift
-class AppDelegate: UIResponder, UIApplicationDelegate {
+final class TeamChatViewModel {
+  struct Inputs {
     ...
-    private let disposeBag = DisposeBag()
+    let messageTap: Observable<ArrayIndex>
+  }
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        ...
-        setupSendingMessages()
-
-        return true
-    }
-
+  struct Outputs {
     ...
-    func setupSendingMessages() {
-        Dependencies.shared.messagesService.setupSending()
-            .subscribe()
-            .disposed(by: disposeBag)
-    }
+    let route: Observable<TeamChatRoute>
+  }
+
+  func makeOutputs(from inputs: Inputs) -> Outputs {
+    ...
+
+    let messageDetailsRoute = inputs.messageTap
+      .withLatestFrom(state) { ... } // Retrieve message model from index
+      .map(TeamChatRoute.messageDetails)
+
+    return Outputs(
+      ...
+      route: messageDetailsRoute
+    )
+  }
 }
 ```
 
-And call send message method from any view model to add message to the pending queue.
+```swift
+// TeamChatViewController.swift
 
+final class TeamChatViewController: UIViewController {
+  ...
+
+  func bindViewModel() {
+    ...
+    
+    outputs.route
+      .observeOn(MainScheduler.instance)
+      .bind { [weak self] route in
+        guard let `self` = self else { return }
+
+        switch route {
+        case let .messageDetails(message):
+          let viewController = MessageDetailsViewController(message: message)
+          self.navigationController?.pushViewController(viewController, animated: true)
+        }
+      }
+      .disposed(by: disposeBag)
+  }
+}
+```

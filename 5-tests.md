@@ -1,27 +1,36 @@
 # Tests
 
 ### General Rules
-We test our code.
+
+##### 1. We test our code.
 
 Although we don't aim for 100% code coverage, we keep it at a reasonable level. Ultimately, you decide by yourself what part of a specific project it is crucial to cover with tests and what kind of tests you need.
 
-Test class should be named like `\(TestingClassName)Tests.swift`, put every test file in the same directory that contains the main class.
+##### 2. Naming
+
+Test class should be named as `\(TestingClassName)Tests.swift`.
+
+Name of tests should be like `func test_WhatWeTesting()`, for example:
+
+```swift
+class AuthServiceTests: XCTestCase {
+	func test_IsLoadingState() { ... }
+	func test_AuthenticationErrorHandling() { ... }
+}
+```
+
+##### 3. Location
+
+Test files should be placed in the same location as a tested class, so the project structure looks like that:
+
 ```
 |-- ViewModels
   |-- LoginViewModel.swift
   |-- LoginViewModelTests.swift
 ```
 
-
-Name of tests should be like `func test_WhatWeTesting()`, for example:
-
-```swift
-func test_isLoadingState()
-func test_AuthenticationErrorHandling()
-```
-
 ## Unit Tests
-Pay most attention to covering your View Models' and singletons'(Domain Layer Services) code with unit tests.
+Pay most attention to covering your View Models and Domain Layer Services code with unit tests.
 
 It's easier to test the code that doesn't keep state, but instead only defines the logic of transforming inputs into outputs. Distribute responsibilities by injecting dependencies when possible. Keeping this in mind while designing your app will make it easier to write tests.
 
@@ -31,9 +40,10 @@ To write useful and conscious tests, think of what edge cases you can cover with
 
 We use RxTest framework for testing reactive code.
 
-### Using
+##### Usage
 
 Use `TestScheduler` to simulate the events at certain moments of time:
+
 ```swift
 let testScheduler = TestScheduler(initialClock: 0)
 testScheduler.createColdObservable([next(201, "String")])
@@ -48,28 +58,18 @@ XCTAsserEqual(events, expectedEvents)
 
 ### Best practices
 
-##### 1) To test `Void` type, compare two `debugDescription` (WARNING: it may work wrong for types with implementation of `CustomDebugStringConvertible`):
-###### Why we do this thing?
-Void is not equatable, and we can't compare it. In debug description we will get some information about out events (example: `next(()) @ 200`) where `next(())` our void event and `@ 200` it's time  in milliseconds when it comes.
+#### 1. To test `Void` type, compare two `debugDescription`
+
+*(WARNING: it may work wrong for types with implementation of `CustomDebugStringConvertible`)*
 
 ```swift
 XCTAsserEqual(events.debugDescription, expectedEvents.debugDescription)
 ```
 
-##### 2) If you use the specific scheduler, you should inject it in ViewModel:
-###### Why we do this thing?
-When we testing our events we using `TestScheduler` which will conform to `SchedulerType`. The problem here is, when you would like to move your sequence to other thread you will lose events.
-Example: 
-(1) we don't inject scheduler
-TestScheduler -----x-x-         -----> Here we try catch it
-                        \    
-    observerOn(Schedular) -x-x-------> Here nothing
+###### Why do we do this?
+Void is not equatable, and we can't compare it. In debug description we will get some information about out events (example: `next(()) @ 200`) where `next(())` our void event and `@ 200` it's time  in milliseconds when it comes.
 
-(2) we do injection of scheduler
-TestScheduler -----x-x-         -x-x-> Here we try catch it
-                        \     /
-observerOn(TestScheduler) -x-
-
+#### 2. If you use the specific scheduler, you should inject it in ViewModel
 
 ```swift
 class ViewModel {
@@ -97,9 +97,25 @@ let testScheduler = TestScheduler(initialClock: 0)
 let viewModel = ViewModel(userService: testUserService, scheduler: testScheduler)
 ```
 
-##### 3) Also, if we want to test `Date` type, we should inject a closure which will return the date:
-###### Why we do this thing?
-When we initialize Date it will take a real current date, in some cases, you will get different dates which will differ with milliseconds.
+###### Why do we do this?
+
+When we test our events we use `TestScheduler` which conforms to the `SchedulerType`. The problem here is, when you would like to move your sequence to other thread you will lose events.
+Example: 
+
+```
+(1) we don't inject a scheduler
+TestScheduler -----x-x-         -----> Here we try catch it
+                        \    
+    observerOn(Scheduler) -x-x-------> Here nothing
+
+
+(2) we do inject a scheduler
+TestScheduler -----x-x-         -x-x-> Here we try catch it
+                        \     /
+observerOn(TestScheduler) -x-
+```
+
+#### 3. Also, if we want to test `Date` type, we should inject a closure which will return the date
 
 ```swift
 typealias CurrentDateFactory = () -> Date
@@ -130,6 +146,9 @@ let date = Date()
 let currentDateFactory = { return date }
 let viewModel = ViewModel(userService: testUserService, scheduler: testScheduler, currentDateFactory: currentDateFactory)
 ```
+
+###### Why do we do this?
+When we initialize a `Date` it will take a real current date, in some cases, you will get different dates which will differ in milliseconds.
 
 ### Mocking
 The best way to test some `ViewModel` which contain `Service` (Domain Layer Services), create some mock of this `Service`. For this thing, we need to use `protocol` and create some class which will conform to it.

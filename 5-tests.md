@@ -67,7 +67,7 @@ XCTAsserEqual(events.debugDescription, expectedEvents.debugDescription)
 ```
 
 ###### Why do we do this?
-Void is not equatable, and we can't compare it. In debug description we will get some information about out events (example: `next(()) @ 200`) where `next(())` our void event and `@ 200` it's time  in milliseconds when it comes.
+Void is not equatable, and we can't compare it. In debug description we will get some information about events (example: `next(()) @ 200`) where `next(())` our void event and `@ 200` it's time  in milliseconds when it comes.
 
 #### 2. If you use the specific scheduler, you should inject it in ViewModel
 
@@ -187,7 +187,7 @@ let date = Date()
 let currentDateFactory = { return date }
 let testUser = User(id: 1)
 
-// I recommend you mock only this `func` or `properties` which you will use in viewModel. 
+// I recommend you mock only `func` or `properties` which you will use in viewModel. 
 // We set a default value for testFetchUser to Observable.empty().
 // It will makes our life more easier :D
 

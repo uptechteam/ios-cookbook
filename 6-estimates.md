@@ -36,7 +36,7 @@ Avg - average is arithmetic mean of min and max
 Define the feature that is not relatively big but rather small and can't be broken to a smaller piece. 
 For example, a screen like this: 
 
-![alt text](https://github.com/uptechteam/ios-cookbook/blob/feature/estimates/resources/estimates_screenshots/login.png "Screen example")
+![alt text](https://github.com/uptechteam/ios-cookbook/blob/feature/estimates/resources/estimates_screenshots/login.png | width=100)
 
 can be broken into the following parts:
 1. Login using credentials

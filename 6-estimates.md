@@ -28,9 +28,9 @@ The features can be one or more from the list:
 ### Estimate
 
 The result of the estimations is a table with columns: feature, min, avg, max. Where:
-Feature - is a feature name / user story
-Min / Max - minimum / maximum estimated time for a feature
-Avg - average is arithmetic mean of min and max 
++ Feature - is a feature name / user story
++ Min / Max - minimum / maximum estimated time for a feature
++ Avg - average is arithmetic mean of min and max 
 
 #### Step 1. Define and pick a feature
 Define the feature that is not relatively big but rather small and can't be broken to a smaller piece. 
@@ -47,7 +47,7 @@ Note: "Forgot password" feature will most likely have a separate screen for it.
 
 Sometimes it's not possible to break down a relatively big feature, for example implementing a chat or video streaming. In this case the feature be picked as is.
 
-Finally, after breaking down to smaller features, choose one feature and move to step 2.
+Finally, after breaking down to smaller features, choose one feature and move the next step.
 
 #### Step 2. Estimate the feature 
 
@@ -69,12 +69,13 @@ One more thing before giving a final min/max number pay attention to custom thin
 #### Step 3. Include additional hours
 
 **QA/Tests/Fixes.**
+
 Include QA/Tests/Fixes/Management if agreed with client.
 Usually QA is 20%, management - 10%, Tests - 20% of total development time.
 
 ### Cheat sheets and tips
 
-Cheat sheet for complexity and min/max hour values.
+Cheat sheet for complexity and min/max hour values:
 
 Complexity | Min | Max
 --- | --- | ---
@@ -83,7 +84,7 @@ normal | 8 | 24
 hard | 24 | 100
 extreme | 50 | 300
 
-Cheat sheet for common features.
+Cheat sheet for common features:
 
 Feature | Min | Max | Comments
 --- | --- | --- | ---
@@ -104,6 +105,8 @@ Video Camera (lib) | 16 | 32 | simple video shooting
 Video Player (custom) | 24 | 32 | for a player with controls like default has
 Simple networking using our [lib](https://github.com/uptechteam/Net) | 4 | 8 | n/a
 Complex networking w multipart requests and/or websockets | 16 | 24 | n/a
+
+###  Beware of pitfalls
 
 When you are trying to make a precise estimate make sure to think of different small details that in total may result in a very time consuming feature.
 As an example, a table view that usually takes place on almost every screen can be not just a simple list but also have such pitfalls:

@@ -35,7 +35,7 @@ Avg - average is arithmetic mean of min and max
 #### Step 1. Define and pick a feature 
 Define the feature that is not relatively big but rather small and can't be broken to a smaller piece. 
 For example, a screen like this: 
-![alt text](https:MISSING LINK !!!!!!!.png "Screen example")
+![alt text](https://github.com/uptechteam/ios-cookbook/blob/feature/estimates/resources/estimates_screenshots/login.png "Screen example")
 can be broken into the following parts:
 1. Login using credentials
 2. Facebook login
@@ -129,7 +129,7 @@ Usually QA is 20%, management - 10%, Tests - 20% of total development time.
 #### Example
 
 Here is an example of one of the estimates of iOS app:
-![alt text](https:MISSING LINK !!!!!!!.png "Estimates Example")
+![alt text](https://github.com/uptechteam/ios-cookbook/blob/feature/estimates/resources/estimates_screenshots/estimates_example.png "Estimates Example")
 
 
 ### Communication Tips <a id="communicationips"></a>

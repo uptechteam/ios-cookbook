@@ -1,14 +1,14 @@
 # Architecture
 
-By architecture here we mean a set of design patterns used across entire application. We believe that quality of code is much more important thing than specific architecture patterns.
+By architecture here we mean a set of design patterns used across the entire application. We believe that code quality is much more important than specific architecture patterns.
 
 However we have a number of reasons to use same architecture for every project we build.
 
 ## Why?
 
 - Have a completed solution for new projects
-- Decrease development time by reusing estabilished principles and techniques of solving similair problems
-- Create consistent codebase to lower the barier to entry for switching developers between existing projects
+- Decrease development time by reusing established principles and techniques for solving similar problems
+- Create consistent codebase to lower the barrier to entry for switching developers between existing projects
 
 ## Requirements
 
@@ -64,7 +64,7 @@ This module's part is completely optional, everything from it can be easily move
 
 All views are required to implement `render(props:)` method, which restores state of view from props object.
 This method must always bring view to same state for same props (view state must not depend on previous calls).
-If you implement animations, your view can rely on it's previous state to make a proper transition. For example, UITableView's data source may require previous rendered sections array to differentiate between it and current sections and do animated batch updates.
+If you implement animations, your view can rely on its previous state to make a proper transition. For example, UITableView's data source may require previous rendered sections array to differentiate between it and current sections and do animated batch updates.
 
 ```swift
 final class TeamChatView: UIView, NibInstantiatable {
@@ -79,7 +79,6 @@ final class TeamChatView: UIView, NibInstantiatable {
 
     func render(props: TeamChatProps) {
         if props.title != self.props?.title {
-            titleLabel.text = props.title
             titleLabel.text = props.title
         }    
 
@@ -158,8 +157,10 @@ final class TeamChatViewModel {
                 )
             }
 
-        self.props = props
-        self.alert = alertSubject
+        return Outputs(
+            props: props,
+            alert: alertSubject
+        )
     }
 }
 ```
@@ -173,6 +174,10 @@ View controller doesn't contain any business logic, unlike with MVC. It strongly
 A typical view controller has a `bindViewModel()` method that binds view outputs to view model inputs and view model outputs to view inputs with reactive framework.
 
 ```swift
+// TeamChatViewController.swift
+
+final class TeamChatViewController: UIViewController {
+    private lazy var teamChatView = TeamChatView.instantiateFromNib()
     private lazy var viewModel = TeamChatViewModel()
     private let disposeBag = DisposeBag()
 
@@ -210,7 +215,7 @@ A typical view controller has a `bindViewModel()` method that binds view outputs
 }
 ```
 
-In cases where module requires some local dependencies (e.g. profile details screen require profile id to fetch info), view controller has custom initializer that passes it's arguments to view model initializer.
+In cases where module requires some local dependencies (e.g. profile details screen require profile id to fetch info), view controller has custom initializer that passes its arguments to view model initializer.
 ```swift
 // ProfileDetailsViewController.swift
 ...
@@ -225,7 +230,7 @@ init(profileId: String) {
 
 Since all view logic is inside view, view controllers are thin and navigation can be handled by them directly. This keeps architecture lightweight, since separate modules are represented by their view controllers and can be integrated to existing code base easily. 
 
-To proceed navigation, view model triggers it's view controller with hot observable output.
+To proceed navigation, view model triggers its view controller with hot observable output.
 ```swift
 // TeamChatViewModel.swift
 

@@ -12,18 +12,18 @@ The main difficulties are:
 
 #### 1. Get to know your client and project 💼.
 a. make a quick research or ask the sales representative about the company, their business, missions (read why in [Communication Tips](#communicationtips) section); 
-b. their audience since it might be people who may require Accessability features in the app;
+b. their audience since it might be people who may require Accessibility features in the app;
 c. review information about the project;
 
 #### 2. Get features list 📜.
 The features can be one or more from the list:
 1. Visual
-⋅⋅* user stories or features list
-⋅⋅* detailed specification
+* user stories or features list
+* detailed specification
 2. Written:
-⋅⋅* wireframes
-⋅⋅* finished designs
-⋅⋅* interactive designs
+* wireframes
+* finished designs
+* interactive designs
 
 ### Estimate
 
@@ -41,7 +41,7 @@ For example, a screen like this:
 can be broken into the following parts:
 1. Login using credentials
 2. Facebook login
-3. Additional Facebook integration (optional depending on existnace of other facebook related features)
+3. Additional Facebook integration (optional depending on existence of other facebook related features)
 
 Note: "Forgot password" feature will most likely have a separate screen for it.
 
@@ -58,7 +58,7 @@ First, define the **complexity** of the feature: easy,
 + **Extreme**: Usually they’re unclear and huge features. It’s better to divide them into smaller ones.
 
 Use complexity to define the difference between min/max values: the more complex it is the bigger difference.
-Why: the affect of different programming speed and seniority level is more visible on bigger features. 
+Why: the effect of different programming speed and seniority level is more visible on bigger features. 
 
 One more thing before giving a final min/max number pay attention to custom things like: animations, sliders, android like [tabs](https://material.io/design/components/tabs.html).
 
@@ -87,11 +87,11 @@ Cheat sheet for common features.
 
 Feature | Min | Max | Comments
 --- | --- | --- | ---
-CI setup | 8 | 16 | might be not initial setup but throught the project 
-Project setup | 4 | 16 | might be not initial setup but throught the project 
+CI setup | 8 | 16 | might be not initial setup but through the project 
+Project setup | 4 | 16 | might be not initial setup but through the project 
 Chat (no lib) | 80 | 120 | of course it also depends on chat features
 Chat (with our lib) | 20 | 40 | of course it also depends on chat features
-Social networklogin / sharing | 4 | 8 | per each feature
+Social network login / sharing | 4 | 8 | per each feature
 Payments system integration | 8 | 24 | a lot of time goes to communication / researching
 Image picker (default) | 2 | 4 | n/a
 Image picker (custom) | 16 | 24 | n/a
@@ -123,11 +123,11 @@ More examples [here](https://github.com/stanfy/ios-components-bikeshedding)
 
 **We do include supporting dev services:**
 - CI setup
-- Crashlitics
- - Analytics services
+- Crashlytics
+- Analytics services
  
- **Consider languages.**
- Often times clients don't mention if they need to support multiple languages or arabic language.
+**Consider languages.**
+Often times clients don't mention if they need to support multiple languages or arabic language.
 
 **Consider reusability (optional).**
 If you see that there are 5 screens with the same UI but different data, make sure to separate one feature to be "Generic/reusable table" which for example may take  10 hours, but screens will take much less than if they would be done from scratch. This also shows the quality and proficiency of the developer to the client (client can also be a tech person). 

@@ -6,16 +6,16 @@ The main difficulties are:
 - underestimations may bring hard times during the development
 - each developer has own development speed
 
-## General advices on how to make estimates
+## Guide on how to make Estimates
 
 ### Gather requirements and inputs
 
-#### 1. Get to know your client and project.
-a. make a quick research or ask the sales representative about the company, their business, missions (read why in [Communication Tips](#communicationips) section); 
+#### 1. Get to know your client and project 💼.
+a. make a quick research or ask the sales representative about the company, their business, missions (read why in [Communication Tips](#communicationtips) section); 
 b. their audience since it might be people who may require Accessability features in the app;
 c. review information about the project;
 
-#### 2. Get features.
+#### 2. Get features list 📜.
 The features can be one or more from the list:
 1. Visual
 ⋅⋅* user stories or features list
@@ -32,11 +32,11 @@ Feature - is a feature name / user story
 Min / Max - minimum / maximum estimated time for a feature
 Avg - average is arithmetic mean of min and max 
 
-#### Step 1. Define and pick a feature 
+#### Step 1. Define and pick a feature
 Define the feature that is not relatively big but rather small and can't be broken to a smaller piece. 
 For example, a screen like this: 
 
-![](https://github.com/uptechteam/ios-cookbook/blob/feature/estimates/resources/estimates_screenshots/login.png =200x355)
+![](https://github.com/uptechteam/ios-cookbook/blob/feature/estimates/resources/estimates_screenshots/login.png)
 
 can be broken into the following parts:
 1. Login using credentials
@@ -66,7 +66,13 @@ One more thing before giving a final min/max number pay attention to custom thin
 + hours (Int)
 + days (Double). Usually we do hours.
 
-#### Cheat sheets and tips
+#### Step 3. Include additional hours
+
+**QA/Tests/Fixes.**
+Include QA/Tests/Fixes/Management if agreed with client.
+Usually QA is 20%, management - 10%, Tests - 20% of total development time.
+
+### Cheat sheets and tips
 
 Cheat sheet for complexity and min/max hour values.
 
@@ -79,13 +85,13 @@ extreme | 50 | 300
 
 Cheat sheet for common features.
 
-Complexity | Min | Max | Comments
+Feature | Min | Max | Comments
 --- | --- | --- | ---
 CI setup | 8 | 16 | might be not initial setup but throught the project 
 Project setup | 4 | 16 | might be not initial setup but throught the project 
 Chat (no lib) | 80 | 120 | of course it also depends on chat features
-Chat (with lib<br>by UPTech) | 20 | 40 | of course it also depends on chat features
-Social network<br>login / sharing | 4 | 8 | per each feature
+Chat (with our lib) | 20 | 40 | of course it also depends on chat features
+Social networklogin / sharing | 4 | 8 | per each feature
 Payments system integration | 8 | 24 | a lot of time goes to communication / researching
 Image picker (default) | 2 | 4 | n/a
 Image picker (custom) | 16 | 24 | n/a
@@ -96,6 +102,8 @@ Photo Camera (custom) | 24 | 40 | capture, focus, zoom
 Video Camera (custom) | 40 | 60 | simple video shooting
 Video Camera (lib) | 16 | 32 | simple video shooting
 Video Player (custom) | 24 | 32 | for a player with controls like default has
+Simple networking using our [lib](https://github.com/uptechteam/Net) | 4 | 8 | n/a
+Complex networking w multipart requests and/or websockets | 16 | 24 | n/a
 
 When you are trying to make a precise estimate make sure to think of different small details that in total may result in a very time consuming feature.
 As an example, a table view that usually takes place on almost every screen can be not just a simple list but also have such pitfalls:
@@ -111,7 +119,7 @@ As an example, a table view that usually takes place on almost every screen can 
 
 More examples [here](https://github.com/stanfy/ios-components-bikeshedding)
 
-#### Special cases
+### Special cases
 
 **We do include supporting dev services:**
 - CI setup
@@ -122,29 +130,26 @@ More examples [here](https://github.com/stanfy/ios-components-bikeshedding)
  Often times clients don't mention if they need to support multiple languages or arabic language.
 
 **Consider reusability (optional).**
-If you see that there are 5 screens with the same UI but different data, make sure to separate one feature to be "Generic/reusable table" which for example may take  10 hours, but screens will take much less than if they would be done from scratch. This also shows the quality and proficiency of the developer to the client (client can also be a tech person).  
+If you see that there are 5 screens with the same UI but different data, make sure to separate one feature to be "Generic/reusable table" which for example may take  10 hours, but screens will take much less than if they would be done from scratch. This also shows the quality and proficiency of the developer to the client (client can also be a tech person). 
 
-**QA/Tests/Fixes.**
-Include QA/Tests/Fixes/Management if agreed with client.
-Usually QA is 20%, management - 10%, Tests - 20% of total development time.
+**Hardware ⌚️ and IOT.**
+In case the hardware is involved we should carefully do the research and see if there are documentation (in English) available, how popular hardware is, if community used it and discussed before. 
 
-#### Example
+### Example
 
 Here is an example of one of the estimates of iOS app:
 ![](https://github.com/uptechteam/ios-cookbook/blob/feature/estimates/resources/estimates_screenshots/estimates_example.png "Estimates Example")
 
 
-### Communication Tips <a id="communicationips"></a>
+## Communication Tips 📝 <a id="communicationtips"></a>
 
+Sometimes we tend to underestimate the estimation stage of the sales process. This stage is one of the stages where a developer can be actively involved to: 
++ suggest better solutions using professional knowledge (e.g. use tab bar instead of a slider menu)
++ upsell some feature (e.g. biometric authentication)
++ show attentiveness and involvement by asking questions (e.g. "should there be screen_name screen, since it's seems we are missing it as a part of Signup flow?")
++ show expertise
 
-How to think during estimations
-take into account the design you have: mockups / design / interactive prototypes
-The more tricky features an application has, the more the roughly estimated time may differ from the actual one
+Doing so can dramatically influence the sales impact and client's opinion on who we are. Since it shows that we are proactive, attentive, smart, experts and so on 🤓.
 
-Table of common tasks/modules in most of the projects
-
-What is the result of estimations
-
-Tips for sales
-
-Conclusion: in any case making the estimates is fun. you are living the project in 1 hour and also you may get to know the idea of the next hyped startup or maybe some interesting business. 
+## Summary ⛳️
+Estimations is an important stage at which we can show the potential client who we are. And yet it's a fun experience to live through the app in an hour or two and get to know some interesting business idea or future hyped startup 🚀.

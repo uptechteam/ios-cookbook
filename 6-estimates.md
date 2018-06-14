@@ -36,7 +36,7 @@ Avg - average is arithmetic mean of min and max
 Define the feature that is not relatively big but rather small and can't be broken to a smaller piece. 
 For example, a screen like this: 
 
-![alt text](https://github.com/uptechteam/ios-cookbook/blob/feature/estimates/resources/estimates_screenshots/login.png | width=100)
+![](https://github.com/uptechteam/ios-cookbook/blob/feature/estimates/resources/estimates_screenshots/login.png =200x355)
 
 can be broken into the following parts:
 1. Login using credentials
@@ -131,7 +131,7 @@ Usually QA is 20%, management - 10%, Tests - 20% of total development time.
 #### Example
 
 Here is an example of one of the estimates of iOS app:
-![alt text](https://github.com/uptechteam/ios-cookbook/blob/feature/estimates/resources/estimates_screenshots/estimates_example.png "Estimates Example")
+![](https://github.com/uptechteam/ios-cookbook/blob/feature/estimates/resources/estimates_screenshots/estimates_example.png "Estimates Example")
 
 
 ### Communication Tips <a id="communicationips"></a>

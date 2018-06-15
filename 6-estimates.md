@@ -138,6 +138,9 @@ If you see that there are 5 screens with the same UI but different data, make su
 **Hardware ⌚️ and IOT.**
 In case the hardware is involved we should carefully do the research and see if there are documentation (in English) available, how popular hardware is, if community used it and discussed before. 
 
+**R&D features.**
+Some projects have features that we can't evaluate easily and require additional research. And it is normal to add R&D time into the feature estimation or break it down into 2 separate features: "research on feature implementation" and "feature implementation". R&D is crucial to make a right decision that later in time won't require re-coding a feature or changing the tech approach. Examples of such features can be: integration with not very well documented / popular library or API, implementing a just announced API by Apple.
+
 ### Example
 
 Here is an example of one of the estimates of iOS app:

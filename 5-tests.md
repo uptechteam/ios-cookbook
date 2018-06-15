@@ -8,16 +8,28 @@ Although we don't aim for 100% code coverage, we keep it at a reasonable level. 
 
 ##### 2. Naming
 
-Test class should be named as `\(TestingClassName)Tests.swift`.
+Test classes should be named as `\(TestingClassName)Tests.swift`.
 
-Name of tests should be like `func test_WhatWeTesting()`, for example:
+Test function names should reflect the behaviour which is being tested: `func test_theTestedBehaviourAndContext_expectedResult()`, or more concise for simple cases: `func test_theTestedBehaviour()`. For example:
 
 ```swift
-class AuthServiceTests: XCTestCase {
-	func test_IsLoadingState() { ... }
-	func test_AuthenticationErrorHandling() { ... }
+class ProfileServiceTests: XCTestCase {
+	func test_gettingProfileWithoutLogin_emitsError() { ... }
+	func test_gettingProfileWithoutId_returnsMyProfile() { ... }
 }
 ```
+
+###### Why do we do this?
+
+For the best possible naming, imagine the situation when you (or one of your colleagues) have to deal with failed tests in your project. Small, explicitly named functions like
+```swift
+func test_factorialForZero_returns1()
+```
+will inform you exactly on what went wrong, but with functions like
+```swift
+func test_checkMyMathIsOK()
+```
+You'll probably have to dive deeper into the code.
 
 ##### 3. Location
 

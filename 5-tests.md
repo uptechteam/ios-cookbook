@@ -142,16 +142,16 @@ class ViewModel {
 
 // Usage in tests:
 let testScheduler = TestScheduler(initialClock: 0)
-let date = Date()
-let currentDateFactory = { return date }
+let testDate = Date()
+let currentDateFactory = { return testDate }
 let viewModel = ViewModel(userService: testUserService, scheduler: testScheduler, currentDateFactory: currentDateFactory)
 ```
 
 ###### Why do we do this?
-When we initialize a `Date` it will take a real current date, in some cases, you will get different dates which will differ in milliseconds.
+The `Date()` initializer creates a current date using real system time. If a View Model calls it directly, there's no way to check its correctness in unit tests, because we don't know (with the required accuracy) what date it should contain. So, if in the suggested example the View Model created the date itself, it would be different from the `testDate`, because we created `testDate` earlier than the View Model.
 
 ### Mocking
-The best way to test some `ViewModel` which contain `Service` (Domain Layer Services), create some mock of this `Service`. For this thing, we need to use `protocol` and create some class which will conform to it.
+The best way to test some `ViewModel` which contains a `Service` (Domain Layer Services) is to create some mock of this `Service`. For this, we need to use `protocol` and create some class which will conform to it.
 Example: 
 
 ```swift
@@ -161,7 +161,7 @@ protocol UserServiceProtocol {
   func fetchUser() -> Observable<Void>
 }
 
-// Mocking class which conform to our protocol
+// Mocking the class which conforms to our protocol
 class TestUserService: UserServiceProtocol {
 
   func fetchUser() -> Observable<Void> {
@@ -189,7 +189,7 @@ let testUser = User(id: 1)
 
 // I recommend you mock only `func` or `properties` which you will use in viewModel. 
 // We set a default value for testFetchUser to Observable.empty().
-// It will makes our life more easier :D
+// It will make our life easier :D
 
 let testCurrentUser = Observable<User>.deferred {
   return self.testScheduler.createColdObservable([next(0, testUser)]).asObservable()
@@ -201,7 +201,7 @@ let viewModel = ViewModel(userService: testUserService, scheduler: testScheduler
 
 ```
 
-In the result i would like to give a real [example](In%20the%20result%20i%20would%20like%20to%20give%20a%20real%20example.%20https://gist.github.com/romanfurman6/f3846351b669eacee3f786611edff72d).
+As a conclusion, I would like to give a real [example](In%20the%20result%20i%20would%20like%20to%20give%20a%20real%20example.%20https://gist.github.com/romanfurman6/f3846351b669eacee3f786611edff72d).
 
 
 ## UI Tests

@@ -52,9 +52,9 @@ Finally, after breaking down to smaller features, choose one feature and move th
 #### Step 2. Estimate the feature 
 
 First, define the **complexity** of the feature: easy, 
-+ **Easy**: Login, forgot password, FAQ, help screens. Usually, static or dynamic screens, without too complex design, often without sending requests to the server.
-+ **Normal**: Home screen, registration, tables, collections, custom controls. Usual screens with server requests, or custom controls.
-+ **Hard**: Third-party API integration, audio/video recording, streaming, chatting, custom gestures, synchronization, offline mode.
++ **Easy**: Login, forgot password, FAQ, help screens. Usually, static or dynamic screens, without too complex design, often without networking.
++ **Normal**: Home screen, registration, tables, collections, custom controls. Usual screens with networking, or custom controls.
++ **Hard**: Third-party API integration, audio/video recording, photo capturing, streaming, chatting, custom gestures, synchronization, offline mode.
 + **Extreme**: Usually they’re unclear and huge features. It’s better to divide them into smaller ones.
 
 Use complexity to define the difference between min/max values: the more complex it is the bigger difference.
@@ -63,8 +63,8 @@ Why: the effect of different programming speed and seniority level is more visib
 One more thing before giving a final min/max number pay attention to custom things like: animations, sliders, android like [tabs](https://material.io/design/components/tabs.html).
 
 **Estimation time unit**. 
-+ hours (Int)
-+ days (Double). Usually we do hours.
++ hours (Int) - preferred unit for estimations
++ days (Double)
 
 #### Step 3. Include additional hours
 
@@ -152,7 +152,7 @@ Sometimes we tend to underestimate the estimation stage of the sales process. Th
 + show attentiveness and involvement by asking questions (e.g. "should there be screen_name screen, since it's seems we are missing it as a part of Signup flow?")
 + show expertise
 
-Doing so can dramatically influence the sales impact and client's opinion on who we are. Since it shows that we are proactive, attentive, smart, experts and so on 🤓.
+Doing so can dramatically influence the sales impact and client's opinion on who we are and whether to work with us. Since it shows that we are proactive, attentive, smart, experts and so on 🤓.
 
 ## Summary ⛳️
 Estimations is an important stage at which we can show the potential client who we are. And yet it's a fun experience to live through the app in an hour or two and get to know some interesting business idea or future hyped startup 🚀.

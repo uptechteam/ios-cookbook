@@ -20,7 +20,7 @@ However we have a number of reasons to use same architecture for every project w
 
 ## MVVM
 
-Our needs satisfy fine-tuned for our purposes [Model-View-ViewModel](https://en.wikipedia.org/wiki/Model–view–viewmodel) architecture.
+Our needs satisfy fine-tuned [Model-View-ViewModel](https://en.wikipedia.org/wiki/Model–view–viewmodel) architecture.
 
 Architecture is heavily dependent on [RxSwift](https://github.com/ReactiveX/RxSwift) framework, but may be easily used with any other reactive framework. 
 
@@ -60,7 +60,7 @@ struct TeamChatProps: Equatable {
 
 `UIView` subclass and `.xib` interface builder file with layout. 
 
-This module's part is completely optional, everything from it can be easily moved to view controller and functionality will remain same. However, we recommend implementing view separately from view controller to avoid growth of view controller's code base.
+This module's part is completely optional, everything from it can be easily moved to view controller and functionality will remain same. However, we recommend implementing view separately from view controller to avoid growth of view controller's code base and enable reusing view if it will be needed in future.
 
 All views are required to implement `render(props:)` method, which restores state of view from props object.
 This method must always bring view to same state for same props (view state must not depend on previous calls).
@@ -72,10 +72,6 @@ final class TeamChatView: UIView, NibInstantiatable {
     @IBOutlet private weak var titleLabel: UILabel!
     private let dataSource = TeamChatDataSource()
     private var props: TeamChatProps?
-
-    override func awakeFromNib() {
-        ...
-    }
 
     func render(props: TeamChatProps) {
         if props.title != self.props?.title {
@@ -100,7 +96,7 @@ Outputs are sequences of events for view layer. Outputs contain cold observable 
 
 To reuse functionality between different view models, we move use cases to service objects.
 
-When screen functionality grows view model becomes complex and hard to maintain. To scale it linearly we implement Redux-like state inside view model. More info about it (here)[].
+When screen functionality grows view model becomes complex and hard to maintain. To scale it linearly we implement Redux-like state inside view model.
 
 ```swift
 final class TeamChatViewModel {

@@ -130,8 +130,8 @@ More examples [here](https://github.com/stanfy/ios-components-bikeshedding)
 - Crashlytics
 - Analytics services
  
-**Consider languages.**
-Often times clients don't mention if they need to support multiple languages or arabic language.
+**Consider Localization.**
+Often times clients don't mention if they need to support multiple languages.
 
 **Consider reusability (optional).**
 If you see that there are 5 screens with the same UI but different data, make sure to separate one feature to be "Generic/reusable table" which for example may take  10 hours, but screens will take much less than if they would be done from scratch. This also shows the quality and proficiency of the developer to the client (client can also be a tech person). 

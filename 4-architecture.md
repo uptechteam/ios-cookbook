@@ -115,7 +115,7 @@ final class TeamChatViewModel {
         self.networkProvider = networkProvider
     }
 
-    func makeOutputs(from inputs: Inputs) {
+    func makeOutputs(from inputs: Inputs) -> Outputs {
         let alertSubject = PublishSubject<String>()
         let isLoadingMessages = BehaviorSubject<Bool>(value: false)
 

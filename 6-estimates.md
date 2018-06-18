@@ -14,13 +14,14 @@ The main difficulties are:
 a. make a quick research or ask the sales representative about the company, their business, missions (read why in [Communication Tips](#communicationtips) section); 
 b. their audience since it might be people who may require Accessibility features in the app;
 c. review information about the project;
+d. ask for required iOS versions, devices needs to be supported (both iPhone and iPad), orientations.
 
 #### 2. Get features list 📜.
 The features can be one or more from the list:
-1. Visual
+1. Written:
 * user stories or features list
 * detailed specification
-2. Written:
+2. Visual:
 * wireframes
 * finished designs
 * interactive designs
@@ -103,7 +104,7 @@ Photo Camera (custom) | 24 | 40 | capture, focus, zoom
 Video Camera (custom) | 40 | 60 | simple video shooting
 Video Camera (lib) | 16 | 32 | simple video shooting
 Video Player (custom) | 24 | 32 | for a player with controls like default has
-Simple networking using our [lib](https://github.com/uptechteam/Net) | 4 | 8 | n/a
+Simple networking using our [lib](https://github.com/Moya/Moya) | 4 | 8 | n/a
 Complex networking w multipart requests and/or websockets | 16 | 24 | n/a
 
 ###  Beware of pitfalls

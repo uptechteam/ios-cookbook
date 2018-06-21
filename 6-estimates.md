@@ -76,6 +76,8 @@ Usually QA is 20%, management - 10%, Tests - 20% of total development time.
 
 ### Cheat sheets and tips
 
+**Important note**: use this cheat sheet only for rough estimates during sales process, which means - we are not committing to this budget/timeline, but just giving the client general price range. Also, don’t make it too high, since we need to sell it too :) 
+
 Cheat sheet for complexity and min/max hour values:
 
 Complexity | Min | Max

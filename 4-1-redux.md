@@ -4,6 +4,57 @@
 
 We implement unidirectional data flow using reactive frameworks inside view model by hands.
 ```swift
+struct TeamChatState {
+  var messages: [Message]
+  var isLoadingMessages: Bool
+}
+```
+```swift
+enum TeamChatAction {
+  case loadMessages([Message])
+  case toggleLoadingMessages(Bool)
+}
+```
+```swift
+final class TeamChatReducer: TeamChatReducerProtocol {
+  func reduce(state: TeamChatState, action: TeamChatAction) -> TeamChatState {
+    var state = state
+
+    switch action {
+    case let .loadMessages(messages):
+      state.messages = messages
+
+    case let .toggleLoadingMessages(on):
+      state.isLoadingMessages = on
+    }
+
+    return state
+  }
+}
+```
+```swift
+final class TeamChatLayout: TeamChatLayoutProtocol {
+  func makeProps(from state: TeamChatState) -> TeamChatProps {
+    let messages: [TeamChatProps.Message] = state.messages
+      .map { message -> TeamChatProps.Message in
+        return TeamChatProps.Message(
+          body: message.body,
+          senderName: message.sender.name,
+          senderAvatarUrl: message.sender.avatarUrl,
+          createdAt: message.createdAt
+        )
+      }
+
+    let title: String = state.isLoadingMessages ? "Loading" : "Chat"
+
+    return TeamChatProps(
+      messages: messages,
+      title: title
+    )
+  }
+}
+```
+```swift
 final class TeamChatViewModel {
   struct Inputs {
     let viewWillAppear: Observable<Void>
@@ -41,7 +92,10 @@ final class TeamChatViewModel {
       sendMessageAction
     ])
 
-    let initialState = TeamChatState(...)
+    let initialState = TeamChatState(
+      messages: [],
+      isLoadingMessages: false
+    )
 
     actions
       .observeOn(scheduler)

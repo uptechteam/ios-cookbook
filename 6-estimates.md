@@ -46,9 +46,9 @@ can be broken into the following parts:
 
 Note: "Forgot password" feature will most likely have a separate screen for it.
 
-Sometimes it's not possible to break down a relatively big feature, for example implementing a chat or video streaming. In this case the feature be picked as is.
+Sometimes it's not possible to break down a relatively big feature, for example implementing a chat or video streaming. In this case the feature can be picked as is.
 
-Finally, after breaking down to smaller features, choose one feature and move the next step.
+Finally, after breaking down to smaller features, choose one feature and move to the next step.
 
 #### Step 2. Estimate the feature 
 

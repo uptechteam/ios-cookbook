@@ -1,20 +1,44 @@
 # Redux View Model
 
-[Redux](https://redux.js.org) is a Javascript framework for predictable state containers. It helps to scale complexity with transparent and clear definition of state. Our implementation of view model is heavily inspired by it.
+Our implementation of view model is heavily inspired by Redux. [Redux](https://redux.js.org) is a javascript framework for predictable state container. It helps to scale complexity with clear definition of state. 
 
 We implement unidirectional data flow using reactive frameworks inside view model by hands.
+
+View model constists of following parts:
+- State
+- Actions
+- Layout
+- Reducer
+- View Model
+
+## State
+
+State is a plain struct that holds result of view model work. State contains all info that anyhow affects view model behavior or view.
+It doesn't meant to be exposed from view model to other architecture components anyhow and must be used by view model's parts only.
+
 ```swift
 struct TeamChatState {
   var messages: [Message]
   var isLoadingMessages: Bool
 }
 ```
+
+## Actions
+
+Actions are data structures that represent a state modification. Usually actions replicate state properties, where each action update one property at time. There might be exceptions when action might represent more meaningful work, e.g. `clearInputData` action that is used for restoring initial state of inputted data.
+
 ```swift
 enum TeamChatAction {
   case loadMessages([Message])
   case toggleLoadingMessages(Bool)
 }
 ```
+
+## Reducer
+
+Reducer is a function that applies actions to state. For convinience we implement it as a single method of Reducer class. 
+It is important to implement it without side effects to be sure that only way of modifying state is dispatching actions.
+
 ```swift
 final class TeamChatReducer: TeamChatReducerProtocol {
   func reduce(state: TeamChatState, action: TeamChatAction) -> TeamChatState {
@@ -32,6 +56,11 @@ final class TeamChatReducer: TeamChatReducerProtocol {
   }
 }
 ```
+
+## Layout
+
+Layout is function that creates props from state. Function must be free to make sure props (visual representation) depends only on current state.
+
 ```swift
 final class TeamChatLayout: TeamChatLayoutProtocol {
   func makeProps(from state: TeamChatState) -> TeamChatProps {
@@ -54,6 +83,11 @@ final class TeamChatLayout: TeamChatLayoutProtocol {
   }
 }
 ```
+
+## View Model
+
+View model is a part that combines and wraps all other parts using reactive framework.
+
 ```swift
 final class TeamChatViewModel {
   struct Inputs {

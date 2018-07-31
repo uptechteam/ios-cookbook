@@ -1,10 +1,33 @@
 # Redux View Model
 
-Our implementation of view model is heavily inspired by Redux. [Redux](https://redux.js.org) is a javascript framework for predictable state container. It helps to scale complexity with clear definition of state. 
+### Motivation
 
-We implement unidirectional data flow using reactive frameworks inside view model by hands.
+As applications complexity grows, our code must manage more state than ever before. And we know that [shared mutable state is bad](https://softwareengineering.stackexchange.com/a/148109).
 
-View model constists of following parts:
+That's where [Redux](https://redux.js.org) comes in and attempts to **make state mutations predictable**.
+
+### Three Redux Principles
+
+#### 1. Single source of truth
+
+The state of your whole application is stored in an object tree within a single store.
+
+#### 2. State is read-only
+
+The only way to change the state is to emit an action, an object describing what happened.
+
+#### 3. Changes are made with pure functions
+
+To specify how the state tree is transformed by actions, you write pure reducers.
+
+Please refer to the [official Redux ReadMe](https://redux.js.org) for more. It has tons of useful information.
+
+--
+
+We are not trying to port Redux on iOS, instead we applied core principles to our View Models. It helps us to scale complexity linearly and build even the most complicated screens with ease. 
+
+Redux View Model constists of the following parts:
+
 - State
 - Actions
 - Layout

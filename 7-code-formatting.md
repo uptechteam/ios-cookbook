@@ -147,18 +147,18 @@ class URLFinder {
 let age: Int // Constants can be initialized later
 
 if condition {
-	age = 1
+  age = 1
 } else {
-	age = 2
+  age = 2
 }
 
 // Not Preferred
 var age: Int = 0
 
 if condition {
-	age = 1
+  age = 1
 } else {
-	age = 2
+  age = 2
 }
 ```
 - **3.1.2** Prefer the composition of `map`, `filter`, `reduce`, etc. over iterating when transforming collections.
@@ -170,9 +170,9 @@ let evenNumbers = [4, 7, 10, 11, 13, 14, 18, 26].filter { $0 % 2 == 0 }
 let evenNumbers: [Int] = []
 let numbers = [4, 7, 10, 11, 13, 14, 18, 26]
 for value in numbers {
-	if value % 2 == 0 {
-		evenNumbers.append(value)
-	}
+  if value % 2 == 0 {
+    evenNumbers.append(value)
+  }
 }
 ```
 - **3.1.3** Prefer not declaring types for constants or variables if they can be inferred. *Exception: chain of closures. It may take some time for Swift to infer types which results in slower compilation time.*
@@ -191,25 +191,25 @@ let name: String = "John"
 { [unowned self] in ...} // and this
 
 class ViewController: UIViewController {
-	private let dataSource = ...
+  private let dataSource = ...
 
-	func setupBindings() {
-	// or if you need only 1 varaible, you can capture it directly instead of capturing whole self.
-		viewModel.purchases
-			.observeValues { [dataSource] in ...} 
-	}
+    func setupBindings() {
+      // or if you need only 1 varaible, you can capture it directly instead of capturing whole self.
+      viewModel.purchases 
+        .observeValues { [dataSource] in ...}
+    }
 }
 ```
 - **3.1.5** Don't place parentheses around control flow predicates
 ```swift
 // Preferred
 if x == y {
-	...
+  ...
 }
 
 // Not Preferred
 if (x == y) {
-	...
+  ...
 }
 ```
 - **3.1.6** Avoid writing out an enum type or static variables where possible - use shorthand.
@@ -230,22 +230,22 @@ attributedString.boundingRect(with: size, options: NSStringDrawingOptions.usesLi
 ```swift
 // Preferred
 enum ViewState {
-	case question(isUserActive: Bool)
+  case question(isUserActive: Bool)
 }
 
 // Not Preferred 
 enum ViewState {
-	case question(Bool)
+  case question(Bool)
 }
 ``` 
 - **3.2.2** When using a switch statement that has a finite set of possibilities, do not include a `default` case. Instead, place unused cases at the bottom and use the `break` keyword to prevent execution.
 ```swift
 switch value {
 case .doWork:
-	...
+  ...
 
 case .ignoreThis, .ignoreThatToo, .andMe:
-	break
+  break
 }
 ```
 - **3.2.3** Prefer lists of possibilities (e.g. `case .a, .b, .c:`) to using the `fall through` keyword.
@@ -256,12 +256,12 @@ case .ignoreThis, .ignoreThatToo, .andMe:
 ```swift
 // Preferred
 if optionalValue != nil {
-	...
+  ...
 }
 
 // Not Preferred
 if let _  = optionalValue {
-	...
+  ...
 }
 ```
 
@@ -283,58 +283,58 @@ UIView.animate(withDuration: 0.3) { ... }
 
 // Non trailing closure 
 doSomething(
-  firstClosure: { 
-	...
+  firstClosure: {
+  ...
 }, secondClosure: {
-	...
+  ...
 })
 ```
 **3.6 `guard` statements**
 - **3.6.1** In general, we prefer to use an `early return` strategy where applicable as opposed to nesting code in if statements.
 ```swift
 	struct Params {
-		let var1: Int
-		let var2: String?
-		let var3: CustomType?
+	  let var1: Int
+	  let var2: String?
+	  let var3: CustomType?
 	}
 	
 	init?(params: Params) {
-		guard 
-			let var2 = params.var2,
-			let var3: params.var3 else 
-		{
-			// Early return 
-			return nil
-		}
-	
-		// Continue initialization
+	  guard 
+	    let var2 = params.var2,
+	    let var3: params.var3 else
+	  {
+	    // Early return
+	    return nil
+	  }
+	  
+	  // Continue initialization
 	}
 ```
 - **3.6.2** When you need to check if a condition is true `guard` is preferred.
 ``` swift
 	// Preferred
 	guard 0..<users.count ~= index else {
-		return 
+	  return 
 	}	
 
 	// Not Preffered
 	if 0..<users.count ~= index {
-		...
+	  ...
 	}
 ```
 - **3.6.3** For control flows `if` is preferred. And you should also use `guard` only if a failure should result in exiting the current context.
  ``` swift
 	// Preferred
 	if isLoggedIn {
-		// Show main screen
+	  // Show main screen
 	} else {
-		// Show registration screen
+	  // Show registration screen
 	}
 	
 	// Not Preffered
 	guard isLoggedIn {
-		// Show registration screen
-		return
+	  // Show registration screen
+	  return
 	}
 
 	// Show main screen

@@ -1,3 +1,17 @@
+- [Motivation](#motivation)
+  - [Three Redux Principles](#three-redux-principles)
+- [Redux View Model](#redux-view-model)
+  - [State](#state)
+  - [Actions](#actions)
+  - [Reducer](#reducer)
+  - [Store](#store)
+  - [Props](#props)
+  - [View Model](#view-model)
+- [Advanced usage](#advanced-usage)
+  - [Async Actions](#async-actions)
+  - [Action Creators](#action-creators)
+  - [Middleware](#middleware)
+
 # Motivation
 
 As applications complexity grows, our code must manage more state than ever before. And all of us know that [a shared mutable state is bad](https://softwareengineering.stackexchange.com/a/148109).
@@ -6,15 +20,15 @@ That's where [Redux](https://redux.js.org) comes in and attempts to **make state
 
 ## Three Redux Principles
 
-#### 1. Single source of truth
+**1. Single source of truth**
 
 The state of your whole application is stored in an object tree within a single store.
 
-#### 2. State is read-only
+**2. State is read-only**
 
 The only way to change the state is to emit an action, an object describing what happened.
 
-#### 3. Changes are made with pure functions
+**3. Changes are made with pure functions**
 
 To specify how the state tree is transformed by actions, you write pure reducers.
 
@@ -24,7 +38,7 @@ Please refer to the [official Redux ReadMe](https://redux.js.org) for more. It h
 
 We are not trying to port Redux on iOS, instead, we applied core principles to our View Models. It helps us to scale complexity linearly and build even the most complicated screens with ease.
 
-##### Redux Components in iOS
+Redux Components in iOS:
 
 ![](resources/redux_vm.png)
 
@@ -208,15 +222,15 @@ When you call an asynchronous API, there are two crucial moments in time: the mo
 
 Each of these two moments usually requires a change in the application state; to do that, you need to dispatch normal actions that will be processed by reducers synchronously. Usually, for any API request you'll want to dispatch at least three different kinds of actions:
 
-#### 1. An action informing the reducers that the request began.
+**1. An action informing the reducers that the request began.**
 
 The reducers may handle this action by toggling an `isFetching` flag in the state. This way the UI knows it's time to show a spinner.
 
-#### 2. An action informing the reducers that the request finished successfully.
+**2. An action informing the reducers that the request finished successfully.**
 
 The reducers may handle this action by merging the new data into the state they manage and resetting `isFetching`. The UI would hide the spinner, and display the fetched data.
 
-#### 3. An action informing the reducers that the request failed.
+**3. An action informing the reducers that the request failed.**
 
 The reducers may handle this action by resetting `isFetching`. Additionally, some reducers may want to store the error message so the UI can display it.
 

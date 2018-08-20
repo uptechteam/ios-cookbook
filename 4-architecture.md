@@ -96,7 +96,7 @@ Outputs are sequences of events for view layer. Outputs contain cold observable 
 
 To reuse functionality between different view models, we move use cases to service objects.
 
-When screen functionality grows view model becomes complex and hard to maintain. To scale it linearly we implement Redux-like state inside view model.
+When screen functionality grows view model becomes complex and hard to maintain. To scale it linearly [we implement Redux-like state inside view model](4-1-redux.md).
 
 ```swift
 final class TeamChatViewModel {

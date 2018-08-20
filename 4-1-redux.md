@@ -1,6 +1,6 @@
 # Motivation
 
-As applications complexity grows, our code must manage more state than ever before. And all of us know that [shared mutable state is bad](https://softwareengineering.stackexchange.com/a/148109).
+As applications complexity grows, our code must manage more state than ever before. And all of us know that [a shared mutable state is bad](https://softwareengineering.stackexchange.com/a/148109).
 
 That's where [Redux](https://redux.js.org) comes in and attempts to **make state mutations predictable**.
 
@@ -22,24 +22,24 @@ Please refer to the [official Redux ReadMe](https://redux.js.org) for more. It h
 
 # Redux View Model
 
-We are not trying to port Redux on iOS, instead we applied core principles to our View Models. It helps us to scale complexity linearly and build even the most complicated screens with ease.
+We are not trying to port Redux on iOS, instead, we applied core principles to our View Models. It helps us to scale complexity linearly and build even the most complicated screens with ease.
 
 ##### Redux Components in iOS
 
 ![](resources/redux_vm.png)
 
-Redux View Model constists of the following parts:
+Redux View Model consists of the following parts:
 
 1. **Actions** that are payloads of information that send data from your application to your store. You send them to the store using `store.dispatch()`.
 2. **Reducers** specify how the application's state changes in response to actions sent to the store. Remember that actions only describe _what_ happened, but don't describe _how_ the application's state changes.
 3. **Store** is an object that brings Actions and Reducers together. It provides a way to dispatch Actions and observe State changes.
 
-Let's take a more in-depth look on all of them.
+Let's take a more in-depth look at all of them.
 
 ## State
 
-State is a plain struct that holds only data that is required to render a view.
-It doesn't meant to be exposed from view model to other architecture components anyhow and must be used by view model's parts only.
+The State is a plain struct that holds only data that is required to render a view.
+It's not meant to be exposed from the view model to other architecture components anyhow and must be used by view model's parts only.
 
 ```swift
 struct TeamChatState {
@@ -62,7 +62,7 @@ enum TeamChatAction {
 
 ## Reducer
 
-Reducer is a _pure_ function that applies actions to the state. It is important to keep it pure and implement it without side effects to be sure that only way of modifying state is dispatching actions.
+Reducer is a _pure_ function that applies actions to the state. It is important to keep it pure and implement it without side effects to be sure that the only way of modifying state is dispatching actions.
 
 ```swift
 extension TeamChat {
@@ -86,18 +86,18 @@ extension TeamChat {
 }
 ```
 
-You might notice that in the example above we don't actually load the messages when `.loadMessages` action is dispatched. That's because reducers are pure and can't perform network requests. On how to perform asynchronous changes a bit later.
+You might notice that in the example above we don't actually load the messages when a `.loadMessages` action is dispatched. That's because reducers are pure and can't perform network requests. On how to perform asynchronous changes a bit later.
 
 ## Store
 
-Store should meet following requirements:
+A Store should meet the following requirements:
 
 - hold application state;
 - allow an access to the current state value;
-- allow state to be updated via `dispatch(action)`;
-- allow state to be observed.
+- allow the state to be updated via `dispatch(action)`;
+- allow the state to be observed.
 
-Store can be easily implemented with or without a reactive framework and be reused in each view model. Here is how the API can look like.
+A Store can be easily implemented with or without a reactive framework and be reused in each view model. Here is how the API can look like.
 
 ```swift
 final class ReduxStore<State, Action> {
@@ -116,8 +116,8 @@ You are free to implement the Store yourself or grab one we use - [ReduxStore](r
 
 ## Props
 
-Props are described in [the Architecture chapter](4-architecture.md#props). They are just bags of data, that are passed to the View to render current State.
-To map state into props we use free pure function `makeProps(from state: State) -> Props`. Function is pure to make sure props (visual representation) depends only on current state.
+Props are described in [the Architecture chapter](4-architecture.md#props). They are just bags of data, that are passed to the View to render the current State.
+To map state into props we use a free pure function `makeProps(from state: State) -> Props`. A function is pure to make sure props (visual representation) depends only on the current state.
 
 ```swift
 extension TeamChat {
@@ -148,8 +148,8 @@ extension TeamChat {
 
 ## View Model
 
-View model is a part that combines and wraps all other parts using reactive framework.
-Here you can also see how asyncronous actions are handled with a `loadMessagesAction` and `loadMessagesSuccessAction`.
+A View Model is a part that combines and wraps all other parts using a reactive framework.
+Here you can also see how asynchronous actions are handled with a `loadMessagesAction` and `loadMessagesSuccessAction`.
 
 ```swift
 final class TeamChatViewModel {
@@ -206,19 +206,19 @@ final class TeamChatViewModel {
 
 When you call an asynchronous API, there are two crucial moments in time: the moment you start the call, and the moment when you receive an answer (or a timeout).
 
-Each of these two moments usually require a change in the application state; to do that, you need to dispatch normal actions that will be processed by reducers synchronously. Usually, for any API request you'll want to dispatch at least three different kinds of actions:
+Each of these two moments usually requires a change in the application state; to do that, you need to dispatch normal actions that will be processed by reducers synchronously. Usually, for any API request you'll want to dispatch at least three different kinds of actions:
 
 #### 1. An action informing the reducers that the request began.
 
-The reducers may handle this action by toggling an isFetching flag in the state. This way the UI knows it's time to show a spinner.
+The reducers may handle this action by toggling an `isFetching` flag in the state. This way the UI knows it's time to show a spinner.
 
 #### 2. An action informing the reducers that the request finished successfully.
 
-The reducers may handle this action by merging the new data into the state they manage and resetting isFetching. The UI would hide the spinner, and display the fetched data.
+The reducers may handle this action by merging the new data into the state they manage and resetting `isFetching`. The UI would hide the spinner, and display the fetched data.
 
 #### 3. An action informing the reducers that the request failed.
 
-The reducers may handle this action by resetting isFetching. Additionally, some reducers may want to store the error message so the UI can display it.
+The reducers may handle this action by resetting `isFetching`. Additionally, some reducers may want to store the error message so the UI can display it.
 
 ## Action Creators
 
@@ -252,7 +252,7 @@ final class TeamChatActionCreator {
 
 ## Middleware
 
-Redux is very simple framework, however it's designed with a lot of care and thought. Redux supports a rich extension method called Middleware. **Middleware provides a third-party extension point between dispatching an action, and the moment it reaches the reducer.** We can use middlewares for logging, talking to an asynchronous API, playing sounds, and more.
+Redux is a pretty simple framework, however, it's designed with a lot of care and thought. Redux supports a rich extension method called Middleware. **Middleware provides a third-party extension point between dispatching an action, and the moment it reaches the reducer.** We can use middlewares for logging, talking to an asynchronous API, playing sounds, and more.
 
 Let's take a look on a simple logging middleware:
 
@@ -309,11 +309,11 @@ What happens when this middleware executes:
 
 ---
 
-**It's very important to pass the action down the middlewares chain with `next(action)` otherwise action will never got to the reducer.**
+**It's very important to pass the action down the middlewares chain with `next(action)` otherwise action will never get to the reducer.**
 
 ---
 
-Middleware are capable to dispatch actions asynchronously, so now we can move messages fetching logic into it's own middleware:
+Middlewares are capable to dispatch actions asynchronously, so now we can move messages fetching logic into its own middleware:
 
 ```swift
 static func makeMessagesLoaderMiddleware(chatService: ChatService) -> TeamChat.Store.Middleware {
@@ -340,7 +340,7 @@ static func makeMessagesLoaderMiddleware(chatService: ChatService) -> TeamChat.S
 }
 ```
 
-Unforunately, the carrying functions syntax looks ugly to me. So if you want to simplify it a bit, you can implement your own helper function, e.g.
+Unfortunately, the currying functions syntax looks a bit off. So if you want (like me) to simplify it a bit, you can implement your own helper function, e.g.
 
 ```swift
 makeMiddleware { dispatch, getState, next, action in ... }

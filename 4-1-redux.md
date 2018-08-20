@@ -1,10 +1,10 @@
-### Motivation
+# Motivation
 
 As applications complexity grows, our code must manage more state than ever before. And all of us know that [shared mutable state is bad](https://softwareengineering.stackexchange.com/a/148109).
 
 That's where [Redux](https://redux.js.org) comes in and attempts to **make state mutations predictable**.
 
-### Three Redux Principles
+## Three Redux Principles
 
 #### 1. Single source of truth
 
@@ -199,3 +199,151 @@ final class TeamChatViewModel {
   }
 }
 ```
+
+# Advanced usage
+
+## Async Actions
+
+When you call an asynchronous API, there are two crucial moments in time: the moment you start the call, and the moment when you receive an answer (or a timeout).
+
+Each of these two moments usually require a change in the application state; to do that, you need to dispatch normal actions that will be processed by reducers synchronously. Usually, for any API request you'll want to dispatch at least three different kinds of actions:
+
+#### 1. An action informing the reducers that the request began.
+
+The reducers may handle this action by toggling an isFetching flag in the state. This way the UI knows it's time to show a spinner.
+
+#### 2. An action informing the reducers that the request finished successfully.
+
+The reducers may handle this action by merging the new data into the state they manage and resetting isFetching. The UI would hide the spinner, and display the fetched data.
+
+#### 3. An action informing the reducers that the request failed.
+
+The reducers may handle this action by resetting isFetching. Additionally, some reducers may want to store the error message so the UI can display it.
+
+## Action Creators
+
+There is plenty of boilerplate needed to map View Model Inputs into Actions. We can encapsulate all of that into Action Creator class.
+
+```swift
+final class TeamChatActionCreator {
+  let actions: Observable<TeamChatAction>
+
+  init(inputs: TeamChatViewModel.Inputs, chatService: ChatService) {
+    let loadMessagesAction = inputs.loadMessages
+      .map { TeamChatAction.loadMessages }
+
+    let loadMessagesSuccessAction = inputs.loadMessages
+      .flatMap { () -> Observable<TeamChatAction> in
+        return chatService.loadMessages()
+          .map(TeamChatAction.loadMessagesSuccess)
+        }
+
+    let deleteMessageAction = inputs.deleteMessage
+      .map(TeamChatAction.deleteMessage)
+
+    self.actions = Observable.merge([
+      loadMessagesAction,
+      loadMessagesSuccessAction
+      deleteMessageAction
+    ])
+  }
+}
+```
+
+## Middleware
+
+Redux is very simple framework, however it's designed with a lot of care and thought. Redux supports a rich extension method called Middleware. **Middleware provides a third-party extension point between dispatching an action, and the moment it reaches the reducer.** We can use middlewares for logging, talking to an asynchronous API, playing sounds, and more.
+
+Let's take a look on a simple logging middleware:
+
+```swift
+extension TeamChat {
+  static func makeLoggingMiddleware(logger: Logger) -> TeamChat.Store.Middleware {
+    return { dispatch, getState in
+      return { next in
+        return { action in
+          logger.log("dispatching: \(action)")
+          let oldState = getState()
+          logger.log("old state: \(oldState)")
+
+          next(action)
+
+          let newState = getState()
+          logger.log("new state: \(newState)")
+        }
+      }
+    }
+  }
+}
+```
+
+Whoa, that's a lot of nested closures! The reason for this is that middleware wraps a `dispatch` function and allows to have chained middlewares. It makes this possible with by tons of tons of functional concepts including high-order functions, function composition, and currying.
+
+Let's understand what each argument is for.
+
+```swift
+return { dispatch, getState in
+```
+
+1. `dispatch: (Action) -> Void` argument is a function, that allows to dispatch any additional action to the store from the middleware.
+
+2. `getState: () -> State` argument is a function that always returns current State of the Store.
+
+```swift
+  return { next in
+    return { action in
+```
+
+3. `action: Action` is the action that was originally dispatched to the Store
+
+4. `next: (Action) -> Void` argument is used to dispatch the action to the next middleware in the chain.
+
+What happens when this middleware executes:
+
+1. Firstly we log currently dispatching action.
+2. We capture and log the state before the action arrived with `getState()` function.
+3. We dispatch action down the middlewares chain with `next(action)`.
+4. All downstream middleware functions in the chain are invoked.
+5. The reducer functions in the store are called with the action payload.
+6. The logger middleware then gets the resulting next state with `getState`.
+
+---
+
+**It's very important to pass the action down the middlewares chain with `next(action)` otherwise action will never got to the reducer.**
+
+---
+
+Middleware are capable to dispatch actions asynchronously, so now we can move messages fetching logic into it's own middleware:
+
+```swift
+static func makeMessagesLoaderMiddleware(chatService: ChatService) -> TeamChat.Store.Middleware {
+  let disposeBag = DisposeBag()
+  return { dispatch, getState in
+      return { next in
+        return { action in
+          next(action)
+
+          guard case TeamChatAction.loadMessages = action else {
+            return
+          }
+
+          chatService.loadMessages()
+            .subscribe(onNext: { messages in
+              // Here we are dispatching the action with loaded messages.
+              let action = TeamChatAction.loadMessagesSuccess(messages)
+              dispatch(action)
+            })
+            .disposed(by: disposeBag)
+        }
+      }
+    }
+}
+```
+
+Unforunately, the carrying functions syntax looks ugly to me. So if you want to simplify it a bit, you can implement your own helper function, e.g.
+
+```swift
+makeMiddleware { dispatch, getState, next, action in ... }
+```
+
+Middlewares is a very powerful mechanism that helps us extend default simple Redux architecture. You may use provided [ReduxStore](resources/ReduxStore.swift) that supports Middelwares.

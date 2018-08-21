@@ -167,7 +167,7 @@ if condition {
 let evenNumbers = [4, 7, 10, 11, 13, 14, 18, 26].filter { $0 % 2 == 0 }
 
 // Not Preferred
-let evenNumbers: [Int] = []
+var evenNumbers: [Int] = []
 let numbers = [4, 7, 10, 11, 13, 14, 18, 26]
 for value in numbers {
   if value % 2 == 0 {

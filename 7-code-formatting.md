@@ -190,13 +190,13 @@ let name: String = "John"
 { [weak self] in ...} // you can do this
 { [unowned self] in ...} // and this
 
+// Also when you don't need self you can capture individual variables
 class ViewController: UIViewController {
   private let dataSource = ...
 
     func setupBindings() {
-      // or if you need only 1 varaible, you can capture it directly instead of capturing whole self.
       viewModel.purchases 
-        .observeValues { [dataSource] in ...}
+        .observeValues { [dataSource] in ...} // or this
     }
 }
 ```

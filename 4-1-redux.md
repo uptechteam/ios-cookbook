@@ -11,6 +11,10 @@
   - [Async Actions](#async-actions)
   - [Action Creators](#action-creators)
   - [Middleware](#middleware)
+  - [Triggers (Navigation)](#triggers-navigation)
+  - [Error handling](#error-handling)
+      - [Possible approaches](#possible-approaches)
+      - [What to use?](#what-to-use)
 
 # Motivation
 
@@ -361,3 +365,79 @@ makeMiddleware { dispatch, getState, next, action in ... }
 ```
 
 Middlewares is a very powerful mechanism that helps us extend default simple Redux architecture. You may use provided [ReduxStore](resources/ReduxStore.swift) that supports Middelwares.
+
+## Triggers (Navigation)
+
+As discussed in the [Architecutre chapter](4-architecture.md#viewmodel), our View Model Outputs have props **and** hot observable sequences of triggers, such as navigation routes. If we want to implement such a trigger, middlewares come to the rescue!
+
+Let's take a look on an example of a routing middleware:
+
+```swift
+private func makeRoutingMiddleware() -> (Store.Middleware, Observable<Route>) {
+  let routeSubject = PublishSubject<Void>()
+  let middleware = Store.makeMiddleware { _, _, next, action in
+    next(action)
+
+    switch action {
+    case .goNext:
+      routeSubject.sendNext(Route.next)
+    }
+  }
+
+  return (middleware, routeSubject.asObservable())
+}
+```
+
+Which is used inside View Model to create a routing trigger:
+
+```swift
+func makeOutputs(from inputs: Inputs) -> Outputs {
+  let (routingMiddleware, routeTrigger) = makeRoutingMiddleware()
+  let store = Store(
+    initialState: initialState,
+    reducer: reduce,
+    middlewares: [routingMiddleware]
+  )
+
+  ...
+
+  return Outputs(
+    props: props,
+    route: routeTrigger
+  )
+}
+```
+
+## Error handling
+
+#### Possible approaches
+
+There are two ways to handle errors with Redux approach:
+
+1. **Emit error as hot observable triggers from the View Model Outputs.**
+2. **Store error in the State and handle by reducers.**
+
+The first approach is super simple and can be easily implemented with a Middleware ([Triggers](#triggers-navigation) section).
+
+The second solution is a bit more boilerplaty, since you need to handle:
+
+1. Presentation of the `UIAlertController`
+2. Dismissal of the error by Actions and reducers.
+
+However, we can decrease casualties by using some simple wrapper around `UIAlertController`, used to render errors and pass `dismissError` Action. An interface of that wrapper can be as simple as:
+
+```swift
+final class ErrorPresenter {
+  let dismissError: Observable<Void>
+
+  init(presentingViewController: UIViewController)
+
+  func render(error: AlertMessage?)
+}
+```
+
+#### What to use?
+
+We recommend sticking with the second approach, as it is safer, deterministic, and the view will be always in sync.
+
+However, if you have only one errors source and don't want to put too much boilerplate into your code, you can use the first apporach to save time and sanity.

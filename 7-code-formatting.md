@@ -189,17 +189,19 @@ let name: String = "John"
 ```swift
 { [weak self] in ...} // you can do this
 { [unowned self] in ...} // and this
-
+```
+- **3.1.5** Try not to capture self if you don't need it. You can capture individual variables.
+```swift
 class ViewController: UIViewController {
   private let dataSource = ...
 
-    func setupBindings() {
-      viewModel.purchases 
-        .observeValues { [dataSource] in ...} // Also when you don't need self you can capture individual variables
+  func setupBindings() {
+    viewModel.purchases 
+      .observeValues { [dataSource] in ...} // It'll capture dataSource with a strong reference. It's also posible to capture it weakly with [weak dataSource] and [unowned dataSource].
     }
 }
 ```
-- **3.1.5** Don't place parentheses around control flow predicates
+- **3.1.6** Don't place parentheses around control flow predicates
 ```swift
 // Preferred
 if x == y {
@@ -211,7 +213,7 @@ if (x == y) {
   ...
 }
 ```
-- **3.1.6** Avoid writing out an enum type or static variables where possible - use shorthand.
+- **3.1.7** Avoid writing out an enum type or static variables where possible - use shorthand.
 ```swift
 // Preferred
 tableView,contentInset = .zero
@@ -221,20 +223,30 @@ attributedString.boundingRect(with: size, options: .usesLineFragmentOrigin, cont
 tableView.contentInset = UIEdgeInsets.zero
 attributedString.boundingRect(with: size, options: NSStringDrawingOptions.usesLineFragmentOrigin, context: nil)
 ```
-- **3.1.7** If a variable or class isn't intended to be overridden apply `final` to it.
-- **3.1.8** When writing public methods, keep in mind whether the method is intended to be overridden or not. If not, mark is as `final`, through keep in mind that this will prevent the method from being overwritten. In general, `final` methods result in improved compilation times, so it is good to use this when applicable.
+- **3.1.8** If a variable or class isn't intended to be overridden apply `final` to it.
+- **3.1.9** When writing public methods, keep in mind whether the method is intended to be overridden or not. If not, mark is as `final`, through keep in mind that this will prevent the method from being overwritten. In general, `final` methods result in improved compilation times, so it is good to use this when applicable.
 
 **3.2 Switch Statements and enums**
-- **3.2.1** When defining a case that has an associated value, make sure that this value is appropriately labeled as opposed to just types.
+- **3.2.1** When defining a case that has an associated value which isn't obvious, make sure that this value is appropriately labeled as opposed to just types. Otherwise, skip the name.
 ```swift
 // Preferred
+enum Result<Value, Error: Swift.Error> {
+  case success(Value) // associated values are obvious and don't need to be named
+  case error(Error)
+}
+
 enum ViewState {
   case question(isUserActive: Bool)
 }
 
 // Not Preferred 
+enum Result<Value, Error: Swift.Error> {
+  case success(response: Value) // additional names are redundant
+  case error(error: Error)
+}
+
 enum ViewState {
-  case question(Bool)
+  case question(Bool) // Without a name it's not obvious what this assosiated value means.
 }
 ``` 
 - **3.2.2** When using a switch statement that has a finite set of possibilities, do not include a `default` case. Instead, place unused cases at the bottom and use the `break` keyword to prevent execution.
@@ -312,12 +324,12 @@ doSomething(
 - **3.6.2** When you need to check if a condition is true `guard` is preferred.
 ``` swift
 	// Preferred
-	guard 0..<users.count ~= index else {
+	guard users.indices.contains(index) else {
 	  return 
 	}	
 
 	// Not Preffered
-	if 0..<users.count ~= index {
+	if users.indices.contains(index) {
 	  ...
 	}
 ```

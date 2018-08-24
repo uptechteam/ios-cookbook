@@ -4,12 +4,12 @@
 - [1. CodeFormatting](#1-codeformatting)
 - [2. Naming](#2-naming)
 - [3. Coding Style](#3-coding-style)
-  - [3.1 General](#general)
-  - [3.2 Switch statements and enums][#switch-and-enums]
-  - [3.3 Optionals](#optionals)
-  - [3.4 Protocols](#protocols)
-  - [3.5 Closures](#closures)
-  - [3.6 guard statements](#guard)
+  - [3.1 General](#31-general)
+  - [3.2 Switch statements and enums](#32-switch-statements-and-enums)
+  - [3.3 Optionals](#33-optionals)
+  - [3.4 Protocols](#34-protocols)
+  - [3.5 Closures](#35-closures)
+  - [3.6 guard statements](#36-guard-statements)
 
 ### 0. SwiftLint
 In our projects we are using [SwiftLint](https://github.com/realm/SwiftLint), a tool to enforce Swift style and conventions.

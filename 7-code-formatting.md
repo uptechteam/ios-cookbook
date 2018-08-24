@@ -1,5 +1,16 @@
 # Code Formatting
 
+- [SwiftLint](#swiftlint)
+- [CodeFormatting](#code-formatting)
+- [Naming](#naming)
+- [Coding Style](#coding-style)
+  - [General](#general)
+  - [Switch statements and enums][#switch-and-enums]
+  - [Optionals](#optionals)
+  - [Protocols](#protocols)
+  - [Closures](#closures)
+  - [guard statements](#guard)
+
 ### 0. SwiftLint 
 In our projects we are using [SwiftLint](https://github.com/realm/SwiftLint), a tool to enforce Swift style and conventions.
 
@@ -226,7 +237,7 @@ attributedString.boundingRect(with: size, options: NSStringDrawingOptions.usesLi
 - **3.1.8** If a variable or class isn't intended to be overridden apply `final` to it.
 - **3.1.9** When writing public methods, keep in mind whether the method is intended to be overridden or not. If not, mark is as `final`, through keep in mind that this will prevent the method from being overwritten. In general, `final` methods result in improved compilation times, so it is good to use this when applicable.
 
-**3.2 Switch Statements and enums**
+**3.2 Switch statements and enums**
 - **3.2.1** When defining a case that has an associated value which isn't obvious, make sure that this value is appropriately labeled as opposed to just types. Otherwise, skip the name.
 ```swift
 // Preferred

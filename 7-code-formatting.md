@@ -1,9 +1,9 @@
 # Code Formatting
 
-- [0. SwiftLint](#swiftlint)
-- [1. CodeFormatting](#code-formatting)
-- [2. Naming](#naming)
-- [3. Coding Style](#coding-style)
+- [0. SwiftLint](#0-swiftlint)
+- [1. CodeFormatting](#1-codeformatting)
+- [2. Naming](#2-naming)
+- [3. Coding Style](#3-coding-style)
   - [3.1 General](#general)
   - [3.2 Switch statements and enums][#switch-and-enums]
   - [3.3 Optionals](#optionals)
@@ -151,7 +151,7 @@ class URLFinder {
 }
 ```
 ### 3. Coding Style
-**3.1 General**
+#### 3.1 General
 - **3.1.1** Prefer let to var whenever possible
 ```swift
 // Preferred
@@ -237,7 +237,7 @@ attributedString.boundingRect(with: size, options: NSStringDrawingOptions.usesLi
 - **3.1.8** If a variable or class isn't intended to be overridden apply `final` to it.
 - **3.1.9** When writing public methods, keep in mind whether the method is intended to be overridden or not. If not, mark is as `final`, through keep in mind that this will prevent the method from being overwritten. In general, `final` methods result in improved compilation times, so it is good to use this when applicable.
 
-**3.2 Switch statements and enums**
+#### 3.2 Switch statements and enums
 - **3.2.1** When defining a case that has an associated value which isn't obvious, make sure that this value is appropriately labeled as opposed to just types. Otherwise, skip the name.
 ```swift
 // Preferred
@@ -272,7 +272,7 @@ case .ignoreThis, .ignoreThatToo, .andMe:
 ```
 - **3.2.3** Prefer lists of possibilities (e.g. `case .a, .b, .c:`) to using the `fall through` keyword.
 
-**3.3 Optionals**
+#### 3.3 Optionals
 - **3.3.1** The only time you should be using `implicitly unwrapped optionals` is with `@IBOutlet` and when resulting crash is a programmer's error (e.g. when resolving dependencies using dip or creating regular expressions).
 - **3.3.2** If you don't plan to use the value stored in an optional, but need to determine whether or not it's `nil`, explicitly check this value against `nil` as opposed to using `if let` syntax.
 ```swift
@@ -287,7 +287,7 @@ if let _  = optionalValue {
 }
 ```
 
-**3.4 Protocols**
+#### 3.4 Protocols
 When implementing protocols, there are two ways of organizing your code:
 1. Using `// MARK:` comments to separate protocol implementation from the rest of your code.
 2.  Using an extension outside of `class/struct` implementation code, but in the same source file.
@@ -296,7 +296,7 @@ When implementing protocols, there are two ways of organizing your code:
 
 When using method #2, add `// MARK:` statements anyway for easier readability.
 
-**3.5 Closures**
+#### 3.5 Closures
 - **3.5.1** If the types of the parameters are obvious, it is ok to omit the type. Sometimes readability is enhanced by adding clarifying detail and sometimes by taking repetitive parts away.
 - **3.5.2** Use trailing closure syntax unless the meaning of the closure is not obvious without the parameter name or function takes 2 or more closures as parameters.
 ```swift
@@ -311,7 +311,7 @@ doSomething(
   ...
 })
 ```
-**3.6 `guard` statements**
+#### 3.6 `guard` statements
 - **3.6.1** In general, we prefer to use an `early return` strategy where applicable as opposed to nesting code in if statements.
 ```swift
 	struct Params {

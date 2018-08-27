@@ -1,7 +1,7 @@
 # Code Formatting
 
 - [0. SwiftLint](#0-swiftlint)
-- [1. CodeFormatting](#1-codeformatting)
+- [1. Code Formatting](#1-code-formatting)
 - [2. Naming](#2-naming)
 - [3. Coding Style](#3-coding-style)
   - [3.1 General](#31-general)
@@ -13,34 +13,17 @@
 
 ### 0. SwiftLint
 In our projects we are using [SwiftLint](https://github.com/realm/SwiftLint), a tool to enforce Swift style and conventions.
-
-#### Installation
-```
-brew install swiftlint
-```
-To make SwiftLint working add next part of the code to Build Phases and setup .swiftlint.yml config (Recommended config file [.swiftlint.yml](https://gist.github.com/romanfurman6/c40443e8b337832bd91beb8fd81ed1aa))
-
-*Targets (ProjectName) -> Build Phases -> + -> New Run Script Phase*
-
-```
-if which swiftlint >/dev/null; then
-swiftlint
-else
-echo "warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint"
-fi
-```
-(put it after Compile Sources part)
-![](https://image.ibb.co/nErBio/image.png)
-
-### 1. CodeFormatting
-Make sure you get familiar with [Apple's API Design Guidelines](https://swift.org/documentation/api-design-guidelines/)
+Recommended config file [.swiftlint.yml](https://gist.github.com/romanfurman6/c40443e8b337832bd91beb8fd81ed1aa))
+### 1. Code Formatting
+Make sure you are familiar with [Apple's API Design Guidelines](https://swift.org/documentation/api-design-guidelines/)
 - We are using 2 tabs (Xcode -> Preferences -> Text Editing -> Indentation -> Tab width & Indent width)
+- Line character limit is 150 symbols (Xcode -> Preferences -> Text Editing -> Page guide at column)
 - Add new line at the end of every file
 - Don't put opening braces on new lines - we use [1TBS style](https://en.m.wikipedia.org/wiki/Indentation_style#1TBS):
 ```swift
 class TestClass {
-	func testFunc(value: Int) {
-		if value != 0 {
+  func testFunc(value: Int) {
+    if value != 0 {
 			//..code..//
 		} else if value == 0 {
 			//..code..//
@@ -48,7 +31,7 @@ class TestClass {
 	}
 }
 ```
-- When declaring a function, set function arguments on the next line if it has more than two arguments:
+- When declaring a function and it doesn't fit in 1 line then put it's parameters on separate lines. Each argument and the return value should be on it's own line:
 ```swift
 func testFunc(
 	firstArgument: Int, 
@@ -58,7 +41,7 @@ func testFunc(
 	//..code..//
 }
 ```
-- When calling a function that has many parameters, put each argument on a separate line with a single extra indentation.
+- When calling a function and it doesn't fit in 1 line then put each argument on a separate line with a single extra indentation.
 ```swift
 testFunc(
 	firstArgument: 1,

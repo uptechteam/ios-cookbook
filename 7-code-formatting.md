@@ -131,12 +131,14 @@ class TestViewController: UIViewController {
 	@IBOutlet weak var nameLabel: UILabel!
 }
 ```
-- All constants should be `static` and put in struct which named `Constants` inside your `class`/`struct`/`enum`:
+- Constants that are used two or more times should be `static` and put in an enum named `Constants`. It should be located at the bottom of the source file:
 ```swift
 class TestClass {
-	struct Constants {
-		static let constantValue = 1
-	}
+	...
+}
+
+enum Constants {
+  static let constant = 1
 }
 ```
 - When dealing with an acronym or other name that is usually written in all caps, actually use all caps in any names that use this in code. The exception is if this word is at the start of a name that needs to start with lowercase - in this case, use all lowercase for the acronym.

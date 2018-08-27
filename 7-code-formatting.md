@@ -13,7 +13,7 @@
 
 ### 0. SwiftLint
 In our projects we are using [SwiftLint](https://github.com/realm/SwiftLint), a tool to enforce Swift style and conventions.
-Recommended config file [.swiftlint.yml](https://gist.github.com/romanfurman6/c40443e8b337832bd91beb8fd81ed1aa))
+Recommended config file [.swiftlint.yml](https://gist.github.com/romanfurman6/c40443e8b337832bd91beb8fd81ed1aa)
 ### 1. Code Formatting
 Make sure you are familiar with [Apple's API Design Guidelines](https://swift.org/documentation/api-design-guidelines/)
 - We are using 2 tabs (Xcode -> Preferences -> Text Editing -> Indentation -> Tab width & Indent width)
@@ -24,29 +24,30 @@ Make sure you are familiar with [Apple's API Design Guidelines](https://swift.or
 class TestClass {
   func testFunc(value: Int) {
     if value != 0 {
-			//..code..//
-		} else if value == 0 {
-			//..code..//
-		}
-	}
+      //..code..//
+    } else if value == 0 {
+      //..code..//
+    }
+  }
 }
 ```
 - When declaring a function and it doesn't fit in 1 line then put it's parameters on separate lines. Each argument and the return value should be on it's own line:
 ```swift
 func testFunc(
-	firstArgument: Int, 
-	secondArgument: Int, 
-	thirdArgument: Int
-	) -> Int {
-	//..code..//
+  firstArgument: Int, 
+  secondArgument: Int, 
+  thirdArgument: Int
+  ) -> Int {
+  
+  //..code..//
 }
 ```
 - When calling a function and it doesn't fit in 1 line then put each argument on a separate line with a single extra indentation.
 ```swift
 testFunc(
-	firstArgument: 1,
-	secondArgument: 1,
-	thirdArgument: 1
+  firstArgument: 1,
+  secondArgument: 1,
+  thirdArgument: 1
 )
 ```
 - Put spaces after comma
@@ -60,21 +61,21 @@ let firstCondition = x == firstReallyReallyLongPredicateFunction()
 let secondCondition = y == secondReallyReallyLongPredicateFunction()
 let thirdCondition = z == thirdReallyReallyLongPredicateFunction()
 if firstCondition && secondCondition && thirdCondition {
-    //..code here..//
+  //..code here..//
 }
 
 // NOT PREFERRED
 if x == firstReallyReallyLongPredicateFunction()
-    && y == secondReallyReallyLongPredicateFunction()
-    && z == thirdReallyReallyLongPredicateFunction() {
-	//..code here..//
+  && y == secondReallyReallyLongPredicateFunction()
+  && z == thirdReallyReallyLongPredicateFunction() {
+  //..code here..//
 }
 ```
 ### 2. Naming
 - We are using `PascalCase` for `struct`, `enum`, `class`, `associatedtype`, `protocol`, etc.).
 ```swift
 class SomeTestClass {
-	//..code here..//
+  //..code here..//
 }
 ```
 - We are using `camelCase` for functions, properties, variables, argument names, enum cases, etc.
@@ -82,42 +83,40 @@ class SomeTestClass {
 ```swift
 // PREFERRED
 class RoundAnimatingButton: UIButton {
-    let animationDuration: NSTimeInterval
-
-    func startAnimating() {
-        let firstSubview = subviews.first
-    }
-
+  let animationDuration: NSTimeInterval
+  
+  func startAnimating() {
+    let firstSubview = subviews.first
+  }
 }
 
 // NOT PREFERRED
 class RoundAnimating: UIButton {
-    let aniDur: NSTimeInterval
-
-    func srtAnmating() {
-        let v = subviews.first
-    }
+  let aniDur: NSTimeInterval
+  
+  func srtAnmating() {
+    let v = subviews.first
+  }
 }
 ```
 - Include type information in constant or variable names when it is not obvious otherwise.
 ```swift
 class TestViewController: UIViewController {
-	// when working with a subclass of `UIViewController` such as a table view
-	// controller, collection view controller, split view controller, etc.,
-	// fully indicate the type in the name.
-	let popupTableViewController: UITableViewController
-
-	// when working with outlets, make sure to specify the outlet type in the
-	// property name.
-	@IBOutlet weak var submitButton: UIButton!
-	@IBOutlet weak var emailTextField: UITextField!
-	@IBOutlet weak var nameLabel: UILabel!
+  // when working with a subclass of `UIViewController` such as a table view
+  // controller, collection view controller, split view controller, etc.,
+  // fully indicate the type in the name.
+  let popupTableViewController: UITableViewController
+  
+  // when working with outlets, make sure to specify the outlet type in the property name.
+  @IBOutlet weak var submitButton: UIButton!
+  @IBOutlet weak var emailTextField: UITextField!
+  @IBOutlet weak var nameLabel: UILabel!
 }
 ```
 - Constants that are used two or more times should be `static` and put in an enum named `Constants`. It should be located at the bottom of the source file:
 ```swift
 class TestClass {
-	...
+  ...
 }
 
 enum Constants {

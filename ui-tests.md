@@ -28,11 +28,43 @@ Before we start with and example, let's talk about using Accessibility to identi
 
 
 
+You can see the the gif below to see the flow we will be testing. Here we will test closing the view by tapping close button, closing the view by swiping down and entering credentials and tapping `Let's Go!` button to signup.
+
+<img src="resources/ui_tests/ui_tests_1.gif" width="300px">
+
 Now let's start with the example:
+
+*(The comments that start with `*` will be the explanations for the chapter, and others are just regular comments.)*
 
 ```
 
 import XCTest
+
+extension XCUIApplication {
+    func openSignupScreen() {
+        buttons["Sign Up"].tap()
+    }
+}
+
+extension XCUIElement {
+    /**
+     Removes any current text in the field before typing in the new value
+     - Parameter text: the text to enter into the field
+     */
+    func clearAndEnterText(text: String) {
+        guard let stringValue = self.value as? String else {
+            XCTFail("Tried to clear and enter text into a non string value")
+            return
+        }
+
+        self.tap()
+
+        let deleteString = stringValue.map { _ in XCUIKeyboardKey.delete.rawValue }.joined(separator: "")
+
+        self.typeText(deleteString)
+        self.typeText(text)
+    }
+}
 
 class SignupUITests: XCTestCase {
 
@@ -41,48 +73,69 @@ class SignupUITests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        // We set this property to false to end test execution as soon as a failure occurs, main reason is UI tests are slower than the unit tests and we don't want to wait to find out we have a problem.
+        // * We set this property to false to end test execution as soon 
+        // as a failure occurs, main reason is UI tests are slower than the 
+        // unit tests and we don't want to wait to find out we have a problem.
         continueAfterFailure = false
         
         app = XCUIApplication()
         
-        // Here we pass launch arguments to `didFinishLaunchingWithOptions` in our AppDelegate. This is the only place where we can communicate with the app in UI tests since it is black-boxed, so we need to do the setup here.
+        // * Here we pass launch arguments to `didFinishLaunchingWithOptions` 
+        // in our AppDelegate. This is the only place where we can communicate 
+        // with the app in UI tests since it is black-boxed, so we need to do 
+        // the setup here.
         app.launchArguments.append(contentsOf: ["CLEAN_STORAGE", "ALPHA_ENV", "STUB_REQUESTS"])
     }
 
     func testSignup() {
+        // * We launch to app to start testing. This is the most time consuming step
+        // so we will combine all 3 tests and do them in one launch.
         app.launch()
       
-        let landing = app.otherElements["Landing View"]
-        let signup = app.otherElements["Signup Card View"]
-        let signupLoadingView = app.otherElements["SignupLoadingView"]
+        // * Preparing the views that we will check later if they exist
+        // let landingView = app.otherElements["LandingView"]
+        // let signupView = app.otherElements["SignupCardView"]
+        // let signupLoadingView = app.otherElements["SignupLoadingView"]
 
         // Test Closing with Close Button
         app.openSignupScreen()
+        // * This was added as an extension to `XCUIApplication` because it is 
+        // used a lot of times. We need to navigate to the view we want to test.
 
-        XCTAssert(signup.waitForExistence(timeout: 5))
+        XCTAssert(signupView.waitForExistence(timeout: 5))
+        // * Here we use .waitForExistence method to see if it appeared.
 
-        let closeButton = app.buttons["Signup Card Close Button"]
-        closeButton.tap()
+        // * Then we find the close button and tap on it to see if view is dismissed.
+        let closeButton = app.buttons["SignupCardCloseButton"]
+        closeButton.tap() // * Here we use tap method of XCUIElement.
 
-        XCTAssert(landing.waitForExistence(timeout: 5))
+        XCTAssert(landingView.waitForExistence(timeout: 5))
+        // * We use waitForExistence method to see if landingView is visible after
+        // dismissing SignupCardView
 
         // Test Closing with Swipe
-        app.openSignupScreen()
+        app.openSignupScreen() // * Starting to test the other 
 
         signup.swipeDown()
+        // * Here we use swipeDown method of XCUIElement, which sends a swipe-down 
+        // gesture to our top view! One of the coolest things that UI testing tools 
+        // allow us to do is using gestures.
 
-        XCTAssert(landing.waitForExistence(timeout: 5))
+        XCTAssert(landingView.waitForExistence(timeout: 5))
 
         // Test signing up
         app.openSignupScreen()
 
         XCTAssert(signup.waitForExistence(timeout: 5))
 
+        // * Here we are trying to get textfield inside another view, we know that 
+        // it is the first subview of the container view so we use .firstMatch
         let emailField = app.otherElements["SignupEmailFieldContainer"].otherElements.firstMatch
         let passwordField = app.otherElements["SignupPasswordFieldContainer"].otherElements.firstMatch
 
-        emailField.clearAndEnterText(text: "new.account@aspiration.com")
+        // * And we use the method we added in XCUIElement extension to clear 
+        // old text(if there was any) and enter the new text.
+        emailField.clearAndEnterText(text: "new.account@mail.com")
         passwordField.clearAndEnterText(text: "password123")
 
         app.buttons["SignupButton"].tap()
@@ -92,3 +145,5 @@ class SignupUITests: XCTestCase {
     }
 }
 ```
+
+

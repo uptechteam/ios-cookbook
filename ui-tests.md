@@ -40,6 +40,95 @@ Now let's start with the example:
 
 import XCTest
 
+class SignupUITests: XCTestCase {
+
+    var app: XCUIApplication!
+
+    override func setUp() {
+        super.setUp()
+
+        // * We set this property to false to end test execution as soon 
+        // as a failure occurs, main reason is UI tests are slower than the 
+        // unit tests and we don't want to wait to find out we have a problem.
+        continueAfterFailure = false
+        
+        app = XCUIApplication()
+        
+        // * Here we pass launch arguments to `didFinishLaunchingWithOptions` 
+        // in our AppDelegate. This is the only place where we can communicate 
+        // with the app in UI tests since it is black-boxed, so we need to do 
+        // any setup needed here. Names are self-explanatory but lets go over
+        // anyway. CLEAN_STORAGE is used for resetting UserDefaults,
+        // ALPHA_ENV is used for setting the environment and STUB_REQUESTS is
+        // used for activating the network request stubbing.
+        app.launchArguments.append(contentsOf: ["CLEAN_STORAGE", "ALPHA_ENV", "STUB_REQUESTS"])
+    }
+
+    func testSignup() {
+        // * We launch to app to start testing. This is the most time consuming step
+        // so we will combine all 3 tests and do them in one launch.
+        app.launch()
+      
+        // * Preparing the views that we will check later if they exist
+        // let landingView = app.otherElements["LandingView"]
+        // let signupView = app.otherElements["SignupCardView"]
+        // let signupLoadingView = app.otherElements["SignupLoadingView"]
+
+        // Test Closing with Close Button * First test
+        app.openSignupScreen() * Here we navigate to the screen we want to test
+        // * This was added as an extension to `XCUIApplication` because it is 
+        // used a lot of times. We need to navigate to the view we want to test.
+
+        XCTAssert(signupView.waitForExistence(timeout: 5))
+        // * Here we use .waitForExistence method to see if it appeared.
+
+        // * Then we find the close button and tap on it to see if view is dismissed.
+        let closeButton = app.buttons["SignupCardCloseButton"]
+        closeButton.tap() // * Here we use tap method of XCUIElement.
+
+        XCTAssert(landingView.waitForExistence(timeout: 5))
+        // * We use waitForExistence method to see if landingView is visible after
+        // dismissing SignupCardView
+
+        // Test Closing with Swipe * Second Test
+        app.openSignupScreen() * Again we navigate to the screen we want to test
+        
+        XCTAssert(signupView.waitForExistence(timeout: 5))
+        // * Again we use .waitForExistence method to see if it appeared.
+
+        signup.swipeDown()
+        // * Here we use swipeDown method of XCUIElement, which sends a swipe-down 
+        // gesture to our top view! One of the coolest things that UI testing tools 
+        // allow us to do is using gestures.
+
+        XCTAssert(landingView.waitForExistence(timeout: 5))
+        // * Again we use waitForExistence method to see if landingView is visible after
+        // dismissing SignupCardView
+
+        // Test signing up * Third test
+        app.openSignupScreen() * Again we navigate to the screen we want to test
+
+        XCTAssert(signupView.waitForExistence(timeout: 5))
+        // * Again we use .waitForExistence method to see if it appeared.
+
+        // * Here we are trying to get textfield inside another view, we know that 
+        // it is the first subview of the container view so we use .firstMatch
+        let emailField = app.otherElements["SignupEmailFieldContainer"].otherElements.firstMatch
+        let passwordField = app.otherElements["SignupPasswordFieldContainer"].otherElements.firstMatch
+
+        // * And we use the method we added in XCUIElement extension to clear 
+        // old text(if there was any) and enter the new text.
+        emailField.clearAndEnterText(text: "new.account@mail.com")
+        passwordField.clearAndEnterText(text: "password123")
+
+        app.buttons["SignupButton"].tap() // * We trigger a tap
+
+        XCTAssert(signupLoadingView.waitForExistence(timeout: 5))
+        // And we check if the next view after a successfull signup appears
+
+    }
+}
+
 extension XCUIApplication {
     func openSignupScreen() {
         buttons["Sign Up"].tap()
@@ -65,85 +154,30 @@ extension XCUIElement {
         self.typeText(text)
     }
 }
-
-class SignupUITests: XCTestCase {
-
-    var app: XCUIApplication!
-
-    override func setUp() {
-        super.setUp()
-
-        // * We set this property to false to end test execution as soon 
-        // as a failure occurs, main reason is UI tests are slower than the 
-        // unit tests and we don't want to wait to find out we have a problem.
-        continueAfterFailure = false
-        
-        app = XCUIApplication()
-        
-        // * Here we pass launch arguments to `didFinishLaunchingWithOptions` 
-        // in our AppDelegate. This is the only place where we can communicate 
-        // with the app in UI tests since it is black-boxed, so we need to do 
-        // the setup here.
-        app.launchArguments.append(contentsOf: ["CLEAN_STORAGE", "ALPHA_ENV", "STUB_REQUESTS"])
-    }
-
-    func testSignup() {
-        // * We launch to app to start testing. This is the most time consuming step
-        // so we will combine all 3 tests and do them in one launch.
-        app.launch()
-      
-        // * Preparing the views that we will check later if they exist
-        // let landingView = app.otherElements["LandingView"]
-        // let signupView = app.otherElements["SignupCardView"]
-        // let signupLoadingView = app.otherElements["SignupLoadingView"]
-
-        // Test Closing with Close Button
-        app.openSignupScreen()
-        // * This was added as an extension to `XCUIApplication` because it is 
-        // used a lot of times. We need to navigate to the view we want to test.
-
-        XCTAssert(signupView.waitForExistence(timeout: 5))
-        // * Here we use .waitForExistence method to see if it appeared.
-
-        // * Then we find the close button and tap on it to see if view is dismissed.
-        let closeButton = app.buttons["SignupCardCloseButton"]
-        closeButton.tap() // * Here we use tap method of XCUIElement.
-
-        XCTAssert(landingView.waitForExistence(timeout: 5))
-        // * We use waitForExistence method to see if landingView is visible after
-        // dismissing SignupCardView
-
-        // Test Closing with Swipe
-        app.openSignupScreen() // * Starting to test the other 
-
-        signup.swipeDown()
-        // * Here we use swipeDown method of XCUIElement, which sends a swipe-down 
-        // gesture to our top view! One of the coolest things that UI testing tools 
-        // allow us to do is using gestures.
-
-        XCTAssert(landingView.waitForExistence(timeout: 5))
-
-        // Test signing up
-        app.openSignupScreen()
-
-        XCTAssert(signup.waitForExistence(timeout: 5))
-
-        // * Here we are trying to get textfield inside another view, we know that 
-        // it is the first subview of the container view so we use .firstMatch
-        let emailField = app.otherElements["SignupEmailFieldContainer"].otherElements.firstMatch
-        let passwordField = app.otherElements["SignupPasswordFieldContainer"].otherElements.firstMatch
-
-        // * And we use the method we added in XCUIElement extension to clear 
-        // old text(if there was any) and enter the new text.
-        emailField.clearAndEnterText(text: "new.account@mail.com")
-        passwordField.clearAndEnterText(text: "password123")
-
-        app.buttons["SignupButton"].tap()
-
-        XCTAssert(signupLoadingView.waitForExistence(timeout: 5))
-
-    }
-}
 ```
 
+### Learnings
 
+#### 1. You can make your UI tests run faster by stubbing the network requests
+
+We saw in the above example that we pass a launch argument called `STUB_REQUESTS`, which was used in AppDelegate to check if we should enable stubbing. For this we used a library called [OHHTTPStubs](https://github.com/AliSoftware/OHHTTPStubs). It is quite easy to use, you just need the JSON response, the `host` and `path` of the request you want to stub and the status code you want. You can also simulate slow networks!
+
+#### 2. Don’t enable view's accessibility, and just use the identifier field
+
+When you are giving identifiers to your UI elements, if you tick the `Enabled` checkbox under accessibility options in IB or if you set `isAccessibilityElement` `true` in code, you won't be able to detect any of the subviews and to detect, you will have to confirm to `UIAccessibilityContainer` to make subviews accessible as seperate elements.
+
+#### 3. Sometimes you will have to find the container and access the children
+
+Sometimes you won't be able to find your views in XCUIApplication.elements, for example it might not able to find a UITextfield subclass that is in another view for styling purpuses(even if you did not check `isAccessibilityElement`). Here you will have to find the container and then access the children like we did in the example with the textfields. ( `app.otherElements["SignupEmailFieldContainer"].otherElements.firstMatch` )
+
+#### 4. You probably need to combine all tests for a screen in one `test` method.
+
+Unlike unit tests, it takes A LOT of time to run all UI tests separetaly, so you can do one `func test..()` for a view with multiple asserts to combine all tests for that view. But not sure if this is a good approach to be honest. It is a trade-off between time and structure.
+
+### Should We Add UI Tests to Our Development Cycle?
+
+This really depends on the project. For the regular projects where we are trying to firstly get the project by giving a good estimate and secondly trying to finish the project in this timeframe, UI tests might seem like a luxury. For projects that we are supporting, where the teams have more time for working on the project health, and where the client is willing, UI tests can be a nice addition and used as another tool to be used for maintaining project health.
+
+What I think that might taken into considiration in future is that, there can be a workflow where our QA engineers write the UI tests for the projects, similar to automation tests on Web(or probably the same?). Couple of arguments for this is, one: UITests are blackbox tests, where the writer of the tests can find related elements either by static texts or the accessibility identifiers, and where the only tools are Xcode UITest tools and the debugger. Second argument is, this would give our QA engineers a deeper insight and understanding about our development tools and more technical knowledge. But it would require a lot of training probably, to find the views, to put the identifiers, since as it is it was hard for me to get around some problems, and by nature of my position I have more knowledge on the platform then a team member who is a QA engineer. 
+
+But this is only taking into consediration the tools that Xcode gives us. We might be able to find an alternative(there are already some that seem promising like iOS Snapshot Test Case and EarlGrey) that is easier to use and let's us do faster implementation with less time wasted on querying the UI elements and on other XCUITest framework weirdness. And at that point it might be plausible to give this responsibility to the QA team.

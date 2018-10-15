@@ -36,7 +36,7 @@ Now let's start with the example:
 
 *(The comments that start with `*` will be the explanations for the chapter, and others are just regular comments.)*
 
-```
+```swift
 
 import XCTest
 

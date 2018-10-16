@@ -70,9 +70,9 @@ class SignupUITests: XCTestCase {
         app.launch()
       
         // * Preparing the views that we will check later if they exist
-        // let landingView = app.otherElements["LandingView"]
-        // let signupView = app.otherElements["SignupCardView"]
-        // let signupLoadingView = app.otherElements["SignupLoadingView"]
+        let landingView = app.otherElements["LandingView"]
+        let signupView = app.otherElements["SignupCardView"]
+        let signupLoadingView = app.otherElements["SignupLoadingView"]
 
         // Test Closing with Close Button * First test
         app.openSignupScreen() * Here we navigate to the screen we want to test

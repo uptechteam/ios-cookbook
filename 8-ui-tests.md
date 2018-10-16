@@ -6,7 +6,7 @@ This chapter of the cookbook can be considered as `exploration stage` for the fo
 - Second, this chapter only talks about the UI test tools that comes bundled with Xcode, and not some of the other options like [iOS Snapshot Test Case](https://github.com/uber/ios-snapshot-test-case), [EarlGrey](https://github.com/google/EarlGrey) and [KIF](https://github.com/kif-framework/KIF),
 - And the last is that the chapter ends with an opinionated paragraph, and might not show the opinion of the whole team.
 
-### Introduction
+## Introduction
 
 Xcode 7 introduced UI testing, which lets us to create a UI test by recording interactions with the UI. UI testing works by finding an app’s UI objects with queries, synthesizing events, then sending them to those objects. The API enables us to examine a UI object’s properties and state in order to compare them against the expected state.
 
@@ -18,7 +18,7 @@ UI tests tools that we get with Xcode rests upon two core technologies: the XCTe
 
 Main reason we need to use Accessibility to extract information about the UI state of the app is that UI testing is a [black-box testing](https://en.wikipedia.org/wiki/Black-box_testing) framework. We shouldn't have to know anything about the implementation of the code we are testing. We can think of UI testing from the perspective of the user. The user doesn't care how our `MassiveViewController` works (or even that it exists 😈), so why should the UI Tests?
 
-### Getting Started
+## Getting Started
 
 If your project doesn't already have a target for UI tests, you can add one by going to `File > New > Target..` in Xcode and select a “UI testing bundle”. Then edit your app’s scheme to run your UI tests when testing, by going to `Product > Scheme > Edit Scheme..` in Xcode and adding your UI testing bundle under “Test”.
 
@@ -156,7 +156,7 @@ extension XCUIElement {
 }
 ```
 
-### Learnings
+## Learnings and Tips
 
 #### 1. You can make your UI tests run faster by stubbing the network requests
 
@@ -174,7 +174,9 @@ Sometimes you won't be able to find your views in XCUIApplication.elements, for 
 
 Unlike unit tests, it takes A LOT of time to run all UI tests separetaly, so you can do one `func test..()` for a view with multiple asserts to combine all tests for that view. But not sure if this is a good approach to be honest. It is a trade-off between time and structure.
 
-### Should We Add UI Tests to Our Development Cycle?
+
+
+## Should We Add UI Tests to Our Development Cycle?
 
 This really depends on the project. For the regular projects where we are trying to firstly get the project by giving a good estimate and secondly trying to finish the project in this timeframe, UI tests might seem like a luxury. For projects that we are supporting, where the teams have more time for working on the project health, and where the client is willing, UI tests can be a nice addition and used as another tool to be used for maintaining project health.
 

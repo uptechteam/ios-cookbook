@@ -75,7 +75,7 @@ class SignupUITests: XCTestCase {
         let signupLoadingView = app.otherElements["SignupLoadingView"]
 
         // Test Closing with Close Button * First test
-        app.openSignupScreen() * Here we navigate to the screen we want to test
+        app.openSignupScreen() // * Here we navigate to the screen we want to test
         // * This was added as an extension to `XCUIApplication` because it is 
         // used a lot of times. We need to navigate to the view we want to test.
 
@@ -91,7 +91,7 @@ class SignupUITests: XCTestCase {
         // dismissing SignupCardView
 
         // Test Closing with Swipe * Second Test
-        app.openSignupScreen() * Again we navigate to the screen we want to test
+        app.openSignupScreen() // * Again we navigate to the screen we want to test
         
         XCTAssert(signupView.waitForExistence(timeout: 5))
         // * Again we use .waitForExistence method to see if it appeared.
@@ -106,7 +106,7 @@ class SignupUITests: XCTestCase {
         // dismissing SignupCardView
 
         // Test signing up * Third test
-        app.openSignupScreen() * Again we navigate to the screen we want to test
+        app.openSignupScreen() // * Again we navigate to the screen we want to test
 
         XCTAssert(signupView.waitForExistence(timeout: 5))
         // * Again we use .waitForExistence method to see if it appeared.

@@ -2,7 +2,7 @@
 
 This chapter of the cookbook can be considered as `exploration stage` for the following reasons:
 
-- First is that the author does not have a lot of experience with UI tests, 
+- First is that the team does not have a lot of experience with UI tests, 
 - Second, this chapter only talks about the UI test tools that comes bundled with Xcode, and not some of the other options like [iOS Snapshot Test Case](https://github.com/uber/ios-snapshot-test-case), [EarlGrey](https://github.com/google/EarlGrey) and [KIF](https://github.com/kif-framework/KIF),
 - And the last is that the chapter ends with an opinionated paragraph, and might not show the opinion of the whole team.
 

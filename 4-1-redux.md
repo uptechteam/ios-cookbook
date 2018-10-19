@@ -15,6 +15,7 @@
   - [Error handling](#error-handling)
       - [Possible approaches](#possible-approaches)
       - [What to use?](#what-to-use)
+- [Theory is cool, but show me the code!](#theory-is-cool-but-show-me-the-code)
 
 # Motivation
 
@@ -441,3 +442,7 @@ final class ErrorPresenter {
 We recommend sticking with the second approach, as it is safer, deterministic, and the view will be always in sync.
 
 However, if you have only one errors source and don't want to put too much boilerplate into your code, you can use the first apporach to save time and sanity.
+
+# Theory is cool, but show me the code!
+
+Please, take a look at an example of the Redux View Model [in our demo project](examples/ReTweet/).

@@ -1,0 +1,8 @@
+github "Alamofire/Alamofire" "4.7.3"
+github "AliSoftware/Dip" "7.0.0"
+github "Moya/Moya" "11.0.2"
+github "ReactiveCocoa/ReactiveSwift" "3.1.0"
+github "ReactiveX/RxSwift" "4.3.1"
+github "RxSwiftCommunity/RxDataSources" "3.1.0"
+github "antitypical/Result" "3.2.4"
+github "onevcat/Kingfisher" "4.10.0"

@@ -1,0 +1,5 @@
+github "ReactiveX/RxSwift" ~> 4.3
+github "RxSwiftCommunity/RxDataSources" ~> 3.1
+github "Moya/Moya"
+github "AliSoftware/Dip"
+github "onevcat/Kingfisher" ~> 4.0

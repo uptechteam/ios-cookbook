@@ -3,8 +3,7 @@
 This chapter of the cookbook can be considered as `exploration stage` for the following reasons:
 
 - First is that the team does not have a lot of experience with UI tests, 
-- Second, this chapter only talks about the UI test tools that comes bundled with Xcode, and not some of the other options like [iOS Snapshot Test Case](https://github.com/uber/ios-snapshot-test-case), [EarlGrey](https://github.com/google/EarlGrey) and [KIF](https://github.com/kif-framework/KIF),
-- And the last is that the chapter ends with an opinionated paragraph, and might not show the opinion of the whole team.
+- Second, this chapter only talks about the UI test tools that comes bundled with Xcode, and not some of the other options like [iOS Snapshot Test Case](https://github.com/uber/ios-snapshot-test-case), [EarlGrey](https://github.com/google/EarlGrey) and [KIF](https://github.com/kif-framework/KIF).
 
 ## Introduction
 
@@ -22,10 +21,11 @@ Main reason we need to use Accessibility to extract information about the UI sta
 
 If your project doesn't already have a target for UI tests, you can add one by going to `File > New > Target..` in Xcode and select a “UI testing bundle”. Then edit your app’s scheme to run your UI tests when testing, by going to `Product > Scheme > Edit Scheme..` in Xcode and adding your UI testing bundle under “Test”.
 
-Before we start with and example, let's talk about using Accessibility to identify views in UI tests. To give our UI elements accesibility identifiers, we can either use interface builder or do it in the implementation code.
+Before we start with an example, let's talk about using Accessibility to identify views in UI tests. To give our UI elements accesibility identifiers, we can either use interface builder or do it in the implementation code.
   - To use interface builder to give an identifier we need to select the view, go to `Identity inspector` tab and set a value for `Identifier` field located in the `Accessibility` section.
   - To give the identifier in code, set `accessibilityIdentifier` of the view to the identifier string you want like following: `anyView.accessibilityIdentifier = "someIdentifierString"`
 
+And also, one great side-effect of using `Accessibility` for UI tests is that it can help us make our apps accessible at the same time!
 
 
 You can see the the gif below to see the flow we will be testing. Here we will test closing the view by tapping close button, closing the view by swiping down and entering credentials and tapping `Let's Go!` button to signup.
@@ -69,7 +69,8 @@ class SignupUITests: XCTestCase {
         // so we will combine all 3 tests and do them in one launch.
         app.launch()
       
-        // * Preparing the views that we will check later if they exist
+        // * Preparing the views that we will check later if they exist. We are using 
+        // the `accessibilityIdentifier`s that we gave to our views to find them
         let landingView = app.otherElements["LandingView"]
         let signupView = app.otherElements["SignupCardView"]
         let signupLoadingView = app.otherElements["SignupLoadingView"]
@@ -96,7 +97,7 @@ class SignupUITests: XCTestCase {
         XCTAssert(signupView.waitForExistence(timeout: 5))
         // * Again we use .waitForExistence method to see if it appeared.
 
-        signup.swipeDown()
+        signupView.swipeDown()
         // * Here we use swipeDown method of XCUIElement, which sends a swipe-down 
         // gesture to our top view! One of the coolest things that UI testing tools 
         // allow us to do is using gestures.
@@ -180,6 +181,6 @@ Unlike unit tests, it takes A LOT of time to run all UI tests separetaly, so you
 
 This really depends on the project. For the regular projects where we are trying to firstly get the project by giving a good estimate and secondly trying to finish the project in this timeframe, UI tests might seem like a luxury. For projects that we are supporting, where the teams have more time for working on the project health, and where the client is willing, UI tests can be a nice addition and used as another tool to be used for maintaining project health.
 
-What I think that might taken into considiration in future is that, there can be a workflow where our QA engineers write the UI tests for the projects, similar to automation tests on Web(or probably the same?). Couple of arguments for this is, one: UITests are blackbox tests, where the writer of the tests can find related elements either by static texts or the accessibility identifiers, and where the only tools are Xcode UITest tools and the debugger. Second argument is, this would give our QA engineers a deeper insight and understanding about our development tools and more technical knowledge. But it would require a lot of training probably, to find the views, to put the identifiers, since as it is it was hard for me to get around some problems, and by nature of my position I have more knowledge on the platform then a team member who is a QA engineer. 
+What I think that might taken into consideration in future is that, there can be a workflow where our QA engineers write the UI tests for the projects, similar to automation tests on Web(or probably the same?). Couple of arguments for this is, one: UITests are blackbox tests, where the writer of the tests can find related elements either by static texts or the accessibility identifiers, and where the only tools are Xcode UITest tools and the debugger. Second argument is, this would give our QA engineers a deeper insight and understanding about our development tools and more technical knowledge. But it would require a lot of training probably, to find the views, to put the identifiers, since as it is it was hard for me to get around some problems, and by nature of my position I have more knowledge on the platform then a team member who is a QA engineer. 
 
-But this is only taking into consediration the tools that Xcode gives us. We might be able to find an alternative(there are already some that seem promising like iOS Snapshot Test Case and EarlGrey) that is easier to use and let's us do faster implementation with less time wasted on querying the UI elements and on other XCUITest framework weirdness. And at that point it might be plausible to give this responsibility to the QA team.
+But this is only taking into consideration the tools that Xcode gives us. We might be able to find an alternative(there are already some that seem promising like iOS Snapshot Test Case and EarlGrey) that is easier to use and let's us do faster implementation with less time wasted on querying the UI elements and on other XCUITest framework weirdness. And at that point it might be plausible to give this responsibility to the QA team.

@@ -175,6 +175,9 @@ Sometimes you won't be able to find your views in XCUIApplication.elements, for 
 
 Unlike unit tests, it takes A LOT of time to run all UI tests separetaly, so you can do one `func test..()` for a view with multiple asserts to combine all tests for that view. But not sure if this is a good approach to be honest. It is a trade-off between time and structure.
 
+#### 5. You can use `Xcode Target`s to your advantage
+
+While you are working on UI tests for a specific screen, you can create a specific target for this UI test and save some time by not running every UI test in the project!
 
 
 ## Should We Add UI Tests to Our Development Cycle?

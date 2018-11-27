@@ -37,7 +37,7 @@ The result of the estimations is a table with columns: feature, min, avg, max. W
 Define the feature that is not relatively big but rather small and can't be broken to a smaller piece. 
 For example, a screen like this: 
 
-![](https://github.com/uptechteam/ios-cookbook/blob/feature/estimates/resources/estimates_screenshots/login.png)
+![](resources/estimates_screenshots/login.png)
 
 can be broken into the following parts:
 1. Login using credentials
@@ -80,34 +80,34 @@ Usually QA is 20%, management - 10%, Tests - 20% of total development time.
 
 Cheat sheet for complexity and min/max hour values:
 
-Complexity | Min | Max
---- | --- | ---
-easy | 2 | 12 
-normal | 8 | 24
-hard | 24 | 100
-extreme | 50 | 300
+| Complexity | Min | Max |
+| ---------- | --- | --- |
+| easy       | 2   | 12  |
+| normal     | 8   | 24  |
+| hard       | 24  | 100 |
+| extreme    | 50  | 300 |
 
 Cheat sheet for common features:
 
-Feature | Min | Max | Comments
---- | --- | --- | ---
-CI setup | 8 | 16 | might be not initial setup but through the project 
-Project setup | 4 | 16 | might be not initial setup but through the project 
-Chat (no lib) | 80 | 120 | of course it also depends on chat features
-Chat (with our lib) | 20 | 40 | of course it also depends on chat features
-Social network login / sharing | 4 | 8 | per each feature
-Payments system integration | 8 | 24 | a lot of time goes to communication / researching
-Image picker (default) | 2 | 4 | n/a
-Image picker (custom) | 16 | 24 | n/a
-Image cropper ([lib](https://github.com/ruslanskorb/RSKImageCropper)) | 4 | 8 | n/a
-Image cropper (custom) | 24 | 40 | n/a
-Internatialization | 8 | 16 | can be more if it's ؁ؓؑ  ؐ  ؕ  (arabic)
-Photo Camera (custom) | 24 | 40 | capture, focus, zoom
-Video Camera (custom) | 40 | 60 | simple video shooting
-Video Camera (lib) | 16 | 32 | simple video shooting
-Video Player (custom) | 24 | 32 | for a player with controls like default has
-Simple networking using our [lib](https://github.com/Moya/Moya) | 4 | 8 | n/a
-Complex networking w multipart requests and/or websockets | 16 | 24 | n/a
+| Feature                                                               | Min | Max | Comments                                           |
+| --------------------------------------------------------------------- | --- | --- | -------------------------------------------------- |
+| CI setup                                                              | 8   | 16  | might be not initial setup but through the project |
+| Project setup                                                         | 4   | 16  | might be not initial setup but through the project |
+| Chat (no lib)                                                         | 80  | 120 | of course it also depends on chat features         |
+| Chat (with our lib)                                                   | 20  | 40  | of course it also depends on chat features         |
+| Social network login / sharing                                        | 4   | 8   | per each feature                                   |
+| Payments system integration                                           | 8   | 24  | a lot of time goes to communication / researching  |
+| Image picker (default)                                                | 2   | 4   | n/a                                                |
+| Image picker (custom)                                                 | 16  | 24  | n/a                                                |
+| Image cropper ([lib](https://github.com/ruslanskorb/RSKImageCropper)) | 4   | 8   | n/a                                                |
+| Image cropper (custom)                                                | 24  | 40  | n/a                                                |
+| Internatialization                                                    | 8   | 16  | can be more if it's ؁ؓؑ  ؐ  ؕ  (arabic)            |
+| Photo Camera (custom)                                                 | 24  | 40  | capture, focus, zoom                               |
+| Video Camera (custom)                                                 | 40  | 60  | simple video shooting                              |
+| Video Camera (lib)                                                    | 16  | 32  | simple video shooting                              |
+| Video Player (custom)                                                 | 24  | 32  | for a player with controls like default has        |
+| Simple networking using our [lib](https://github.com/Moya/Moya)       | 4   | 8   | n/a                                                |
+| Complex networking w multipart requests and/or websockets             | 16  | 24  | n/a                                                |
 
 ###  Beware of pitfalls
 
@@ -147,7 +147,7 @@ Some projects have features that we can't evaluate easily and require additional
 ### Example
 
 Here is an example of one of the estimates of iOS app:
-![](https://github.com/uptechteam/ios-cookbook/blob/feature/estimates/resources/estimates_screenshots/estimates_example.png "Estimates Example")
+![](resources/estimates_screenshots/estimates_example.png "Estimates Example")
 
 
 ## Communication Tips 📝 <a id="communicationtips"></a>

@@ -102,7 +102,7 @@ let dogs = realm.objects(Dog.self).filter("name contains 'Fido'")
 
 #### 3.2. Use [SSL pinning](https://www.owasp.org/index.php/Pinning_Cheat_Sheet)
 
-- Alamofire (and thus Moya) supports SSL pinning with a few lines of code:
+Alamofire (and thus Moya) supports SSL pinning with a few lines of code:
 
 ```swift
 let policies: [String: ServerTrustPolicy] = [
@@ -135,9 +135,9 @@ Make it shorter for applications which process a significant amount of sensitive
 ### 5. Do not store keys in the code
 
 ```swift
-  ⚠️
-  let apiKey = "f2801f1b9fd1"
-  let appId = "12312321"
+⚠️ ⚠️ ⚠️
+let apiKey = "f2801f1b9fd1"
+let appId = "12312321"
 ```
 
 Such keys can be easily parsed from the binary file by running `strings MyApp`.
@@ -185,6 +185,8 @@ func applicationDidEnterBackground(_ application: UIApplication) {
 ![](resources/security/app_switcher.png "App Switcher with secured screenshots")
 
 ### 9. Do not log sensitive data
+
+---
 
 Further Reading:
 

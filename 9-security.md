@@ -124,7 +124,7 @@ let provider = MoyaProvider<AuthApi>(manager: sessionManager)
 
 #### 4.1. Keep your access token lifetime reasonable
 
-Make it shorter for applications which process a significant amount of sensitive data.
+Make it shorter for applications which process a significant amount of sensitive data. For example, reasonable session length for a banking app is around 15 minutes.
 
 #### 4.2. Use [Password AutoFill](https://developer.apple.com/documentation/security/password_autofill/) in all sign-up and sign-in flows
 
@@ -185,6 +185,10 @@ func applicationDidEnterBackground(_ application: UIApplication) {
 ![](resources/security/app_switcher.png "App Switcher with secured screenshots")
 
 ### 9. Do not log sensitive data
+
+If an application is logging sensitive information, then its data will be captured on device logs. An attacker can easily dump device logs and retrieve the user's sensitive information.
+
+Do not pass any sensitive information to the third party platforms like Mixpanel, Amplitude or Crashlytics.
 
 ---
 

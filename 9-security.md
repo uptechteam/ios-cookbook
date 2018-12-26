@@ -41,7 +41,7 @@ _Be careful with Keychain though. The items stored in the Keychain won't be remo
 
 #### 2.2. Use [iOS file encryption](https://developer.apple.com/documentation/uikit/core_app/protecting_the_user_s_privacy/encrypting_your_app_s_files)
 
-On iOS 8 and above, files inside apps can be automatically using `NSFileProtection` whenever the device is locked.
+On iOS 8 and above, files inside apps can be automatically encrypted using `NSFileProtection` whenever the device is locked.
 
 ```swift
 do {

@@ -1,7 +1,7 @@
 # Code Formatting
 
 - [0. SwiftLint](#0-swiftlint)
-- [1. Code Formatting](#1-code-formatting)
+- [1. Code Generation](#1-code-generation)
 - [2. Code Formatting](#2-code-formatting)
 - [3. Naming](#3-naming)
 - [4. Coding Style](#4-coding-style)

@@ -16,7 +16,7 @@
 In our projects we are using [SwiftLint](https://github.com/realm/SwiftLint), a tool to enforce Swift style and conventions.
 Recommended config file [.swiftlint.yml](https://gist.github.com/romanfurman6/c40443e8b337832bd91beb8fd81ed1aa)
 ### 1. Code Generation
-In our projects we are using code generation for images and colors stored in the assets.
+In our projects we are using [SwiftGen](https://github.com/SwiftGen/SwiftGen), a tool for generation of images and colors stored in the assets.
 ### 2. Code Formatting
 Make sure you are familiar with [Apple's API Design Guidelines](https://swift.org/documentation/api-design-guidelines/)
 - We are using 2 tabs (Xcode -> Preferences -> Text Editing -> Indentation -> Tab width & Indent width)

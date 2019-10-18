@@ -6,16 +6,6 @@ platform :ios do
     ENV["SLACK_URL"] = ""
   end
 
-  lane :test_and_staging do |options|
-    test(build_configuration: "staging")
-    deploy_staging
-  end
-
-  lane :test_and_production do
-    test(build_configuration: "production")
-    deploy_production
-  end
-
   desc "Runs all the tests"
   lane :test do |options|
     scheme = get_scheme(build_configuration: options[:build_configuration])
@@ -28,10 +18,19 @@ platform :ios do
     )
   end
 
+  lane :test_and_staging do |options|
+    test(build_configuration: "staging")
+    deploy_staging
+  end
+
+  lane :test_and_production do
+    test(build_configuration: "production")
+    deploy_production
+  end
+
   lane :deploy_staging do
     # Fetch provisioning profiles
     match(
-      git_url: certificates_repo_url,
       type: "adhoc",
       readonly: true
     )
@@ -48,10 +47,9 @@ platform :ios do
     )
 
     # Deploy to your builds distributor
-    changelog = changelog_from_git_commits(merge_commit_filtering: "exclude_merges")
-    hockey(
-      api_token: "api_token",
-      notes: changelog
+    upload_to_testflight(
+      username: "username@uptech.team",
+      app_identifier: "awesomeproject.uptech.team"
     )
 
     # Commit bump build number, add a tag and push
@@ -90,7 +88,6 @@ platform :ios do
   lane :deploy_production do
     # Fetch provisioning profiles
     match(
-      git_url: certificates_repo_url,
       type: "adhoc",
       readonly: true
     )
@@ -102,10 +99,9 @@ platform :ios do
       export_method: "ad-hoc"
     )
 
-    changelog = changelog_from_git_commits(merge_commit_filtering: "exclude_merges")
-    hockey(
-      api_token: "api_token",
-      notes: changelog
+    upload_to_testflight(
+      username: "username@uptech.team",
+      app_identifier: "awesomeproject.uptech.team"
     )
 
     version = get_version_number(xcodeproj: "AwesomeProject.xcodeproj")
@@ -125,19 +121,16 @@ platform :ios do
   desc "Fetches certificates and profiles from the ios-certificates repository by HTTPS"
   lane :sync_profiles do
     match(
-      git_url: certificates_repo_url,
       type: "development",
       readonly: true
     )
 
     match(
-      git_url: certificates_repo_url,
       type: "adhoc",
       readonly: true
     )
 
     match(
-      git_url: certificates_repo_url,
       type: "appstore",
       readonly: true
     )
@@ -150,12 +143,10 @@ platform :ios do
     device_hash[device_name] = device_udid
     register_devices(devices: device_hash)
     match(
-      git_url: certificates_repo_url,
       type: "development",
       force_for_new_devices: true
     )
     match(
-      git_url: certificates_repo_url,
       type: "adhoc",
       force_for_new_devices: true
     )
@@ -189,14 +180,4 @@ platform :ios do
       UI.build_failure!("Couldn't recognize passed build configuration!")
     end
   end
-
-  # we don't want to use ssh on the local machines
-  def certificates_repo_url
-    if is_ci?
-      return "git@provider.com:certificates_repo_url.git"
-    else
-      return "https://provider.com/certificates_repo_url.git"
-    end
-  end
-
 end

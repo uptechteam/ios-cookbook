@@ -1,121 +1,106 @@
-version: 2
-jobs:
-  build-and-test:
+version: 2.1
+
+executors:
+  uptech_macos:
     macos:
-      xcode: "9.2.0"
+      xcode: "11.1.0"
     shell: /bin/bash --login -eo pipefail
     environment:
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
 
+
+commands:
+  uptech_restore_cache:
     steps:
-      - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "Cartfile.resolved" }}
+          key: dependency-cache-{{ checksum "Cartfile.resolved" }}-{{ .Environment.CACHE_VERSION }}
+
+  uptech_save_cache:
+    steps:
+      - save_cache:
+          key: dependency-cache-{{ checksum "Cartfile.resolved" }}-{{ .Environment.CACHE_VERSION }}
+          paths: 
+            - "Carthage/"
+
+  install_dependencies:
+    steps:
       - run:
-          name: Install Bundle
+          name: Bundle Install
           command: bundle install
       - run:
-          name: Check & Install Dependencies
-          command: ./bin/upstall SwiftLint carthage
+          name: Install Carthage & SwiftLint
+          command: ./bin/upstall
       - run:
-          name: Install Carthage Dependecies
+          name: Carthage Bootstrap
           command: carthage bootstrap --platform ios --cache-builds
-      - save_cache:
-          key: dependency-cache-{{ checksum "Cartfile.resolved" }}
-          paths:
-          - "Carthage/"
-      - run:
-          name: Build and run tests
-          command: fastlane test build_configuration:staging
+
+  uptech_store_test_results:
+    steps:
       - store_test_results:
           path: fastlane/test_output
 
-  deploy_staging:
-    macos:
-      xcode: "9.2.0"
-    shell: /bin/bash --login -eo pipefail
-    environment:
-      LC_ALL: en_US.UTF-8
-      LANG: en_US.UTF-8
 
+jobs:
+  build-and-test:
+    executor: uptech_macos
     steps:
       - checkout
-      - add_ssh_keys:
-          fingerprints:
-            - "fi:ng:er:pr:in:t1"
-            - "fi:ng:er:pr:in:t2"
-      - restore_cache:
-          key: dependency-cache-{{ checksum "Cartfile.resolved" }}
+      - uptech_restore_cache
+      - install_dependencies
+      - uptech_save_cache
       - run:
-          name: Install Bundle
-          command: bundle install
+          name: Build and run tests
+          command: bundle exec fastlane test build_configuration:staging
+      - uptech_store_test_results
+
+  deploy_qa:
+    executor: uptech_macos
+    steps:
+      - checkout
+      - uptech_restore_cache
+      - install_dependencies
+      - uptech_save_cache
       - run:
-          name: Check & Install Dependencies
-          command: ./bin/upstall SwiftLint carthage
+          name: Build and run tests
+          command: bundle exec fastlane test_then_deploy_qa
+      - uptech_store_test_results
+
+  deploy_staging:
+    executor: uptech_macos
+    steps:
+      - checkout
+      - uptech_restore_cache
+      - install_dependencies
+      - uptech_save_cache
       - run:
-          name: Install Carthage Dependecies
-          command: carthage bootstrap --platform ios --cache-builds
-      - save_cache:
-          key: dependency-cache-{{ checksum "Cartfile.resolved" }}
-          paths:
-            - "Carthage/"
-      - run:
-          name: Build, run tests and deploy beta
-          command: fastlane test_and_staging
+          name: Build and run tests
+          command: bundle exec fastlane test_then_deploy_staging
+      - uptech_store_test_results
 
   deploy_production:
-    macos:
-      xcode: "9.2.0"
-    shell: /bin/bash --login -eo pipefail
-    environment:
-      LC_ALL: en_US.UTF-8
-      LANG: en_US.UTF-8
-
+    executor: uptech_macos
     steps:
       - checkout
-      - add_ssh_keys:
-          fingerprints:
-            - "fi:ng:er:pr:in:t1"
-            - "fi:ng:er:pr:in:t2"
-      - restore_cache:
-          key: dependency-cache-{{ checksum "Cartfile.resolved" }}
+      - uptech_restore_cache
+      - install_dependencies
+      - uptech_save_cache
       - run:
-          name: Install Bundle
-          command: bundle install
-      - run:
-          name: Check & Install Dependencies
-          command: ./bin/upstall SwiftLint carthage
-      - run:
-          name: Install Carthage Dependecies
-          command: carthage bootstrap --platform ios --cache-builds
-      - save_cache:
-          key: dependency-cache-{{ checksum "Cartfile.resolved" }}
-          paths:
-            - "Carthage/"
-      - run:
-          name: Build, run tests and deploy beta
-          command: fastlane test_and_production
+          name: Build and run tests
+          command: bundle exec fastlane test_then_deploy_production
+      - uptech_store_test_results
 
 workflows:
   version: 2
-  build-test-and-deploy:
+  build:
     jobs:
       - build-and-test:
           filters:
             branches:
               ignore:
                 - develop
-                - master
-
-      - deploy_staging:
+      - deploy_qa:
           filters:
             branches:
               only:
                 - develop
-
-      - deploy_production:
-          filters:
-            branches:
-              only:
-                - master

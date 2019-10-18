@@ -121,16 +121,18 @@ func doSomething() -> (Int, Int) {
   return (0, 0)
 }
 ```
-- Usually we use namespacing enums (e.g. enum LoginScreen), but this approach has some problems. One of them is when we put a controller in namespacing extension, we are not able to see type information in memory debugger, only a bunch of ViewControllers. Prefixes to the resque: 
+- Names of all types for a given screen usually contain the same prefix (e.g. TemplatesPageListViewModel, TemplatesPageListViewController, TemplatesPageListView etc). Sometimes the names are too long and we use prefixes to name them (e.g. TPLViewModel, TPLViewController, TPLView).
+
+Alternative approach is to use namespacing enums (e.g. TemplatesPageList), but this approach has some problems. One of them is when we put a controller in namespacing extension, we are not able to see type information in memory debugger, only a bunch of ViewControllers.
 ```swift
 // Preferred
-class LSViewModel {}
-class LSViewController: UIViewController {}
+class TPLViewModel {}
+class TPLViewController: UIViewController {}
 
 // Not Preferred
-enum LoginScreen {}
+enum TemplatesPageList {}
 
-extension LoginScreen {
+extension TemplatesPageList {
   class ViewModel {}
   class ViewController: UIViewController {}
 }

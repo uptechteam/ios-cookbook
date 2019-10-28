@@ -74,26 +74,24 @@ if x == firstReallyReallyLongPredicateFunction()
   //..code here..//
 }
 ```
-- Nested types should be located at the bottom of a parent type or the file:
+- Nested types should be located at the top of a parent type:
 ```swift
 struct Foo {
-   let name: String 
-   let bar: Bar
-   
    struct Bar {}
+   
+   let bar: Bar
+   let name: String 
 }
 
 class ViewController: UIViewController {
+  struct Props {}
+  (private) enum Constants {}
+  
   ###
   
   code here
   
   ###
-  
-  // MARK: - Inner Declarations -
-  struct Props {}
-  
-  (private) enum Constants {}
 }
 ```
 - Do not put empty line at the beginning of a type:

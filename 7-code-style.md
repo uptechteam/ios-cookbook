@@ -1,4 +1,4 @@
-# Code Formatting
+# Code Style
 
 - [0. SwiftLint](#0-swiftlint)
 - [1. Code Generation](#1-code-generation)

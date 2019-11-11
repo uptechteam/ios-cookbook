@@ -1,4 +1,4 @@
-# Code Formatting
+# Code Style
 
 - [0. SwiftLint](#0-swiftlint)
 - [1. Code Generation](#1-code-generation)
@@ -11,6 +11,11 @@
   - [4.4 Protocols](#44-protocols)
   - [4.5 Closures](#45-closures)
   - [4.6 guard statements](#46-guard-statements)
+- [5. Tagged](#5-tagged)
+  - [5.1 Problem](#51-problem)
+  - [5.2 Solution](#52-solution)
+  - [5.3 Features](#53-features)
+  - [5.4 Installation](#54-installation)
 
 ### 0. SwiftLint
 In our projects we are using [SwiftLint](https://github.com/realm/SwiftLint), a tool to enforce Swift style and conventions.
@@ -472,3 +477,96 @@ doSomething(
 	// Show main screen
 ```
 - **4.6.4** When unwrapping optionals or checking if a condition is true, prefer `guard` statements as opposed to `if` statements to decrease the amount of nested indentation in your code.
+
+### 5. Tagged
+`Tagged` is a wrapper for an additional layer of type-safety.
+
+The main benefit that you will get is more clear code. And you don't have a chance accidentally set incorrect tagged value.
+
+
+#### 5.1 Problem
+There are cases when you want to distinguish IDs or any other primitive types like `String` or `Int` etc. And you're faced with a question of what particular value it represents.eg.
+
+You have a usual struct like this.
+``` swift 
+struct User {
+  let phone: String
+  let email: String
+  let advertisingID: UUID
+  let vendorID: UUID
+}
+```
+
+You run into API like this where you have several options what arguments you should pass.
+``` swift 
+func authenticateUser(credential: String)
+func registerUser(id: UUID)
+```
+And you have to spend time looking for API documentation than makes comments or change functions.
+<p>
+Tagged can prevent bugs at compile time.
+</p>
+
+#### 5.2 Solution
+We can improve `User` struct with Tagged types.
+
+``` swift 
+struct User {
+  let phone: PhoneNumber
+  let email: Email
+  let advertisingID: AdvertisingID
+  let vendorID: VendorID
+}
+```
+
+When you have specifically indicated type `Email` and `AdvertisingID` you have no doubt what you should pass.
+``` swift 
+func authenticateUser(credential: Email)
+func registerUser(id: AdvertisingID)
+```
+
+
+#### 5.3 Features
+If rawValue conforms to `Codadble`, `Equatable`, `Hashable`, `Comparable` and `ExpressibleBy-Literal` family of protocols that mean `Tagged` conditionally conformed to them too.
+<p>
+Tagged is convenient in usage the only thing you should care about is to create a unique tag.
+</p>
+
+You can create typealiases in a separate file with a dedicated tags.
+```swift 
+enum EmailTag {}
+
+typealias Email = Tagged<EmailTag, String>
+```
+
+Or you can do it directly inside the model.
+```swift 
+struct User {
+  typealias ID = Tagged<User, Int>
+
+  let id: ID // User.ID
+}
+```
+
+#### 5.4 Installation
+There are several ways to add it to the project.
+<br>
+
+`Carthage`
+``` 
+github "pointfreeco/swift-tagged" ~> 0.4
+```
+`CocoaPods`
+``` Ruby
+pod 'Tagged', '~> 0.4'
+```
+`SwiftPM` 
+``` Swift
+dependencies: [
+  .package(url: "https://github.com/pointfreeco/swift-tagged.git", from: "0.4.0")
+]
+```
+
+<br><b>References:</b>
+- [GitHub repository](https://github.com/pointfreeco/swift-tagged)
+- [Pointfree episode](https://www.pointfree.co/episodes/ep12-tagged)

@@ -1,6 +1,26 @@
-# Architectural Principles
+# Architectural Principles <!-- omit in toc -->
 
 This chapter defines ground ideas and architectural principles we follow at Uptech.
+
+- [Background](#background)
+  - [What is a &quot;Good Architecture&quot;?](#what-is-a-quotgood-architecturequot)
+  - [MVC](#mvc)
+  - [What is MVC?](#what-is-mvc)
+  - [Domain and Presentation](#domain-and-presentation)
+  - [MVVM, MVP, VIPER, React/Redux and friends](#mvvm-mvp-viper-reactredux-and-friends)
+  - [Conclusion](#conclusion)
+- [Cooking Recipes](#cooking-recipes)
+  - [1. UIViewController is a part of the Presentation layer](#1-uiviewcontroller-is-a-part-of-the-presentation-layer)
+  - [2. Rich Domain Model](#2-rich-domain-model)
+  - [3. Don't fight the iOS SDK](#3-dont-fight-the-ios-sdk)
+  - [4. Create other classes in the Presentation layer if you need it](#4-create-other-classes-in-the-presentation-layer-if-you-need-it)
+  - [5. Aim for the simplest solution first](#5-aim-for-the-simplest-solution-first)
+  - [6. Rx as a tool for asynchronous programming](#6-rx-as-a-tool-for-asynchronous-programming)
+    - [Futures](#futures)
+    - [Observer Pattern](#observer-pattern)
+  - [7. Redux](#7-redux)
+- [Future Directions](#future-directions)
+  - [Sources:](#sources)
 
 # Background
 
@@ -111,7 +131,7 @@ Fighting with iOS SDK is impossible and any attempt to do this complicates the s
 * Use patterns that iOS frameworks – especially UIKit – are already based on.
 * MVC, Delegate, Dependency Injection, Target / Action
 
-## 4. Create other classes in the Presentation layer if you need it.
+## 4. Create other classes in the Presentation layer if you need it
 
 The Presentation layer can contain a lot of logic too. If your ViewController becomes fat, use [child view controllers](https://www.swiftbysundell.com/basics/child-view-controllers/) to decompose the screen. Decouple data sources from the view controller. If things are getting out of hand, use Redux.
 
@@ -182,7 +202,7 @@ fetchTodoList()
   )
 ```
 
-## Observer Pattern
+### Observer Pattern
 
 **Observer pattern** is heavily utilized in Cocoa world and the SDK provides an API for that - `NotificationCenter`. The problem with a NotificationCenter is that notifications are not strongly typed, everything is `String` or `Any`. Instead, we can use generic `Observable<T>` from RxSwift to observe changes in the Domain model.
 
@@ -204,7 +224,7 @@ Keep calm and be ready for a brave new world!
 
 ---
 
-### Sources:
+## Sources:
 * [The only viable iOS architecture –– Amirzhan Idryshev
 ](https://medium.com/flawless-app-stories/the-only-viable-ios-architecture-c42f7b4c845d)
 * [Do MVC like it’s 1979 –– Bohdan Orlov

@@ -1,3 +1,5 @@
+**This chapter is outdated.** We got rid of the View Models, so that View Controllers dispatch actions directly into the Store. All the rest is still intact.
+
 - [Motivation](#motivation)
   - [Three Redux Principles](#three-redux-principles)
 - [Redux View Model](#redux-view-model)

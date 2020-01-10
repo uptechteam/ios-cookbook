@@ -1,14 +1,14 @@
-**This chapter is outdated.** We got rid of the View Models, so that View Controllers dispatch actions directly into the Store. All the rest is still intact.
-
 - [Motivation](#motivation)
   - [Three Redux Principles](#three-redux-principles)
-- [Redux View Model](#redux-view-model)
+- [Applying Redux](#applying-redux)
   - [State](#state)
   - [Actions](#actions)
   - [Reducer](#reducer)
   - [Store](#store)
   - [Props](#props)
-  - [View Model](#view-model)
+  - [View Controller - Redux Communication](#view-controller---redux-communication)
+      - [Dispatching Actions](#dispatching-actions)
+      - [Map State into Props and render](#map-state-into-props-and-render)
 - [Advanced usage](#advanced-usage)
   - [Async Actions](#async-actions)
   - [Action Creators](#action-creators)
@@ -21,9 +21,7 @@
 
 # Motivation
 
-As applications complexity grows, our code must manage more state than ever before. And all of us know that [a shared mutable state is bad](https://softwareengineering.stackexchange.com/a/148109).
-
-That's where [Redux](https://redux.js.org) comes in and attempts to **make state mutations predictable**.
+[Redux](https://redux.js.org) attempts to **make state mutations predictable**. It helps you write modules that behave consistently, improves maintability and scalability. 
 
 ## Three Redux Principles
 
@@ -41,15 +39,13 @@ To specify how the state tree is transformed by actions, you write pure reducers
 
 Please refer to the [official Redux ReadMe](https://redux.js.org) for more. It has tons of useful information.
 
-# Redux View Model
+# Applying Redux
 
-We are not trying to port Redux on iOS, instead, we applied core principles to our View Models. It helps us to scale complexity linearly and build even the most complicated screens with ease.
+We are not trying to port Redux to iOS, UIKit doesn't play well with a concept of a single state for the entire application. We don't want to fight with the platform SDK.
 
-Redux Components in iOS:
+Instead, we use Redux to manage state *of some complex objects* in our applications. 
 
-![](resources/redux_vm.png)
-
-Redux View Model consists of the following parts:
+Redux consists of the following parts:
 
 1. **Actions** that are payloads of information that send data from your application to your store. You send them to the store using `store.dispatch()`.
 2. **Reducers** specify how the application's state changes in response to actions sent to the store. Remember that actions only describe _what_ happened, but don't describe _how_ the application's state changes.
@@ -65,7 +61,7 @@ It's not meant to be exposed from the view model to other architecture component
 ```swift
 struct TeamChatState {
   var messages: [Message]
-  var isLoadingMessages: Bool
+  var isSendingMessage: Bool
 }
 ```
 
@@ -75,8 +71,8 @@ Actions are data structures that represent a state modification. We tend to use 
 
 ```swift
 enum TeamChatAction {
-  case loadMessages
-  case loadMessagesSuccess([Message])
+  case sendMessage
+  case sendMessageSuccess([Message])
   case deleteMessage(id: Message.Identifier)
 }
 ```
@@ -86,16 +82,18 @@ enum TeamChatAction {
 Reducer is a _pure_ function that applies actions to the state. It is important to keep it pure and implement it without side effects to be sure that the only way of modifying state is dispatching actions.
 
 ```swift
-extension TeamChat {
+extension TeamChatViewController {
   static func reduce(state: TeamChatState, action: TeamChatAction) -> TeamChatState {
     var state = state
 
     switch action {
-    case .loadMessages:
-      state.isLoadingMessages = true
+    case .sendMessage:
+      state.isSendingMessage = true
 
-    case let .loadMessagesSuccess(newMessages):
-      state.messages.append(newMessages)
+    case let .sendMessageSuccess(newMessage):
+      if let messageIndex = state.messages.index(where: { $0.clientID == newMessage.clientID }) {
+        state.messages[messageIndex] = newMessage
+      }
       state.isLoadingMessages = false
 
     case let .deleteMessage(messageIdToDelete):
@@ -107,7 +105,7 @@ extension TeamChat {
 }
 ```
 
-You might notice that in the example above we don't actually load the messages when a `.loadMessages` action is dispatched. That's because reducers are pure and can't perform network requests. On how to perform asynchronous changes a bit later.
+You might notice that in the example above we don't actually send the message when a `.sendMessage` action is dispatched. That's because reducers are pure and can't perform network requests. On how to perform asynchronous changes a bit later.
 
 ## Store
 
@@ -141,7 +139,7 @@ Props are described in [the Architecture chapter](4-architecture.md#props). They
 To map state into props we use a free pure function `makeProps(from state: State) -> Props`. A function is pure to make sure props (visual representation) depends only on the current state.
 
 ```swift
-extension TeamChat {
+extension TeamChatViewController {
   static func makeProps(from state: TeamChatState) -> TeamChatProps {
     return TeamChatProps(
       messages: makeMessages(from: state),
@@ -150,7 +148,7 @@ extension TeamChat {
   }
 
   private static func makeTitle(from state: State) -> String {
-    return state.isLoadingMessages ? "Loading" : "Chat"
+    return state.isSendingMessage ? "Sending" : "Chat"
   }
 
   private static func makeMessages(from state: State) -> [TeamChatProps.Message] {
@@ -167,59 +165,79 @@ extension TeamChat {
 }
 ```
 
-## View Model
+## View Controller - Redux Communication
 
-A View Model is a part that combines and wraps all other parts using a reactive framework.
-Here you can also see how asynchronous actions are handled with a `loadMessagesAction` and `loadMessagesSuccessAction`.
+A View Controller owns and setups an instance of a Store, dispatches action into Store, observes State changes, and maps State into Props. View Controller also injects middlewares into the store to perform side effects (like load data) or handle the navigation.
+
+#### Dispatching Actions
+
+All actions are dispatched with a simple `store.dispatch(_ action: Action)` call. Typical View Controllers actions:
+* lifecycle events (`viewWillAppear`, `viewWillDisappear`, etc)
+* UI actions (button taps, cell selections, etc)
+* changes in the Domain Model (data did change, new item was created etc)
+
+#### Map State into Props and render
+
+View Controller observes State changes and maps each change into the Props. Each time new Props are generated, it should be rendered by a view with a `render(props: Props)` method.
+
+`render(props:)` method compares received Props with a currently rendered Props, so that we won't perform excessive UI updates.
+
 
 ```swift
-final class TeamChatViewModel {
-  struct Inputs {
-    let loadMessages: Observable<Void>
-    let deleteMessage: Observable<Message.Identifier>
+final class TeamChatViewController: UIViewController {
+  private let messagesProvider: MessagesProvider
+  private let store: Store
+  private var renderedProps: TeamChatProps?
+
+  init(chatID: Chat.ID, messagesProvider: MessagesProvider) {
+    let (routingMiddleware, routeObservable) = TeamChatViewController.makeRoutingMiddleware()
+    self.store = Store(initialState: ..., reducer: TeamChatViewController.reduce, middlewares: [routingMiddleware])
+    self.messagesProvider = messagesProvider
+    super.init(...)
+    bindToStore(state: store.state, route: routeObservable)
   }
 
-  struct Outputs {
-    let props: Observable<TeamChatProps>
+  override func viewDidLoad() {
+    super.viewDidLoad()
+
+    observeModel()
+
+    store.dispatch(Action.preloadData)
   }
 
-  func makeOutputs(from inputs: Inputs) -> Outputs {
-    // 1. Create a Store
-    let initialState = TeamChatState(messages: [], isLoadingMessages: false)
-    let store = ReduxStore<TeamChatState, TeamChatAction>(initialState: initialState, reducer: TeamChat.reducer)
+  private func observeModel() {
+    messagesProvider.messagesDidChange
+      .subscribe(onNext: { [messagesProvider, store] in 
+        store.dispatch(Action.updateMessageList(messagesProvider.messages))
+      })
+      .disposed(by: disposeBag)
+  }
 
-    // 2. Map inputs into the Actions
-    let loadMessagesAction = inputs.loadMessages
-      .map { TeamChatAction.loadMessages }
-
-    let loadMessagesSuccessAction = inputs.loadMessages
-      .flatMap { () -> Observable<TeamChatAction> in
-        return chatService.loadMessages()
-          .map(TeamChatAction.loadMessagesSuccess)
-      }
-
-    let deleteMessageAction = inputs.deleteMessage
-      .map(TeamChatAction.deleteMessage)
-
-    let actions = Observable.merge([
-      loadMessagesAction,
-      loadMessagesSuccessAction
-      deleteMessageAction
-    ])
-
-    // 3. Subscribe for Actions to dispatch them into Store
-    actions
-      .subscribe(onNext: store.dispatch)
+  private func bindToStore(state: Observable<State>, route: Observable<Route>) {
+    state
+      .map(TeamChatViewController.makeProps(from:))
+      .observe(on: MainScheduler.instance)
+      .subscribe(onNext: { [unowned self] in self.render(props: $0) })
       .disposed(by: disposeBag)
 
-    let props = state
-      .map(TeamChat.makeProps(from:))
-      .share(replay: 1, scope: .forever)
+    route
+      .observe(on: MainScheduler.instance)
+      .subscribe(onNext: { [unowned self] in self.navigate(by: $0) })
+      .disposed(by: disposeBag)
+  }
 
-    return Outputs(props: props)
+  private func render(props: TeamChatProps) {
+    if props.messages != renderedProps?.messages {
+      setMessages(props.messages)
+    }
+
+    ...
+
+    renderedProps = props
   }
 }
 ```
+
 
 # Advanced usage
 
@@ -278,8 +296,8 @@ Redux is a pretty simple framework, however, it's designed with a lot of care an
 Let's take a look on a simple logging middleware:
 
 ```swift
-extension TeamChat {
-  static func makeLoggingMiddleware(logger: Logger) -> TeamChat.Store.Middleware {
+extension TeamChatViewController {
+  static func makeLoggingMiddleware(logger: Logger) -> Store.Middleware {
     return { dispatch, getState in
       return { next in
         return { action in
@@ -337,7 +355,7 @@ What happens when this middleware executes:
 Middlewares are capable to dispatch actions asynchronously, so now we can move messages fetching logic into its own middleware:
 
 ```swift
-static func makeMessagesLoaderMiddleware(chatService: ChatService) -> TeamChat.Store.Middleware {
+static func makeMessagesLoaderMiddleware(messagesService: MessagesService) -> TeamChat.Store.Middleware {
   let disposeBag = DisposeBag()
   return { dispatch, getState in
       return { next in

@@ -6,6 +6,7 @@
 //  Copyright © 2018 Arthur Mironenko. All rights reserved.
 //
 
+import Foundation
 import RxSwift
 import Moya
 import RxMoya
@@ -67,30 +68,26 @@ final class TwitterService {
     self.provider = provider
   }
 
-  func getTimeline(offset: Int, limit: Int) -> Observable<[Tweet]> {
+  func getTimeline(offset: Int, limit: Int) -> Single<[Tweet]> {
     let target = TwitterTarget.timeline(offset: offset, limit: limit)
     return provider.rx.request(target)
       .filterSuccessfulStatusCodes()
       .map([NetworkTweet].self, using: decoder, failsOnEmptyData: true)
-      .debug()
       .map { $0.compactMap(Tweet.init) }
-      .asObservable()
   }
 
-  func postTweet(_ tweet: ComposedTweet) -> Observable<Tweet> {
+  func postTweet(_ tweet: ComposedTweet) -> Single<Tweet> {
     let newTweet = NetworkOutgoingTweet(username: user.username, text: tweet.text, clientID: tweet.id)
     let target = TwitterTarget.postTweet(newTweet)
     return provider.rx.request(target)
       .filterSuccessfulStatusCodes()
       .map(NetworkTweet.self, using: decoder, failsOnEmptyData: true)
-      .asObservable()
-      .flatMap { networkTweet -> Observable<Tweet> in
+      .flatMap { networkTweet -> Single<Tweet> in
         guard let tweet = Tweet(response: networkTweet) else {
-          return Observable.error(MoyaError.requestMapping("Error"))
+          return .error(MoyaError.requestMapping("Error"))
         }
 
-        return Observable.just(tweet)
+        return .just(tweet)
       }
-      .debug()
   }
 }

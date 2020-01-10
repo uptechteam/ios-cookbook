@@ -7,20 +7,24 @@
 //
 
 import UIKit
-import RxSwift
-import RxCocoa
+
+protocol ComposeTweetViewControllerDelegate: AnyObject {
+  func composeTweetViewControllerDidFinish(_ viewController: ComposeTweetViewController)
+}
 
 final class ComposeTweetViewController: UIViewController {
 
-  fileprivate let discardButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: nil, action: nil)
-  fileprivate let sendButton = UIBarButtonItem(barButtonSystemItem: .done, target: nil, action: nil)
-  fileprivate lazy var contentView = ComposeTweetContentView.initFromNib()
+  weak var delegate: ComposeTweetViewControllerDelegate?
 
-  let disposeBag = DisposeBag()
+  private let timelineProvider: TimelineProvider
 
-  init() {
+  private let discardButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: nil, action: nil)
+  private let sendButton = UIBarButtonItem(barButtonSystemItem: .done, target: nil, action: nil)
+  private lazy var contentView = ComposeTweetContentView.initFromNib()
+
+  init(timelineProvider: TimelineProvider) {
+    self.timelineProvider = timelineProvider
     super.init(nibName: nil, bundle: nil)
-    setup()
   }
 
   required init?(coder aDecoder: NSCoder) {
@@ -33,7 +37,8 @@ final class ComposeTweetViewController: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    setup()
+    setupUI()
+    setupUIActions()
   }
 
   override func viewWillAppear(_ animated: Bool) {
@@ -41,29 +46,28 @@ final class ComposeTweetViewController: UIViewController {
     contentView.tweetTextView.becomeFirstResponder()
   }
 
-  private func setup() {
-    setupUI()
-  }
-
   private func setupUI() {
     title = "Compose Tweet"
     navigationItem.leftBarButtonItem = discardButton
     navigationItem.rightBarButtonItem = sendButton
   }
-}
 
-extension Reactive where Base: ComposeTweetViewController {
-  var didDiscard: Observable<Void> {
-    return base.discardButton.rx.tap.asObservable()
+  private func setupUIActions() {
+    discardButton.target = self
+    discardButton.action = #selector(handleDisccardButtonTap)
+
+    sendButton.target = self
+    sendButton.action = #selector(handleSendButtonTap)
   }
 
-  var didSubmit: Observable<ComposedTweet> {
-    let tweetText = base.contentView.tweetTextView.rx.text
-      .asObservable()
-      .map { $0 ?? "" }
+  @objc
+  private func handleDisccardButtonTap() {
+    delegate?.composeTweetViewControllerDidFinish(self)
+  }
 
-    return base.sendButton.rx.tap
-      .withLatestFrom(tweetText)
-      .map(ComposedTweet.init)
+  @objc
+  private func handleSendButtonTap() {
+    timelineProvider.sendTweet(message: contentView.tweetTextView.text)
+    delegate?.composeTweetViewControllerDidFinish(self)
   }
 }

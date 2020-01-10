@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Timeline {
+extension TimelineViewController {
   static func makeProps(from state: State) -> TimelineViewController.Props {
     return TimelineViewController.Props(
       items: makeItems(from: state),
@@ -28,23 +28,22 @@ extension Timeline {
       )
     }
 
-    func makePendingCellProps(from pendingTweet: State.PendingTweet) -> TimelinePendingTweetCell.Props {
+    func makePendingCellProps(tweet: ComposedTweet, error: Error?) -> TimelinePendingTweetCell.Props {
       return TimelinePendingTweetCell.Props(
         username: state.user.username,
-        time: DateFormatter.shortTime.string(from: pendingTweet.tweet.sentDate),
-        tweet: pendingTweet.tweet.text,
-        status: pendingTweet.error == nil ? .sending : .error
+        time: DateFormatter.shortTime.string(from: tweet.sentDate),
+        tweet: tweet.text,
+        status: error == nil ? .sending : .error
       )
     }
 
     return state.timeline
-      .compactMap { tweetID in
-        if let pendingTweet = state.allPendingTweets[tweetID] {
-          return .pendingTweet(makePendingCellProps(from: pendingTweet))
-        } else if let fetchedTweet = state.allFetchedTweets[tweetID] {
-          return .tweet(makeTweetCellProps(from: fetchedTweet))
-        } else {
-          fatalError("State is out of sync!")
+      .map { timelineTweet in
+        switch timelineTweet {
+        case let .pending(composedTweet, error):
+          return .pendingTweet(makePendingCellProps(tweet: composedTweet, error: error))
+        case let .remote(remoteTweet):
+          return .tweet(makeTweetCellProps(from: remoteTweet))
         }
       }
   }

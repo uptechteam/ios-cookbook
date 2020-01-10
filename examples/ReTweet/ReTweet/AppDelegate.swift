@@ -23,10 +23,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let user = User(username: "Arthur")
     let twitterService = TwitterService(
       user: user,
-      provider: MoyaProvider<TwitterTarget>(plugins: [NetworkLoggerPlugin(verbose: true, cURL: true)])
+      provider: MoyaProvider<TwitterTarget>(plugins: [NetworkLoggerPlugin()])
     )
+    let timelineProvider = TimelineProvider(twitterService: twitterService)
 
-    let timelineViewController = TimelineViewController(user: user, twitterService: twitterService)
+    let timelineViewController = TimelineViewController(user: user, timelineProvider: timelineProvider)
     let timelineNavigationController = UINavigationController(rootViewController: timelineViewController)
     window.rootViewController = timelineNavigationController
     window.makeKeyAndVisible()

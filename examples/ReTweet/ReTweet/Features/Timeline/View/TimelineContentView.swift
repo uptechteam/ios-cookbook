@@ -11,20 +11,25 @@ import RxSwift
 import RxCocoa
 import RxDataSources
 
+protocol TimelineContentViewDelegate: AnyObject {
+  func timelineContentViewDidRefresh(_ view: TimelineContentView)
+  func timelineContentView(_ view: TimelineContentView, didTapResendButtonAtIndex: Int)
+}
+
 final class TimelineContentView: UIView {
 
   fileprivate typealias DataSource = RxTableViewSectionedReloadDataSource<SectionModel<Void, TimelineViewController.Props.Item>>
 
-  private let tableView = UITableView()
-  fileprivate let refreshControl = UIRefreshControl()
-  private let dataSource: DataSource
+  weak var delegate: TimelineContentViewDelegate?
 
-  fileprivate let resendTap: Observable<Int>
+  private let refreshControl = UIRefreshControl()
+  private let tableView = UITableView()
+  private var dataSource: DataSource!
+
   private let items = PublishSubject<[TimelineViewController.Props.Item]>()
   private let disposeBag = DisposeBag()
 
   override init(frame: CGRect) {
-    (self.dataSource, self.resendTap) = makeDataSource()
     super.init(frame: frame)
     setup()
   }
@@ -34,6 +39,10 @@ final class TimelineContentView: UIView {
   }
 
   private func setup() {
+    dataSource = makeDataSource()
+
+    refreshControl.addTarget(self, action: #selector(handleRefreshControl), for: .valueChanged)
+
     tableView.addSubview(refreshControl)
     tableView.register(TimelineTweetCell.self)
     tableView.register(TimelinePendingTweetCell.self)
@@ -55,6 +64,38 @@ final class TimelineContentView: UIView {
       .disposed(by: disposeBag)
   }
 
+  private func makeDataSource() -> TimelineContentView.DataSource {
+    return TimelineContentView.DataSource(configureCell: { (dataSource, tableView, indexPath, item) -> UITableViewCell in
+      switch item {
+      case .tweet(let props):
+        let cell: TimelineTweetCell = tableView.dequeueReusableCell(for: indexPath)
+        cell.render(props: props)
+        return cell
+
+      case .pendingTweet(let props):
+        let cell: TimelinePendingTweetCell = tableView.dequeueReusableCell(for: indexPath)
+        cell.render(props: props)
+
+        cell.rx.resendTap
+          .subscribe(onNext: { [weak self] in
+            guard let self = self else { return }
+            self.delegate?.timelineContentView(self, didTapResendButtonAtIndex: indexPath.row)
+          })
+          .disposed(by: cell.disposeOnReuseBag)
+
+        return cell
+      }
+    })
+  }
+
+  @objc private func handleRefreshControl() {
+    if refreshControl.isRefreshing {
+      DispatchQueue.main.async {
+        self.delegate?.timelineContentViewDidRefresh(self)
+      }
+    }
+  }
+
   func setItems(_ items: [TimelineViewController.Props.Item]) {
     self.items.onNext(items)
   }
@@ -68,36 +109,3 @@ final class TimelineContentView: UIView {
   }
 }
 
-private func makeDataSource() -> (dataSource: TimelineContentView.DataSource, resendTap: Observable<Int>) {
-  let resendTap = PublishSubject<Int>()
-  let dataSource = TimelineContentView.DataSource(configureCell: { (dataSource, tableView, indexPath, item) -> UITableViewCell in
-    switch item {
-    case .tweet(let props):
-      let cell: TimelineTweetCell = tableView.dequeueReusableCell(for: indexPath)
-      cell.render(props: props)
-      return cell
-
-    case .pendingTweet(let props):
-      let cell: TimelinePendingTweetCell = tableView.dequeueReusableCell(for: indexPath)
-      cell.render(props: props)
-
-      cell.rx.resendTap
-        .subscribe(onNext: { resendTap.onNext(indexPath.row) })
-        .disposed(by: cell.disposeOnReuseBag)
-
-      return cell
-    }
-  })
-
-  return (dataSource, resendTap.asObservable())
-}
-
-extension Reactive where Base: TimelineContentView {
-  var resendButtonTap: Observable<Int> {
-    return base.resendTap
-  }
-
-  var pullToRefresh: Observable<Void> {
-    return base.refreshControl.rx.controlEvent(.valueChanged).asObservable()
-  }
-}

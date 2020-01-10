@@ -3,7 +3,7 @@
 This chapter defines ground ideas and architectural principles we follow at Uptech.
 
 - [Background](#background)
-  - [What is a &quot;Good Architecture&quot;?](#what-is-a-quotgood-architecturequot)
+  - [What is a "Good Architecture"?](#what-is-a-%22good-architecture%22)
   - [MVC](#mvc)
   - [What is MVC?](#what-is-mvc)
   - [Domain and Presentation](#domain-and-presentation)
@@ -18,7 +18,7 @@ This chapter defines ground ideas and architectural principles we follow at Upte
   - [6. Rx as a tool for asynchronous programming](#6-rx-as-a-tool-for-asynchronous-programming)
     - [Futures](#futures)
     - [Observer Pattern](#observer-pattern)
-  - [7. Redux](#7-redux)
+  - [7. Redux for complex objects](#7-redux-for-complex-objects)
 - [Future Directions](#future-directions)
   - [Sources:](#sources)
 
@@ -208,11 +208,13 @@ fetchTodoList()
 
 Apart from that Rx provides a lot of useful operators, such as `flatMapLatest`, `debounce` or `distinctUntilChanged`. Be aware of them, but do not overuse. Most of the asynchronous code is located in the Domain Model, so only part of the Presentation Layer that should touch Rx is subscribing to the model updates notifications.
 
-## 7. Redux
+## 7. Redux for complex objects
 
 Redux is another useful approach in our toolbelt. Originally, Redux is an implementation of the unidirectional data flow architecture, where the whole app state is represented in a single big tree-object, and mutations to this object are limited by a distinct number of actions. 
 
-This idea is also applicable to the unit of any size: whole app, single module or even just a class. Redux is an implementation detail of a single module so it doesn't affect the system. We use Redux for objects with a lot of interdependent states, it allows us to ssynchronize state management in a single function `reducer`. For more information refer to [the Redux chapter](4-1-redux.md).
+This idea is also applicable to the unit of any size: whole app, single module or even just a class. Redux is an implementation detail of a single module so it doesn't affect the rest of the system. 
+
+We use Redux for objects with a lot of interdependent states, it allows us to synchronize state management in a single function, which guarantees that state is always valid. For more information refer to [the Redux chapter](4-1-redux.md).
 
 # Future Directions
 

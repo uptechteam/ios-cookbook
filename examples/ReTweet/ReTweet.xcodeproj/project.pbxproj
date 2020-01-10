@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,16 +14,6 @@
 		8E05D433216F43810049B78A /* ComposeTweetContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E05D432216F43810049B78A /* ComposeTweetContentView.swift */; };
 		8E05D435216F48610049B78A /* ComposeTweetContentView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8E05D434216F48610049B78A /* ComposeTweetContentView.xib */; };
 		8E05D437216F4D510049B78A /* NibInitializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E05D436216F4D510049B78A /* NibInitializable.swift */; };
-		8E05D444216F51600049B78A /* Differentiator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E05D43A216F51600049B78A /* Differentiator.framework */; };
-		8E05D445216F51600049B78A /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E05D43B216F51600049B78A /* Kingfisher.framework */; };
-		8E05D446216F51600049B78A /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E05D43C216F51600049B78A /* Alamofire.framework */; };
-		8E05D447216F51600049B78A /* Dip.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E05D43D216F51600049B78A /* Dip.framework */; };
-		8E05D448216F51600049B78A /* RxMoya.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E05D43E216F51600049B78A /* RxMoya.framework */; };
-		8E05D449216F51600049B78A /* RxDataSources.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E05D43F216F51600049B78A /* RxDataSources.framework */; };
-		8E05D44A216F51600049B78A /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E05D440216F51600049B78A /* RxCocoa.framework */; };
-		8E05D44B216F51600049B78A /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E05D441216F51600049B78A /* RxSwift.framework */; };
-		8E05D44C216F51600049B78A /* Moya.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E05D442216F51600049B78A /* Moya.framework */; };
-		8E05D44F216F52020049B78A /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E05D44E216F52020049B78A /* Result.framework */; };
 		8E05D452216F52900049B78A /* ComposedTweet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E05D451216F52900049B78A /* ComposedTweet.swift */; };
 		8E05D455216F538B0049B78A /* TimelineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E05D454216F538B0049B78A /* TimelineViewController.swift */; };
 		8E05D459216F58030049B78A /* TimelineContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E05D458216F58030049B78A /* TimelineContentView.swift */; };
@@ -38,17 +28,25 @@
 		8E31B0A021709C8500CB1DC4 /* NetworkTweet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E31B09F21709C8500CB1DC4 /* NetworkTweet.swift */; };
 		8E31B0A221709CC500CB1DC4 /* NetworkOutgoingTweet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E31B0A121709CC500CB1DC4 /* NetworkOutgoingTweet.swift */; };
 		8E31B0A62170A4C500CB1DC4 /* ReduxStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E31B0A52170A4C400CB1DC4 /* ReduxStore.swift */; };
-		8E31B0A82170A4E000CB1DC4 /* TimelineNamespace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E31B0A72170A4E000CB1DC4 /* TimelineNamespace.swift */; };
-		8E31B0AE2170B55E00CB1DC4 /* TimelineViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E31B0AD2170B55E00CB1DC4 /* TimelineViewModel.swift */; };
 		8E31B0B521748E1600CB1DC4 /* CustomJSONDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E31B0B421748E1600CB1DC4 /* CustomJSONDecoder.swift */; };
 		8E31B0B721748E4900CB1DC4 /* CustomJSONEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E31B0B621748E4900CB1DC4 /* CustomJSONEncoder.swift */; };
 		8E31B0B92174909300CB1DC4 /* Formatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E31B0B82174909300CB1DC4 /* Formatter.swift */; };
+		8E7BC2C023C899E20095309C /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 8E7BC2BF23C899E20095309C /* RxRelay */; };
+		8E7BC2C223C899E20095309C /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 8E7BC2C123C899E20095309C /* RxSwift */; };
+		8E7BC2C423C899E20095309C /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 8E7BC2C323C899E20095309C /* RxCocoa */; };
+		8E7BC2C723C89A410095309C /* Dip in Frameworks */ = {isa = PBXBuildFile; productRef = 8E7BC2C623C89A410095309C /* Dip */; };
+		8E7BC2CA23C89A5D0095309C /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = 8E7BC2C923C89A5D0095309C /* Differentiator */; };
+		8E7BC2CC23C89A5D0095309C /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = 8E7BC2CB23C89A5D0095309C /* RxDataSources */; };
+		8E7BC2CF23C89B020095309C /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 8E7BC2CE23C89B020095309C /* Kingfisher */; };
+		8E7BC2D223C89B5E0095309C /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 8E7BC2D123C89B5E0095309C /* Moya */; };
+		8E7BC2D423C89B5E0095309C /* RxMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 8E7BC2D323C89B5E0095309C /* RxMoya */; };
+		8E7BC2D623C89E740095309C /* TimelineProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E7BC2D523C89E740095309C /* TimelineProvider.swift */; };
+		8E7BC2D823C8A1EE0095309C /* TimelineTweet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E7BC2D723C8A1EE0095309C /* TimelineTweet.swift */; };
 		8EAB918021762968000F60CC /* ErrorPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EAB917F21762968000F60CC /* ErrorPresenter.swift */; };
 		8ECAFA7221788EEB005D2DF6 /* RxExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECAFA7121788EEB005D2DF6 /* RxExtensions.swift */; };
 		8ECAFA772178BF12005D2DF6 /* TimelineStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECAFA762178BF11005D2DF6 /* TimelineStore.swift */; };
 		8ECAFA792178C197005D2DF6 /* TimelineProps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECAFA782178C197005D2DF6 /* TimelineProps.swift */; };
-		8ECAFA7B2178C23A005D2DF6 /* TimelineActionCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECAFA7A2178C23A005D2DF6 /* TimelineActionCreator.swift */; };
-		8ECAFA7E2178C95B005D2DF6 /* TimelineResendMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECAFA7D2178C95B005D2DF6 /* TimelineResendMiddleware.swift */; };
+		8ECAFA7E2178C95B005D2DF6 /* TimelineProviderMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECAFA7D2178C95B005D2DF6 /* TimelineProviderMiddleware.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -86,17 +84,16 @@
 		8E31B09F21709C8500CB1DC4 /* NetworkTweet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTweet.swift; sourceTree = "<group>"; };
 		8E31B0A121709CC500CB1DC4 /* NetworkOutgoingTweet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkOutgoingTweet.swift; sourceTree = "<group>"; };
 		8E31B0A52170A4C400CB1DC4 /* ReduxStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReduxStore.swift; sourceTree = "<group>"; };
-		8E31B0A72170A4E000CB1DC4 /* TimelineNamespace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineNamespace.swift; sourceTree = "<group>"; };
-		8E31B0AD2170B55E00CB1DC4 /* TimelineViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineViewModel.swift; sourceTree = "<group>"; };
 		8E31B0B421748E1600CB1DC4 /* CustomJSONDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomJSONDecoder.swift; sourceTree = "<group>"; };
 		8E31B0B621748E4900CB1DC4 /* CustomJSONEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomJSONEncoder.swift; sourceTree = "<group>"; };
 		8E31B0B82174909300CB1DC4 /* Formatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatter.swift; sourceTree = "<group>"; };
+		8E7BC2D523C89E740095309C /* TimelineProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineProvider.swift; sourceTree = "<group>"; };
+		8E7BC2D723C8A1EE0095309C /* TimelineTweet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineTweet.swift; sourceTree = "<group>"; };
 		8EAB917F21762968000F60CC /* ErrorPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorPresenter.swift; sourceTree = "<group>"; };
 		8ECAFA7121788EEB005D2DF6 /* RxExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxExtensions.swift; sourceTree = "<group>"; };
 		8ECAFA762178BF11005D2DF6 /* TimelineStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineStore.swift; sourceTree = "<group>"; };
 		8ECAFA782178C197005D2DF6 /* TimelineProps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineProps.swift; sourceTree = "<group>"; };
-		8ECAFA7A2178C23A005D2DF6 /* TimelineActionCreator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineActionCreator.swift; sourceTree = "<group>"; };
-		8ECAFA7D2178C95B005D2DF6 /* TimelineResendMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineResendMiddleware.swift; sourceTree = "<group>"; };
+		8ECAFA7D2178C95B005D2DF6 /* TimelineProviderMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineProviderMiddleware.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,16 +101,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8E05D444216F51600049B78A /* Differentiator.framework in Frameworks */,
-				8E05D445216F51600049B78A /* Kingfisher.framework in Frameworks */,
-				8E05D446216F51600049B78A /* Alamofire.framework in Frameworks */,
-				8E05D447216F51600049B78A /* Dip.framework in Frameworks */,
-				8E05D448216F51600049B78A /* RxMoya.framework in Frameworks */,
-				8E05D449216F51600049B78A /* RxDataSources.framework in Frameworks */,
-				8E05D44A216F51600049B78A /* RxCocoa.framework in Frameworks */,
-				8E05D44B216F51600049B78A /* RxSwift.framework in Frameworks */,
-				8E05D44F216F52020049B78A /* Result.framework in Frameworks */,
-				8E05D44C216F51600049B78A /* Moya.framework in Frameworks */,
+				8E7BC2C723C89A410095309C /* Dip in Frameworks */,
+				8E7BC2CA23C89A5D0095309C /* Differentiator in Frameworks */,
+				8E7BC2D223C89B5E0095309C /* Moya in Frameworks */,
+				8E7BC2CF23C89B020095309C /* Kingfisher in Frameworks */,
+				8E7BC2C423C899E20095309C /* RxCocoa in Frameworks */,
+				8E7BC2CC23C89A5D0095309C /* RxDataSources in Frameworks */,
+				8E7BC2D423C89B5E0095309C /* RxMoya in Frameworks */,
+				8E7BC2C223C899E20095309C /* RxSwift in Frameworks */,
+				8E7BC2C023C899E20095309C /* RxRelay in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -195,6 +191,7 @@
 				8E05D470216F937B0049B78A /* User.swift */,
 				8E31B09A2170990800CB1DC4 /* Tweet.swift */,
 				8E05D451216F52900049B78A /* ComposedTweet.swift */,
+				8E7BC2D723C8A1EE0095309C /* TimelineTweet.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -202,8 +199,7 @@
 		8E05D453216F537D0049B78A /* Timeline */ = {
 			isa = PBXGroup;
 			children = (
-				8E31B0A72170A4E000CB1DC4 /* TimelineNamespace.swift */,
-				8E05D457216F53980049B78A /* ViewModel */,
+				8E05D457216F53980049B78A /* Store */,
 				8E05D456216F538E0049B78A /* View */,
 			);
 			path = Timeline;
@@ -219,16 +215,14 @@
 			path = View;
 			sourceTree = "<group>";
 		};
-		8E05D457216F53980049B78A /* ViewModel */ = {
+		8E05D457216F53980049B78A /* Store */ = {
 			isa = PBXGroup;
 			children = (
 				8ECAFA7C2178C94B005D2DF6 /* Middleware */,
-				8E31B0AD2170B55E00CB1DC4 /* TimelineViewModel.swift */,
 				8ECAFA762178BF11005D2DF6 /* TimelineStore.swift */,
 				8ECAFA782178C197005D2DF6 /* TimelineProps.swift */,
-				8ECAFA7A2178C23A005D2DF6 /* TimelineActionCreator.swift */,
 			);
-			path = ViewModel;
+			path = Store;
 			sourceTree = "<group>";
 		};
 		8E05D45A216F58830049B78A /* Cells */ = {
@@ -278,6 +272,7 @@
 			children = (
 				8E31B09E21709C7900CB1DC4 /* NetworkModels */,
 				8E31B09C21709B4300CB1DC4 /* TwitterService.swift */,
+				8E7BC2D523C89E740095309C /* TimelineProvider.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -294,7 +289,7 @@
 		8ECAFA7C2178C94B005D2DF6 /* Middleware */ = {
 			isa = PBXGroup;
 			children = (
-				8ECAFA7D2178C95B005D2DF6 /* TimelineResendMiddleware.swift */,
+				8ECAFA7D2178C95B005D2DF6 /* TimelineProviderMiddleware.swift */,
 			);
 			path = Middleware;
 			sourceTree = "<group>";
@@ -309,13 +304,23 @@
 				8E05D415216F41290049B78A /* Sources */,
 				8E05D416216F41290049B78A /* Frameworks */,
 				8E05D417216F41290049B78A /* Resources */,
-				8E05D438216F508F0049B78A /* Copy Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = ReTweet;
+			packageProductDependencies = (
+				8E7BC2BF23C899E20095309C /* RxRelay */,
+				8E7BC2C123C899E20095309C /* RxSwift */,
+				8E7BC2C323C899E20095309C /* RxCocoa */,
+				8E7BC2C623C89A410095309C /* Dip */,
+				8E7BC2C923C89A5D0095309C /* Differentiator */,
+				8E7BC2CB23C89A5D0095309C /* RxDataSources */,
+				8E7BC2CE23C89B020095309C /* Kingfisher */,
+				8E7BC2D123C89B5E0095309C /* Moya */,
+				8E7BC2D323C89B5E0095309C /* RxMoya */,
+			);
 			productName = ReTweet;
 			productReference = 8E05D419216F41290049B78A /* ReTweet.app */;
 			productType = "com.apple.product-type.application";
@@ -344,6 +349,13 @@
 				Base,
 			);
 			mainGroup = 8E05D410216F41290049B78A;
+			packageReferences = (
+				8E7BC2BE23C899E20095309C /* XCRemoteSwiftPackageReference "RxSwift" */,
+				8E7BC2C523C89A410095309C /* XCRemoteSwiftPackageReference "Dip" */,
+				8E7BC2C823C89A5D0095309C /* XCRemoteSwiftPackageReference "RxDataSources" */,
+				8E7BC2CD23C89B020095309C /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				8E7BC2D023C89B5E0095309C /* XCRemoteSwiftPackageReference "Moya" */,
+			);
 			productRefGroup = 8E05D41A216F41290049B78A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -368,64 +380,32 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		8E05D438216F508F0049B78A /* Copy Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/Kingfisher.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/Dip.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/Alamofire.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/Differentiator.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/Moya.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/RxMoya.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/RxSwift.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/RxCocoa.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/RxDataSources.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/Result.framework",
-			);
-			name = "Copy Frameworks";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		8E05D415216F41290049B78A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				8E05D471216F937B0049B78A /* User.swift in Sources */,
+				8E7BC2D823C8A1EE0095309C /* TimelineTweet.swift in Sources */,
 				8E31B0A021709C8500CB1DC4 /* NetworkTweet.swift in Sources */,
-				8E31B0A82170A4E000CB1DC4 /* TimelineNamespace.swift in Sources */,
 				8E31B0B92174909300CB1DC4 /* Formatter.swift in Sources */,
 				8E31B0B721748E4900CB1DC4 /* CustomJSONEncoder.swift in Sources */,
 				8ECAFA7221788EEB005D2DF6 /* RxExtensions.swift in Sources */,
 				8E05D462216F68EC0049B78A /* TimelineTweetCell.swift in Sources */,
 				8E05D46C216F79C60049B78A /* Reusable.swift in Sources */,
-				8ECAFA7E2178C95B005D2DF6 /* TimelineResendMiddleware.swift in Sources */,
+				8E7BC2D623C89E740095309C /* TimelineProvider.swift in Sources */,
+				8ECAFA7E2178C95B005D2DF6 /* TimelineProviderMiddleware.swift in Sources */,
 				8E31B09B2170990800CB1DC4 /* Tweet.swift in Sources */,
 				8E05D464216F6C290049B78A /* TimelinePendingTweetCell.swift in Sources */,
 				8E31B0A62170A4C500CB1DC4 /* ReduxStore.swift in Sources */,
 				8E05D431216F436C0049B78A /* ComposeTweetViewController.swift in Sources */,
 				8E31B0B521748E1600CB1DC4 /* CustomJSONDecoder.swift in Sources */,
-				8ECAFA7B2178C23A005D2DF6 /* TimelineActionCreator.swift in Sources */,
 				8E05D459216F58030049B78A /* TimelineContentView.swift in Sources */,
 				8E05D452216F52900049B78A /* ComposedTweet.swift in Sources */,
 				8E31B09D21709B4300CB1DC4 /* TwitterService.swift in Sources */,
 				8EAB918021762968000F60CC /* ErrorPresenter.swift in Sources */,
 				8E05D41D216F41290049B78A /* AppDelegate.swift in Sources */,
 				8ECAFA772178BF12005D2DF6 /* TimelineStore.swift in Sources */,
-				8E31B0AE2170B55E00CB1DC4 /* TimelineViewModel.swift in Sources */,
 				8E05D455216F538B0049B78A /* TimelineViewController.swift in Sources */,
 				8E31B0A221709CC500CB1DC4 /* NetworkOutgoingTweet.swift in Sources */,
 				8E05D433216F43810049B78A /* ComposeTweetContentView.swift in Sources */,
@@ -630,6 +610,97 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		8E7BC2BE23C899E20095309C /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.1;
+			};
+		};
+		8E7BC2C523C89A410095309C /* XCRemoteSwiftPackageReference "Dip" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AliSoftware/Dip";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.1.1;
+			};
+		};
+		8E7BC2C823C89A5D0095309C /* XCRemoteSwiftPackageReference "RxDataSources" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RxSwiftCommunity/RxDataSources";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.1;
+			};
+		};
+		8E7BC2CD23C89B020095309C /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.12.0;
+			};
+		};
+		8E7BC2D023C89B5E0095309C /* XCRemoteSwiftPackageReference "Moya" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Moya/Moya";
+			requirement = {
+				kind = exactVersion;
+				version = "14.0.0-beta.6";
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		8E7BC2BF23C899E20095309C /* RxRelay */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8E7BC2BE23C899E20095309C /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxRelay;
+		};
+		8E7BC2C123C899E20095309C /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8E7BC2BE23C899E20095309C /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
+		8E7BC2C323C899E20095309C /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8E7BC2BE23C899E20095309C /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		8E7BC2C623C89A410095309C /* Dip */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8E7BC2C523C89A410095309C /* XCRemoteSwiftPackageReference "Dip" */;
+			productName = Dip;
+		};
+		8E7BC2C923C89A5D0095309C /* Differentiator */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8E7BC2C823C89A5D0095309C /* XCRemoteSwiftPackageReference "RxDataSources" */;
+			productName = Differentiator;
+		};
+		8E7BC2CB23C89A5D0095309C /* RxDataSources */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8E7BC2C823C89A5D0095309C /* XCRemoteSwiftPackageReference "RxDataSources" */;
+			productName = RxDataSources;
+		};
+		8E7BC2CE23C89B020095309C /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8E7BC2CD23C89B020095309C /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		8E7BC2D123C89B5E0095309C /* Moya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8E7BC2D023C89B5E0095309C /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = Moya;
+		};
+		8E7BC2D323C89B5E0095309C /* RxMoya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8E7BC2D023C89B5E0095309C /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = RxMoya;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 8E05D411216F41290049B78A /* Project object */;
 }

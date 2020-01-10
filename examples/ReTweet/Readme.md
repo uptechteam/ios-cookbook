@@ -6,7 +6,14 @@ Refer to the [TimelineViewModel implementation](ReTweet/Features/Timeline/ViewMo
 
 # How to run
 
-1. Fetch and build Carthage frameworks with `carthage bootstrap --platform ios --cache-builds`
+## 1. Launch server
+
+1. Install [Node.js](https://nodejs.org)
 2. `cd server`
 3. `npm install`
-4. `npm start` to launch the server
+4. `npm start`
+
+## 2. Build iOS Project
+
+1. Open ReTweet.xcodeproj in Xcode
+2. Build and run the project on a simulator

@@ -27,14 +27,25 @@ final class TimelineViewController: UIViewController {
   private lazy var contentView = TimelineContentView()
   private let errorPresenter = ErrorPresenter()
 
-  private let postTweetSubject = PublishSubject<ComposedTweet>()
-
-  private let viewModel: Timeline.ViewModel
+  private let timelineProvider: TimelineProvider
+  private let store: Store
   private let disposeBag = DisposeBag()
   private var renderedProps: Props?
 
-  init(user: User, twitterService: TwitterService) {
-    self.viewModel = Timeline.ViewModel(user: user, twitterService: twitterService)
+  init(user: User, timelineProvider: TimelineProvider) {
+    self.timelineProvider = timelineProvider
+    self.store = Store(
+      initialState: TimelineViewController.State(
+        user: user,
+        timeline: [],
+        isLoading: false,
+        updateIntent: nil,
+        error: nil
+      ),
+      reducer: TimelineViewController.reduce,
+      middlewares: [TimelineViewController.makeProviderMiddleware(timelineProvider: timelineProvider)]
+    )
+
     super.init(nibName: nil, bundle: nil)
   }
 
@@ -48,12 +59,12 @@ final class TimelineViewController: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    setup()
-  }
-
-  private func setup() {
     setupUI()
-    setupBindings()
+    bindToModel()
+    bindToStore()
+    setupUIActions()
+
+    store.dispatch(action: .loadTweets)
   }
 
   private func setupUI() {
@@ -61,31 +72,39 @@ final class TimelineViewController: UIViewController {
     navigationItem.rightBarButtonItem = newTweetButton
   }
 
-  private func setupBindings() {
-    let inputs = Timeline.ViewModel.Inputs(
-      viewWillAppear: rx.methodInvoked(#selector(viewWillAppear(_:))).map({ _ in Void() }),
-      pullToRefresh: contentView.rx.pullToRefresh,
-      newTweetButtonTap: newTweetButton.rx.tap.asObservable(),
-      postTweet: postTweetSubject.asObservable(),
-      resendTweet: contentView.rx.resendButtonTap,
-      dismissError: errorPresenter.dismissed
-    )
+  private func bindToModel() {
+    timelineProvider.timelineDidChange
+      .subscribe(onNext: { [unowned self] in
+        self.store.dispatch(action: .updateTimeline(self.timelineProvider.timeline))
+      })
+      .disposed(by: disposeBag)
 
-    let outputs = viewModel.makeOutputs(from: inputs)
+    timelineProvider.timelineDidFailToLoad
+      .subscribe(onNext: { [unowned self] in
+        self.store.dispatch(action: .displayTimelineError($0))
+      })
+      .disposed(by: disposeBag)
+  }
 
-    outputs.props
+  private func bindToStore() {
+    store.state
+      .map(TimelineViewController.makeProps(from:))
       .observeOn(MainScheduler.instance)
-      .subscribe(onNext: { [unowned self] in self.render(props: $0) })
+      .subscribe(onNext: { [unowned self] in
+        self.render(props: $0)
+      })
       .disposed(by: disposeBag)
+  }
 
-    outputs.route
-      .observeOn(MainScheduler.instance)
-      .subscribe(onNext: { [unowned self] in self.navigate(by: $0) })
-      .disposed(by: disposeBag)
+  func setupUIActions() {
+    contentView.delegate = self
 
-    outputs.stateChanges
-      .subscribe()
-      .disposed(by: disposeBag)
+    newTweetButton.target = self
+    newTweetButton.action = #selector(showComposeTweet)
+
+    errorPresenter.onDismiss = { [store] in
+      store.dispatch(action: .dismissError)
+    }
   }
 
   private func render(props: Props) {
@@ -104,28 +123,27 @@ final class TimelineViewController: UIViewController {
     renderedProps = props
   }
 
-  private func navigate(by route: Timeline.Route) {
-    switch route {
-    case .newTweet:
-      showComposeTweet()
-    }
-  }
-
+  @objc
   private func showComposeTweet() {
-    let composeViewController = ComposeTweetViewController()
+    let composeViewController = ComposeTweetViewController(timelineProvider: timelineProvider)
+    composeViewController.delegate = self
     let composeNavigationController = UINavigationController(rootViewController: composeViewController)
-    navigationController?.present(composeNavigationController, animated: true, completion: nil)
-
-    composeViewController.rx.didDiscard
-      .subscribe(onNext: { [weak self] in self?.navigationController?.dismiss(animated: true) })
-      .disposed(by: composeViewController.disposeBag)
-
-    composeViewController.rx.didSubmit
-      .subscribe(onNext: { [weak self] submittedTweet in
-        self?.postTweetSubject.onNext(submittedTweet)
-        self?.navigationController?.dismiss(animated: true)
-      })
-      .disposed(by: composeViewController.disposeBag)
+    present(composeNavigationController, animated: true, completion: nil)
   }
 }
 
+extension TimelineViewController: TimelineContentViewDelegate {
+  func timelineContentViewDidRefresh(_ view: TimelineContentView) {
+    store.dispatch(action: .loadTweets)
+  }
+
+  func timelineContentView(_ view: TimelineContentView, didTapResendButtonAtIndex index: Int) {
+    store.dispatch(action: .resendTweet(index: index))
+  }
+}
+
+extension TimelineViewController: ComposeTweetViewControllerDelegate {
+  func composeTweetViewControllerDidFinish(_ viewController: ComposeTweetViewController) {
+    dismiss(animated: true)
+  }
+}

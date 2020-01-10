@@ -14,6 +14,7 @@ final class ErrorPresenter {
   private var presentedError: String?
 
   var dismissed: Observable<Void>
+  var onDismiss: () -> Void = { }
 
   init() {
     let dismissSubject = PublishSubject<Void>()
@@ -22,6 +23,7 @@ final class ErrorPresenter {
 
     let okAction = UIAlertAction(title: "OK", style: .default) { [weak self] _ in
       dismissSubject.onNext(Void())
+      self?.onDismiss()
       self?.presentedError = nil
     }
 

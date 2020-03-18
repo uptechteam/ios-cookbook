@@ -20,7 +20,7 @@ This chapter defines ground ideas and architectural principles we follow at Upte
     - [Observer Pattern](#observer-pattern)
   - [7. Redux](#7-redux)
 - [Future Directions](#future-directions)
-  - [Sources:](#sources)
+- [Sources](#sources)
 
 # Background
 
@@ -223,9 +223,7 @@ SwiftUI and Combine may change the way we used to build things. SwiftUI makes po
 
 Keep calm and be ready for a brave new world!
 
----
-
-## Sources:
+# Sources
 
 - [The only viable iOS architecture –– Amirzhan Idryshev
   ](https://medium.com/flawless-app-stories/the-only-viable-ios-architecture-c42f7b4c845d)

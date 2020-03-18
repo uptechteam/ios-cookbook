@@ -3,7 +3,7 @@
 This chapter defines ground ideas and architectural principles we follow at Uptech.
 
 - [Background](#background)
-  - [What is a &quot;Good Architecture&quot;?](#what-is-a-quotgood-architecturequot)
+  - [What is a Good Architecture?](#what-is-a-good-architecture)
   - [MVC](#mvc)
   - [What is MVC?](#what-is-mvc)
   - [Domain and Presentation](#domain-and-presentation)
@@ -24,7 +24,7 @@ This chapter defines ground ideas and architectural principles we follow at Upte
 
 # Background
 
-## What is a "Good Architecture"?
+## What is a Good Architecture?
 
 We can say that architecture is good when it follows a couple of traits:
 
@@ -40,12 +40,13 @@ Famous "Cocoa MVC" diagram from the [official Apple documentation](https://devel
 
 ![](resources/cocoa_mvc.png)
 
-MVC is a standard Cocoa architectural pattern, which received a lot of criticism and was blamed for causing too much code in one place and too closely coupled code ("Massive View Controller"). 
+MVC is a standard Cocoa architectural pattern, which received a lot of criticism and was blamed for causing too much code in one place and too closely coupled code ("Massive View Controller").
 
 Very often MVC is interpreted as follows:
-* **Model** - data entities of our application (structs such as `User`, `Book` or `Balance`);
-* **View** - what user sees (subclasses of the `UIView`);
-* **Controller** - mediator between View and Model, which takes care of all the rest (networking, persistence, business logic, etc).
+
+- **Model** - data entities of our application (structs such as `User`, `Book` or `Balance`);
+- **View** - what user sees (subclasses of the `UIView`);
+- **Controller** - mediator between View and Model, which takes care of all the rest (networking, persistence, business logic, etc).
 
 But what if we misinterpreted the original idea of MVC? What if MVC is not just three classes "data, view and the rest"?
 
@@ -54,7 +55,7 @@ But what if we misinterpreted the original idea of MVC? What if MVC is not just 
 MVC is a result of a very huge work. It was invented by Trygve Reenskaug as a result of his work on the Dynabook project at Xerox PARC in 1979. This project was going for about 10 years. Reenskaug summarized the main ideas and solutions in GUI application development that were accumulated during these 10 years in MVC.
 And it wasn’t like “Hey, we created a universal pattern in 10 years that you should use to solve any problem”. It is a fundamental mistake we made.
 
-**MVC is not a pattern, it's a philosophy.**  It is not a scheme of app’s modules decomposition. MVC is one of the first attempts to formalize main ideas working with apps with GUI. These ideas are still relevant and [not only](https://dotnet.microsoft.com/apps/aspnet/mvc) [for the](https://hackernoon.com/from-mvc-to-modern-web-frameworks-8067ec9dee65) [iOS platform](https://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/mvc.html). 
+**MVC is not a pattern, it's a philosophy.** It is not a scheme of app’s modules decomposition. MVC is one of the first attempts to formalize main ideas working with apps with GUI. These ideas are still relevant and [not only](https://dotnet.microsoft.com/apps/aspnet/mvc) [for the](https://hackernoon.com/from-mvc-to-modern-web-frameworks-8067ec9dee65) [iOS platform](https://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/mvc.html).
 
 Please, read [the original MVC reports](http://folk.uio.no/trygver/2007/MVC_Originals.pdf) and [The Model-View-Controller. It's Past and Present](http://heim.ifi.uio.no/~trygver/2003/javazone-jaoo/MVC_pattern.pdf) if you want to know more, it's quite fascinating.
 
@@ -62,7 +63,7 @@ Please, read [the original MVC reports](http://folk.uio.no/trygver/2007/MVC_Orig
 
 ## Domain and Presentation
 
-**Domain Model** is the core of our application. It is the main part of it. It consists of several business objects, for example, entities such as account, product, transaction and so on. And the logic around these objects is called business logic. For example, “if the user has little money on the account, give him a discount”. *Domain Model* can consist of one object as well as a whole system of objects. It depends on how complex business logic is.
+**Domain Model** is the core of our application. It is the main part of it. It consists of several business objects, for example, entities such as account, product, transaction and so on. And the logic around these objects is called business logic. For example, “if the user has little money on the account, give him a discount”. _Domain Model_ can consist of one object as well as a whole system of objects. It depends on how complex business logic is.
 
 **Presentation** is what users can see and interact with. In MVC the View and Controller are parts of Presentation.
 
@@ -72,13 +73,13 @@ MVC philosophy in iOS:
 
 ## MVVM, MVP, VIPER, React/Redux and friends
 
-A lot of different approaches and patterns were spawned to solve *(inexistent)* "Massive View Controller" problem. On paper, they have noble goals that should help separate data model, business logic, model-view communication and put everything in its place. But practically most of them move a big ball of ~~mud~~ Domain logic from the ViewController into ViewModel/Presenter/Store/(put your container here), leaving the original problem unsolved.
+A lot of different approaches and patterns were spawned to solve _(inexistent)_ "Massive View Controller" problem. On paper, they have noble goals that should help separate data model, business logic, model-view communication and put everything in its place. But practically most of them move a big ball of ~~mud~~ Domain logic from the ViewController into ViewModel/Presenter/Store/(put your container here), leaving the original problem unsolved.
 
-Thus, we can't call such patterns an architecture. **They are not an alternative to MVC**, but a scheme of a single module decomposition in the *Presentation* layer.
+Thus, we can't call such patterns an architecture. **They are not an alternative to MVC**, but a scheme of a single module decomposition in the _Presentation_ layer.
 
-To be clear, there is nothing wrong with any of these patterns. Even though the *Domain Model* contains most of the app state, we can't get rid of some stateful logic in the *Presentation* layer. It includes view state, navigation logic or responding to the view lifecycle events. Such patterns  solve problems in unique and interesting ways and can help you improve your *Presentation* layer code.
+To be clear, there is nothing wrong with any of these patterns. Even though the _Domain Model_ contains most of the app state, we can't get rid of some stateful logic in the _Presentation_ layer. It includes view state, navigation logic or responding to the view lifecycle events. Such patterns solve problems in unique and interesting ways and can help you improve your _Presentation_ layer code.
 
-For example, MVVM makes some of the *Presentation* code testable. Redux encapsulates a state of the module into a single object and guarantees that all the UI updates are synchronized with a module state. 
+For example, MVVM makes some of the _Presentation_ code testable. Redux encapsulates a state of the module into a single object and guarantees that all the UI updates are synchronized with a module state.
 
 With that being said, the simplest solution is often the best one. Don't fight with iOS SDK, embrace and leverage the tools the platform gives us.
 
@@ -100,36 +101,36 @@ Make your Domain Model smart. Use [design patterns](https://en.wikipedia.org/wik
 
 Requirements to the Domain Model:
 
-* Model must be encapsulated and must not reference the view or application framework;
-* The Model interface must expose actions, not primitive data operations;
-* Updates may occur only in response to change notifications from the Model.
+- Model must be encapsulated and must not reference the view or application framework;
+- The Model interface must expose actions, not primitive data operations;
+- Updates may occur only in response to change notifications from the Model.
 
 These requirements are the minimum for any application design.
 
 **Advice:**
 
-Use **facades** to build a nice API for your Presentation layer to use. Facades helps hide complex object graph of Domain model behind a single object. Example:
+Use [**Facade** pattern](https://en.wikipedia.org/wiki/Facade_pattern) to build a nice API for your Presentation layer to use. Facades helps hide complex object graph of Domain model behind a single object. Example:
 
 ```swift
 protocol TodoListFacade {
     var tasksListDidChange: Observable<Void> { get }
 
     var tasks: [Task] { get }
-    
+
     func createNewTask(name: String, dueDate: Date?)
     func markTaskAsCompleted(id: Task.ID)
     func removeTask()
 }
 ```
 
-*Notice that all the methods which update the model don't return any value. Presentation layer doesn't care about a result of the model update and updates itself only in response to notifications.*
+_Notice that all the methods which update the model don't return any value. Presentation layer doesn't care about a result of the model update and updates itself only in response to notifications._
 
 ## 3. Don't fight the iOS SDK
 
 Fighting with iOS SDK is impossible and any attempt to do this complicates the system. As soon as we stop fighting with iOS SDK, all these staffs become useful. The SDK starts to help us and benefit.
 
-* Use patterns that iOS frameworks – especially UIKit – are already based on.
-* MVC, Delegate, Dependency Injection, Target / Action
+- Use patterns that iOS frameworks – especially UIKit – are already based on.
+- MVC, Delegate, Dependency Injection, Target / Action
 
 ## 4. Create other classes in the Presentation layer if you need it
 
@@ -147,26 +148,26 @@ Rx is a handy tool that makes asynchronous programming simpler, solving [callbac
 
 ### Futures
 
-At the time of writing this chapter, Swift doesn't support asynchronous programming primitives such as *async*/*await*. Developers have to use callbacks for any kind of asynchronous operation. This [doesn't always end up well](http://callbackhell.com).
+At the time of writing this chapter, Swift doesn't support asynchronous programming primitives such as _async_/_await_. Developers have to use callbacks for any kind of asynchronous operation. This [doesn't always end up well](http://callbackhell.com).
 
-Instead, we can resort to 3rd party libraries, such as Rx. Among a lot of concepts, RxSwift brings *Single*, which also knows as a *Future* or a *Promise*.
+Instead, we can resort to 3rd party libraries, such as Rx. Among a lot of concepts, RxSwift brings _Single_, which also knows as a _Future_ or a _Promise_.
 
 **Future** object represents the eventual completion (or failure) of an asynchronous operation, and its resulting value. Future is a proxy for a value not necessarily known when the promise is created.
 
-Features allows to replace these code:
+Futures allows to replace these code:
 
 ```swift
-func fetchTodoList(completionHandler: ([Task]) -> Void, errorHandler: (Error) -> Void) { 
-    ... 
+func fetchTodoList(completionHandler: ([Task]) -> Void, errorHandler: (Error) -> Void) {
+    ...
 }
 
-func storeTask(completionHandler: () -> Void) { 
-  ... 
+func storeTask(completionHandler: () -> Void) {
+  ...
 }
 
 // At a call site
 fetchTodoList(
-  completionHandler: { tasks in  
+  completionHandler: { tasks in
     let group = DispatchGroup()
     for task in tasks {
       group.enter()
@@ -210,9 +211,9 @@ Apart from that Rx provides a lot of useful operators, such as `flatMapLatest`, 
 
 ## 7. Redux
 
-Redux is another useful approach in our toolbelt. Originally, Redux is an implementation of the unidirectional data flow architecture, where the whole app state is represented in a single big tree-object, and mutations to this object are limited by a distinct number of actions. 
+Redux is another useful approach in our toolbelt. Originally, Redux is an implementation of the unidirectional data flow architecture, where the whole app state is represented in a single big tree-object, and mutations to this object are limited by a distinct number of actions.
 
-This idea is also applicable to the unit of any size: whole app, single module or even just a class. Redux is an implementation detail of a single module so it doesn't affect the system. We use Redux for objects with a lot of interdependent states, it allows us to ssynchronize state management in a single function `reducer`. For more information refer to [the Redux chapter](4-1-redux.md).
+This idea is also applicable to the unit of any size: whole app, single module or even just a class. Redux is an implementation detail of a single module so it doesn't affect the system. We use Redux for objects with a lot of interdependent states, it allows us to synchronize state management in a single function `reducer`. For more information refer to [the Redux chapter](4-1-redux.md).
 
 # Future Directions
 
@@ -225,10 +226,11 @@ Keep calm and be ready for a brave new world!
 ---
 
 ## Sources:
-* [The only viable iOS architecture –– Amirzhan Idryshev
-](https://medium.com/flawless-app-stories/the-only-viable-ios-architecture-c42f7b4c845d)
-* [Do MVC like it’s 1979 –– Bohdan Orlov
-](https://badootech.badoo.com/do-mvc-like-its-1979-da62304f6568)
-* [MVC vs MVVM vs VIPER – which to use for iOS? –– Paul Hudson](https://www.hackingwithswift.com/articles/41/mvc-vs-mvvm-vs-viper-which-to-use-for-ios)
-* [Охота на мифический MVC. Обзор, возвращение к первоисточникам и про то, как анализировать и выводить шаблоны самому –– cobiot](https://habr.com/en/post/321050/)
-* [The worst possible application –– Matt Gallagher](https://www.cocoawithlove.com/blog/worst-possible-application.html)
+
+- [The only viable iOS architecture –– Amirzhan Idryshev
+  ](https://medium.com/flawless-app-stories/the-only-viable-ios-architecture-c42f7b4c845d)
+- [Do MVC like it’s 1979 –– Bohdan Orlov
+  ](https://badootech.badoo.com/do-mvc-like-its-1979-da62304f6568)
+- [MVC vs MVVM vs VIPER – which to use for iOS? –– Paul Hudson](https://www.hackingwithswift.com/articles/41/mvc-vs-mvvm-vs-viper-which-to-use-for-ios)
+- [Охота на мифический MVC. Обзор, возвращение к первоисточникам и про то, как анализировать и выводить шаблоны самому –– cobiot](https://habr.com/en/post/321050/)
+- [The worst possible application –– Matt Gallagher](https://www.cocoawithlove.com/blog/worst-possible-application.html)

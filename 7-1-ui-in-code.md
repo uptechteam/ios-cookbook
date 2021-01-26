@@ -1,7 +1,14 @@
 # UIKit In Code
 
-Assign: Oleksandr Kulyk, Oleksii Andriushchenko, Mykhailo Palchuk
-Status: In progress
+- [Advantages]()
+- [Code formatting document for the project]()
+- [Best practices]()
+- [Examples]()
+    - [Example A]()
+    - [Example Y]()
+    - [Example G]()
+    - [Compare with StackView VS without StackView]()
+- [References]()
 
 ## Advantages of UI in code
 
@@ -210,6 +217,7 @@ extension UILayoutPriority {
 
 ```swift
 import SwiftUI
+
 struct ViewRepresentable<View: UIView>: UIViewRepresentable {
   let view: View
   init(_ view: View, setup: (View) -> Void = { _ in }) {
@@ -222,12 +230,13 @@ struct ViewRepresentable<View: UIView>: UIViewRepresentable {
   func updateUIView(_ uiView: View, context: Context) {
   }
 }
+
 struct YourViewPreview: PreviewProvider {
-    @available(iOS 13.0.0, *)
-    static var previews: some View {
-        let view = YourOwnCustomView()
-        return ViewRepresentable(view)
-            .frame(width: 335.0, height: 68.0)
+  @available(iOS 13.0.0, *)
+  static var previews: some View {
+    let view = YourOwnCustomView()
+    return ViewRepresentable(view)
+      .frame(width: 335.0, height: 68.0)
   }
 }
 ```
@@ -236,14 +245,14 @@ struct YourViewPreview: PreviewProvider {
 
 ```swift
 private func setUpViews() {
-		addSubview(stackView)
-		    stackView.addArrangedSubview(title)
-		    stackView.addArrangedSubview(imageView)
-		    stackView.addArrangedSubview(prizeNameContainer)
-		        prizeNameContainer.addSubview(prizeName)
-		    stackView.addArrangedSubview(button)
-		    stackView.addArrangedSubview(info)
-  }
+  addSubview(stackView)
+		stackView.addArrangedSubview(title)
+		stackView.addArrangedSubview(imageView)
+		stackView.addArrangedSubview(prizeNameContainer)
+		  prizeNameContainer.addSubview(prizeName)
+		stackView.addArrangedSubview(button)
+		stackView.addArrangedSubview(info)
+}
 ```
 
 • Helpful extension for adding corner radius:
@@ -270,7 +279,7 @@ extension CACornerMask {
 }
 ```
 
-- You can create your own .codesnippet files for fast View initial setup.
+- You can create your own code snippet files for fast View initial setup and then share them with your team. They are stored locally as .codesnippet files in /Users/[user]/Library/Developer/Xcode/UserData/CodeSnippets and can be easily exported by copying and imported by placing new files in this directory.
 
 Examples:
 
@@ -279,6 +288,8 @@ Examples:
 ## Example
 
 ![exampleView.png](./resources/ui_in_code/exampleView.png)
+
+Example from project A
 
 ```swift
 import UIKit
@@ -407,28 +418,27 @@ extension PlayerCell {
 }
 ```
 
-Example from Yaza
+Example from project Y
 
 ```swift
 import UIKit
 
-final class TimersCell: UITableViewCell, ReusableCell {
+final class PlayerCell: UITableViewCell {
 
   struct Props: Equatable {
-    let title: String
-    let description: String
-    let time: String
+    let songName: String
+    let albumName: String
+    let duration: String
   }
 
   private struct Constants {
     static let imageSize: CGFloat = 36
   }
 
-  private let iconImageView = UIImageView()
-  private let titleLabel = UILabel()
-  private let descriptionLabel = UILabel()
-  private let timeLabel = UILabel()
-  private let separatorView = UIView()
+  private let playImageView = UIImageView()
+  private let songNameLabel = UILabel()
+  private let albumNameLabel = UILabel()
+  private let durationLabel = UILabel()
 
   override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
     super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -444,143 +454,133 @@ final class TimersCell: UITableViewCell, ReusableCell {
     selectionStyle = .none
     backgroundColor = .white
 
-    iconImageView.setImage(.asset(Asset.playIcon))
-    iconImageView.backgroundColor = .blue500
-    iconImageView.roundCornersContinuosly(radius: Constants.imageSize / 2)
-    iconImageView.clipsToBounds = true
-    titleLabel.font = FontFamily.Bahnschrift.regular.font(size: 16)
-    titleLabel.textColor = .grey900
-    descriptionLabel.font = FontFamily.Bahnschrift.regular.font(size: 13)
-    descriptionLabel.textColor = .grey500
-    timeLabel.font = FontFamily.Bahnschrift.regular.font(size: 16)
-    timeLabel.textColor = .grey500
-    timeLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
-    separatorView.backgroundColor = .grey200
+    playImageView.image = Asset.iconPlay.image
+    playImageView.backgroundColor = .systemPink
+    playImageView.roundCornersContinuosly(radius: Constants.imageSize / 2)
+    playImageView.clipsToBounds = true
+    songNameLabel.lineBreakMode = .byTruncatingMiddle
+    songNameLabel.font = .systemFont(ofSize: 16, weight: .bold)
+    albumNameLabel.lineBreakMode = .byTruncatingTail
+    albumNameLabel.font = .systemFont(ofSize: 13, weight: .light)
+    durationLabel.setContentCompressionResistancePriority(
+      .prioritizedCompressionResistance,
+      for: .horizontal)
+    durationLabel.font = .systemFont(ofSize: 14, weight: .semibold)
 
-    let lablesStackView = UIStackView(arrangedSubviews: [titleLabel, descriptionLabel])
+    let lablesStackView = UIStackView(arrangedSubviews: [songNameLabel, albumNameLabel])
     lablesStackView.axis = .vertical
     lablesStackView.alignment = .leading
 
-    let stackView = UIStackView(arrangedSubviews: [iconImageView, lablesStackView, UIView(), timeLabel])
-		stackView.alignment = .center
+    let stackView = UIStackView(arrangedSubviews: [playImageView, lablesStackView, UIView(), durationLabel])
+    stackView.alignment = .center
     stackView.spacing = 8
     stackView.setCustomSpacing(0, after: lablesStackView)
     addSubview(stackView, withEdgeInsets: .init(top: 8, left: 8, bottom: 8, right: 8))
-
-    addSubview(separatorView, constraints: [
-      separatorView.leadingAnchor.constraint(equalTo: leadingAnchor),
-      separatorView.trailingAnchor.constraint(equalTo: trailingAnchor),
-      separatorView.bottomAnchor.constraint(equalTo: bottomAnchor),
-      separatorView.heightAnchor.constraint(equalToConstant: 1)
-    ])
   }
 
   func render(props: Props) {
-    titleLabel.text = props.title
-    descriptionLabel.text = props.description
-    timeLabel.text = props.time
+    songNameLabel.text = props.songName
+    albumNameLabel.text = props.albumName
+    durationLabel.text = props.duration
   }
 }
 ```
 
-alias_ (GOAT) style example 
+Example from project G
 
 ```swift
 import UIKit
 
-class TimersCell: UITableViewCell {
+final class PlayerCell: UITableViewCell {
 
-    private lazy var stateImage: UIImageView = {
-        let image = UIImage(imageLiteralResourceName: "play")
-        let view = UIImageView(image: image)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    private lazy var textContainer: UIStackView = {
-        let sv = UIStackView()
-        sv.axis = .vertical
-        sv.spacing = 4.0
-        sv.translatesAutoresizingMaskIntoConstraints = false
-        return sv
-    }()
-    private lazy var title: UILabel = {
-        let lbl = UILabel()
-        lbl.translatesAutoresizingMaskIntoConstraints = false
-        return lbl
-    }()
-    private lazy var subtitle: UILabel = {
-        let lbl = UILabel()
-        lbl.numberOfLines = 0
-        lbl.translatesAutoresizingMaskIntoConstraints = false
-        return lbl
-    }()
-    private lazy var time: UILabel = {
-        let lbl = UILabel()
-        lbl.translatesAutoresizingMaskIntoConstraints = false
-        return lbl
-    }()
-    private lazy var separator: UIView = {
-        let view = UIView()
-        view.backgroundColor = .aliasDarkGray
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
+  private lazy var playImage: UIImageView = {
+    let image = UIImage(imageLiteralResourceName: "play")
+    let view = UIImageView(image: image)
+    view.translatesAutoresizingMaskIntoConstraints = false
+    view.backgroundColor = .systemPink
+    view.layer.cornerRadius = 18
+    view.clipsToBounds = true
+    return view
+  }()
+  private lazy var textContainer: UIStackView = {
+    let sv = UIStackView()
+    sv.axis = .vertical
+    sv.spacing = 4.0
+    sv.translatesAutoresizingMaskIntoConstraints = false
+    return sv
+  }()
+  private lazy var songName: UILabel = {
+    let lbl = UILabel()
+    lbl.lineBreakMode = .byTruncatingMiddle
+    lbl.font = .systemFont(ofSize: 16, weight: .bold)
+    lbl.translatesAutoresizingMaskIntoConstraints = false
+    return lbl
+  }()
+  private lazy var albumName: UILabel = {
+    let lbl = UILabel()
+    lbl.lineBreakMode = .byTruncatingTail
+    lbl.font = .systemFont(ofSize: 13, weight: .light)
+    lbl.translatesAutoresizingMaskIntoConstraints = false
+    return lbl
+  }()
+  private lazy var duration: UILabel = {
+    let lbl = UILabel()
+    lbl.setContentCompressionResistancePriority(
+      .prioritizedCompressionResistance,
+      for: .horizontal)
+    lbl.font = .systemFont(ofSize: 14, weight: .semibold)
+    lbl.translatesAutoresizingMaskIntoConstraints = false
+    return lbl
+  }()
 
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setUpViews()
-        setUpConstraints()
-    }
+  override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+    super.init(style: style, reuseIdentifier: reuseIdentifier)
+    setUpViews()
+    setUpConstraints()
+  }
 
-    required public init?(coder aDecoder: NSCoder) {
-        let msg = "\(String(describing: type(of: self))) cannot be used with a nib file"
-        GAssertionFailure(msg)
-        fatalError(msg)
-    }
+  required public init?(coder aDecoder: NSCoder) {
+    let msg = "\(String(describing: type(of: self))) cannot be used with a nib file"
+    GAssertionFailure(msg)
+    fatalError(msg)
+  }
 
-    func configure(title: String, subtitle: String, time: String) {
-        self.title.attributedText = title.toStyle(NSMutableString.h2_reg_left_gray)
-        self.subtitle.attributedText = subtitle.toStyle(NSMutableString.body_reg_left_gray)
-        self.time.attributedText = time.toStyle(NSMutableString.body_reg_center_gray)
-    }
+  func configure(songName: String, albumName: String, duration: String) {
+    self.songName.text = songName
+    self.albumName.text = albumName
+    self.duration.text = duration
+  }
 
-    private func setUpViews() {
-        contentView.addSubview(stateImage)
-        contentView.addSubview(textContainer)
-            textContainer.addArrangedSubview(title)
-            textContainer.addArrangedSubview(subtitle)
-        contentView.addSubview(time)
-        contentView.addSubview(separator)
-    }
+  private func setUpViews() {
+    contentView.addSubview(playImage)
+    contentView.addSubview(textContainer)
+      textContainer.addArrangedSubview(songName)
+      textContainer.addArrangedSubview(albumName)
+    contentView.addSubview(duration)
+  }
 
-    private func setUpConstraints() {
-        var constraints = [NSLayoutConstraint]()
-        let inset: CGFloat = 16.0
-        constraints += [
-            stateImage.heightAnchor.constraint(equalToConstant: 36.0),
-            stateImage.widthAnchor.constraint(equalTo: stateImage.heightAnchor),
-            stateImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: inset),
-            stateImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: inset),
-            stateImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -1.0 * inset)
-        ]
-        constraints += [
-            textContainer.topAnchor.constraint(equalTo: contentView.topAnchor, constant: inset),
-            textContainer.leadingAnchor.constraint(equalTo: stateImage.trailingAnchor, constant: inset),
-            textContainer.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -1.0 * inset)
-        ]
-        constraints += [
-            time.centerYAnchor.constraint(equalTo: textContainer.centerYAnchor),
-            time.leadingAnchor.constraint(equalTo: textContainer.trailingAnchor, constant: inset),
-            time.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -1.0 * inset)
-        ]
-        constraints += [
-            separator.heightAnchor.constraint(equalToConstant: 1.0),
-            separator.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            separator.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            separator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
-        ]
-        NSLayoutConstraint.activate(constraints)
-    }
+  private func setUpConstraints() {
+    var constraints = [NSLayoutConstraint]()
+    let inset: CGFloat = 16.0
+    constraints += [
+      playImage.heightAnchor.constraint(equalToConstant: 36.0),
+      playImage.widthAnchor.constraint(equalTo: playImage.heightAnchor),
+      playImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: inset),
+      playImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: inset),
+      playImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -1.0 * inset)
+    ]
+    constraints += [
+      textContainer.topAnchor.constraint(equalTo: contentView.topAnchor, constant: inset),
+      textContainer.leadingAnchor.constraint(equalTo: playImage.trailingAnchor, constant: inset),
+      textContainer.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -1.0 * inset)
+    ]
+    constraints += [
+      duration.centerYAnchor.constraint(equalTo: textContainer.centerYAnchor),
+      duration.leadingAnchor.constraint(equalTo: textContainer.trailingAnchor, constant: inset),
+      duration.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -1.0 * inset)
+    ]
+    NSLayoutConstraint.activate(constraints)
+  }
 
 }
 ```
@@ -589,77 +589,51 @@ Compare with StackView VS without StackView
 
 ```swift
 func setupWithStackView() {
-	let lablesStackView = UIStackView(arrangedSubviews: [titleLabel, descriptionLabel])
+  let lablesStackView = UIStackView(arrangedSubviews: [songNameLabel, albumNameLabel])
   lablesStackView.axis = .vertical
   lablesStackView.alignment = .leading
 
-  let stackView = UIStackView(arrangedSubviews: [iconImageView, lablesStackView, UIView(), timeLabel])
-	stackView.alignment = .center
+  let stackView = UIStackView(arrangedSubviews: [playImageView, lablesStackView, UIView(), durationLabel])
+  stackView.alignment = .center
   stackView.spacing = 8
   stackView.setCustomSpacing(0, after: lablesStackView)
   addSubview(stackView, withEdgeInsets: .init(top: 8, left: 16, bottom: 8, right: 24))
-
-  addSubview(separatorView, constraints: [
-    separatorView.leadingAnchor.constraint(equalTo: leadingAnchor),
-    separatorView.trailingAnchor.constraint(equalTo: trailingAnchor),
-    separatorView.bottomAnchor.constraint(equalTo: bottomAnchor),
-    separatorView.heightAnchor.constraint(equalToConstant: 1)
-  ])
 }
 
 func setupWithoutStackView() {
-	addSubview(stateImageView, withConstraints: [
-    stateImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-    stateImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-    stateImageView.heightAnchor.constraint(equalToConstant: Constants.stateImageSize.height),
-    stateImageView.widthAnchor.constraint(equalToConstant: Constants.stateImageSize.width),
+  addSubview(playImageView, withConstraints: [
+    playImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
+    playImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+    playImageView.heightAnchor.constraint(equalToConstant: Constants.stateImageSize.height),
+    playImageView.widthAnchor.constraint(equalToConstant: Constants.stateImageSize.width),
   ])
 
-	addSubview(matterNameLabel, withConstraints: [
-    matterNameLabel.topAnchor.constraint(equalTo: topAnchor, constant: 9),
-    matterNameLabel.leadingAnchor.constraint(
-      equalTo: leadingAnchor,
-      constant: Constants.defaultMatterNameLeftOffset),
+  addSubview(songNameLabel, withConstraints: [
+    songNameLabel.topAnchor.constraint(equalTo: topAnchor, constant: 9),
+    songNameLabel.leadingAnchor.constraint(equalTo: playImageView.trailingAnchor, constant: 16),
   ])
 
-	addSubview(clientNameLabel, withConstraints: [
-    clientNameLabel.leadingAnchor.constraint(
-      equalTo: leadingAnchor,
-      constant: Constants.defaultMatterNameLeftOffset),
-    clientNameLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -15),
+  addSubview(albumNameLabel, withConstraints: [
+    albumNameLabel.leadingAnchor.constraint(equalTo: playImageView.trailingAnchor, constant: 16),
+    albumNameLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -15),
   ])
 
-	addSubview(trackedTimeLabel, withConstraints: [
-    trackedTimeLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-    trackedTimeLabel.leadingAnchor.constraint(
-      greaterThanOrEqualTo: matterNameLabel.trailingAnchor,
+  addSubview(durationLabel, withConstraints: [
+    durationLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+    durationLabel.leadingAnchor.constraint(
+      greaterThanOrEqualTo: songNameLabel.trailingAnchor,
       constant: 8),
-    trackedTimeLabel.leadingAnchor.constraint(
-      greaterThanOrEqualTo: clientNameLabel.trailingAnchor,
+    durationLabel.leadingAnchor.constraint(
+      greaterThanOrEqualTo: albumNameLabel.trailingAnchor,
       constant: 8),
-    trackedTimeLabel.trailingAnchor.constraint(
+    durationLabel.trailingAnchor.constraint(
       equalTo: trailingAnchor,
       constant: -24),
-  ])
-
-	addSubview(separatorView, withConstraints: [
-    separatorView.leadingAnchor.constraint(equalTo: leadingAnchor),
-    separatorView.trailingAnchor.constraint(equalTo: trailingAnchor),
-    separatorView.bottomAnchor.constraint(equalTo: bottomAnchor),
-    separatorView.heightAnchor.constraint(equalToConstant: 1),
   ])
 }
 ```
 
-References:
+## References
 
-- [https://www.toptal.com/ios/ios-user-interfaces-storyboards-vs-nibs-vs-custom-code](https://www.toptal.com/ios/ios-user-interfaces-storyboards-vs-nibs-vs-custom-code)
-- [https://github.com/airbnb/swift](https://github.com/airbnb/swift)
-
-**TODO:** 
-
-@Mykhailo Palchuk i~~mplement example view from TimeByPing~~, more code formatting practices from current project, ~~code formatting document per project description~~, code snippets, best practices
-
-@Oleksii Andriushchenko more code formatting practices from current project, example with stack views and without stack view (trick)
-
-@Oleksandr Kulyk update example view, codesnippet update, codesnippet integration guide
+- UI in code VS storyboards VS xibs [https://www.toptal.com/ios/ios-user-interfaces-storyboards-vs-nibs-vs-custom-code](https://www.toptal.com/ios/ios-user-interfaces-storyboards-vs-nibs-vs-custom-code)
+- Airbnb code style guide (great source of inspiration) [https://github.com/airbnb/swift](https://github.com/airbnb/swift)

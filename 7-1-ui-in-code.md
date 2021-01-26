@@ -1,14 +1,14 @@
 # UIKit In Code
 
 - [Advantages](#advantages-of-ui-in-code)
-- [Code formatting document for the project]()
-- [Best practices]()
-- [Examples]()
-    - [Example A]()
-    - [Example Y]()
-    - [Example G]()
-    - [Compare with StackView VS without StackView]()
-- [References]()
+- [Code formatting document for the project](#code-formatting-document-for-the-project)
+- [Best practices](#best-practices)
+- [Examples](#example)
+    - [Example A](#example-from-project-A)
+    - [Example Y](#example-from-project-Y)
+    - [Example G](#example-from-project-G)
+    - [Compare with StackView VS without StackView](#compare-with-stackView-vs-without-stackView)
+- [References](#references)
 
 ## Advantages of UI in code
 
@@ -289,7 +289,7 @@ Examples:
 
 ![exampleView.png](./resources/ui_in_code/exampleView.png)
 
-Example from project A
+### Example from project A
 
 ```swift
 import UIKit
@@ -418,7 +418,7 @@ extension PlayerCell {
 }
 ```
 
-Example from project Y
+### Example from project Y
 
 ```swift
 import UIKit
@@ -486,7 +486,7 @@ final class PlayerCell: UITableViewCell {
 }
 ```
 
-Example from project G
+### Example from project G
 
 ```swift
 import UIKit
@@ -585,7 +585,7 @@ final class PlayerCell: UITableViewCell {
 }
 ```
 
-Compare with StackView VS without StackView
+### Compare with StackView VS without StackView
 
 ```swift
 func setupWithStackView() {

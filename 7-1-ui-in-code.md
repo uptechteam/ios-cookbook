@@ -1,6 +1,6 @@
 # UIKit In Code
 
-- [Advantages]()
+- [Advantages](#advantages-of-ui-in-code)
 - [Code formatting document for the project]()
 - [Best practices]()
 - [Examples]()

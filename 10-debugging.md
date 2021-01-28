@@ -43,7 +43,7 @@ Xcode instruments is a set of powerful tools to use **while** developing apps fo
 
 The Time Profiler instrument gives insights into the system’s CPUs and how effective multiple cores and threads are used. Basically - how good your app is performing.
 
-Always profile on a physical device, because your mac has a lot more horsepower
+❕Always profile on a physical device, because your mac has a lot more horsepower
 
 Use example:
 
@@ -55,7 +55,7 @@ Use example:
 
 - After recording, you tick the "Separate by Thread" and "Hide System Libraries" settings in the call tree
 
-  ![](resources/timeProfiler1.png)
+  ![](resources/debugging/timeProfiler1.png)
 
 - You notice that the main thread is loaded up to 49% by your "withTonalFilter" function. That's the photo filter!
 
@@ -71,6 +71,34 @@ Call tree settings:
 - **Top Functions**: makes Instruments consider the total time spent in a function as the sum of the time within that function, as well as the time spent in functions called by that function. So if function A calls B, then Instruments reports A’s time as the time spent in A plus the time spent in B
 
 #### Allocations
+
+This instrument helps you find abandoned memory that is no longer needed, but is not released.
+
+Generally, you'd want to make sure that all your objects are released from memory during development. A useful method is to have a deinit call in your view controllers with a print statement just to make sure that nothing is holding on to this VC after dismissal. A typical example is failing to `invalidate()` a repeating Timer object, thus, creating a strong reference cycle.
+
+```swift
+deinit {
+  print("VeryNiceViewController deinit 🧹")
+}
+```
+
+The allocations graph displays how much memory your app is using while running. Typically, even if your app is doing some resource-heavy work – eventually these resources have to be released from memory. If this doesn't happen – you will clearly see it on the graph.
+
+Lets look at an example
+
+<img src="resources/debugging/allocations2.png" style="zoom:50%;" />
+
+With the allocation instrument running we performed 3 image searches by keyword, and displayed each result in a collectionView on the `SearchResultsViewController`. By typing the name of our process in the filter we can see objects from our app only. We notice that 3 instances of `SearchResultsViewController` and 63 cells are persistent in memory. That's not right!
+
+The Transient column shows the number of objects that existed but have since been deallocated. In this case, we should have only 1 persistent VC, and the other "used" 2 - should be transient.
+
+![](resources/debugging/allocations1.png)
+
+Here we launched the allocations instrument, ran our app, and started performing repeating actions (the same as in the last example). After each "run" - we flagged this point in time with "mark generation". After conducting 6 searches we clearly see that memory is only growing (by ~8MB each run!) and not being released. Expanding the generations and looking into the stack trace will let us identify the methods that are responsible for holding on to memory (developer initiated stack traces are highlighted and marked with a blue "person" icon).
+
+❕It is sometimes usefull to force iOS to release some memory by simulating a memory warning (*Document ▸ Simulate Memory Warning*). This tells the system frameworks to release memory so you can be absolutely sure that the memory leak is your fault 🙃
+
+We identified the problem, now lets look into the memory debugger to see what's going on in more detail
 
 #### Memory Debugger
 

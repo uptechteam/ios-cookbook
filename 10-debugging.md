@@ -55,7 +55,7 @@ Use example:
 
 - After recording, you tick the "Separate by Thread" and "Hide System Libraries" settings in the call tree
 
-  <img src="/Users/danylo/Downloads/11_littleArrow.png" alt="11_littleArrow" style="zoom:70%;" />
+  ![](resources/timeProfiler1.png)
 
 - You notice that the main thread is loaded up to 49% by your "withTonalFilter" function. That's the photo filter!
 

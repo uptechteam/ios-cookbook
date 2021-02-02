@@ -9,10 +9,10 @@ This is a chapter about debugging tools, best practices and how we debug iOS app
   - Breakpoints
   - Expressions
 - [Xcode Instruments](#3-Xcode-Instruments)
-  - View debugger
+  - View hierarchy debugger
   - Time profiler
   - Allocations
-  - Memory debugger
+  - Visual Memory debugger
   - Battery
 - [Logging](#4-Logging)
 - [Useful tools](#5-Useful-tools)
@@ -37,7 +37,9 @@ LLDB
 
 Xcode instruments is a set of powerful tools to use **while** developing apps for iOS/macOS. Although we were tempted to dive deep into every one of them, not all of them are necessary on a day-to-day basis. Instead, lets cover ones that should be used to test and debug every app.
 
-#### View Debugger
+#### View Hierarchy Debugger
+
+View Debugger is a cool new feature that provides an interactive way to visualize view hierarchies. It is useful for identifying problems with layouts that can’t be identified looking at a flat screen.
 
 #### Time Profiler
 
@@ -98,9 +100,13 @@ Here we launched the allocations instrument, ran our app, and started performing
 
 ❕It is sometimes usefull to force iOS to release some memory by simulating a memory warning (*Document ▸ Simulate Memory Warning*). This tells the system frameworks to release memory so you can be absolutely sure that the memory leak is your fault 🙃
 
-We identified the problem, now lets look into the memory debugger to see what's going on in more detail
+We identified the problem, and we can now track it down by looking into the stack trace and find the faulty methods. But to go even deeper, we can look into the Xcode memory debugger.
 
-#### Memory Debugger
+#### Visual Memory Debugger
+
+The Visual Memory Debugger pauses your app and displays a visual representation of objects in memory and the references between them.
+
+❕To see the backtrace of the objects in the debugger, Malloc stack logging has to be enabled (Edit scheme -> Run -> Diagnostics -> Malloc stack logging + Live allocations only)
 
 #### Battery
 
@@ -114,5 +120,4 @@ We identified the problem, now lets look into the memory debugger to see what's 
 
 Further Reading:
 
-- https://www.apple.com/business/site/docs/iOS_Security_Guide.pdf
-- https://github.com/OWASP/owasp-mstg#ios-testing-guide
+- https://www.raywenderlich.com/16126261-instruments-tutorial-with-swift-getting-started

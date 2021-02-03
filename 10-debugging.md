@@ -39,7 +39,19 @@ Xcode instruments is a set of powerful tools to use **while** developing apps fo
 
 #### View Hierarchy Debugger
 
-View Debugger is a cool new feature that provides an interactive way to visualize view hierarchies. It is useful for identifying problems with layouts that can’t be identified looking at a flat screen.
+View Debugger is a cool feature that provides an interactive way to visualize view hierarchies. It is useful for identifying problems with layouts that can’t be identified looking at a flat screen.
+
+💁‍♀️ Often, when you're having problems with your UI layout it's worth checking in with the view hierarchy. All unexpected layout issues (like constraint ambiguity) will be displayed there.
+
+💁‍♂️ When selecting a view in the hierarchy, it is automatically highlighted in the 3D representation. But if you see something unknown and weird in the 3D view, you have to press **⇧⌘D** to reveal it in the hierarchy
+
+💁 It's really helpful to give your views an accessibility identifier to easily find them in the view hierarchy. The hierarchy displays objects by their class names, so if you're working with, say, `MyCoolView` and other subclasses of UIView - you're going to see names of these subclasses in the hierarchy. But if you're working with plain `UIView`'s - it's going to be hard to know which is which. By adding accessibility identifiers to you `UIViews` you can easily identify <sub>(get it? identifier -> identify haha)</sub> multiple views in the hierarchy by going into the Object inspector -> Accessibility. 
+
+```swift
+redView.accessibilityIdentifier = "RedView"
+```
+
+Plus, by doing this, if you ever run into an "UnsatisfiableConstraints" error - you're going to get the identifiers of the problematic views printed with their addresses. Neat!
 
 #### Time Profiler
 

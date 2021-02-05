@@ -44,13 +44,13 @@
 
 8. Writing UI code may lead to new knowledge
 
-    Wile writing all the UI code "by hand", you may discover some new stuff that wasn't available with storyboards. You may also find new ways of doing transitions, learn more about some UIKit elements and other cool stuff. Working on a deeper level of abstractions is always more fun.
+    While writing all the UI code "by hand", you may discover some new stuff that wasn't available with storyboards. You may also find new ways of doing transitions, learn more about some UIKit elements and other cool stuff. Working on a deeper level of abstractions is always more fun.
 
 **Cons** of UI in code
 
 1. No more segues
 
-    Segues are available only in storyboards, which may be tough to leave without for some unexperienced developers. However, there are many cool ways to do the same thing in code!
+    Segues are available only in storyboards, which may be tough to leave without for some inexperienced developers. However, there are many cool ways to do the same thing in code!
 
 2. Defining UI in code may be slower at first
 
@@ -255,7 +255,7 @@ private func setUpViews() {
 }
 ```
 
-• Helpful extension for adding corner radius:
+- Helpful extension for adding corner radius:
 
 ```swift
 extension UIView {

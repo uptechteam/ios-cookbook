@@ -246,12 +246,12 @@ struct YourViewPreview: PreviewProvider {
 ```swift
 private func setUpViews() {
   addSubview(stackView)
-		stackView.addArrangedSubview(title)
-		stackView.addArrangedSubview(imageView)
-		stackView.addArrangedSubview(prizeNameContainer)
-		  prizeNameContainer.addSubview(prizeName)
-		stackView.addArrangedSubview(button)
-		stackView.addArrangedSubview(info)
+    stackView.addArrangedSubview(title)
+    stackView.addArrangedSubview(imageView)
+    stackView.addArrangedSubview(prizeNameContainer)
+      prizeNameContainer.addSubview(prizeName)
+    stackView.addArrangedSubview(button)
+    stackView.addArrangedSubview(info)
 }
 ```
 
@@ -259,14 +259,14 @@ private func setUpViews() {
 
 ```swift
 extension UIView {
-	func roundCornersContinuosly(radius: CGFloat, corners: CACornerMask = .all) {
-		layer.maskedCorners = corners
-	  layer.cornerRadius = radius
+  func roundCornersContinuosly(radius: CGFloat, corners: CACornerMask = .all) {
+    layer.maskedCorners = corners
+    layer.cornerRadius = radius
 
-	  if #available(iOS 13.0, *) {
-		  layer.cornerCurve = .continuous
-	  }
-	}
+    if #available(iOS 13.0, *) {
+      layer.cornerCurve = .continuous
+    }
+  }
 }
 
 extension CACornerMask {

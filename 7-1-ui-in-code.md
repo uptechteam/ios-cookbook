@@ -290,6 +290,8 @@ Examples:
 ![exampleView.png](./resources/ui_in_code/exampleView.png)
 
 ### Example from project A
+<details>
+    <summary>Click to expand the code</summary>
 
 ```swift
 import UIKit
@@ -418,8 +420,12 @@ extension PlayerCell {
 }
 ```
 
-### Example from project Y
+</details>
 
+### Example from project Y
+<details>
+    <summary>Click to expand the code</summary>
+    
 ```swift
 import UIKit
 
@@ -485,9 +491,12 @@ final class PlayerCell: UITableViewCell {
   }
 }
 ```
+</details>
 
 ### Example from project G
-
+<details>
+    <summary>Click to expand the code</summary>
+    
 ```swift
 import UIKit
 
@@ -584,9 +593,13 @@ final class PlayerCell: UITableViewCell {
 
 }
 ```
+</details>
 
 ### Compare with StackView VS without StackView
 
+<details>
+    <summary>Click to expand the code</summary>
+    
 ```swift
 func setupWithStackView() {
   let lablesStackView = UIStackView(arrangedSubviews: [songNameLabel, albumNameLabel])
@@ -632,6 +645,7 @@ func setupWithoutStackView() {
   ])
 }
 ```
+</details>
 
 ## References
 

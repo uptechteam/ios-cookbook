@@ -120,6 +120,22 @@ The Visual Memory Debugger pauses your app and displays a visual representation 
 
 ❕To see the backtrace of the objects in the debugger, Malloc stack logging has to be enabled (Edit scheme -> Run -> Diagnostics -> Malloc stack logging + Live allocations only)
 
+After you ran and used your app for a couple of cycles, go ahead and smash that Debug Memory Graph button. Usually, the first thing to do is to check whether Xcode found some obvious leaks for us. To do that – find the little ⚠️ button at the bottom of the Debug navigator pane (in the "filter" textfield). This will highlight the leaked blocks that Xcode found for us. Nice, but what do you do when Xcode doesn't see anything but your app is eating memory like it's tomato soup from Very Well Cafe?
+
+The Debug navigator pane shows the list of all types and instances allocated in memory at the moment you paused your app. By looking at it we can again see that we have 105 collectionView cells and 4 SearchResultsVCs being held in memory.
+
+<img src="resources/debugging/memGraph1.png" style="zoom:50%;" />
+
+Lets click on one of the SearchResultsVC instances. Xcode will show a pretty big graph of that instance and any references to it. We can see that there is a big ammount of closures referencing the same instance of our VC.
+
+<img src="resources/debugging/memGraph2.png" style="zoom:40%;" />
+
+If you select the arrow pointing to the VC and open the Utilities pane you will see that the reference type is "strong". The type of reference from the collectionViewCell to the closure is also strong. Lets select the cell to see where it is declared. 
+
+<img src="resources/debugging/memGraph3.png" style="zoom:60%;" />
+
+Tapping on that small arrow will take us exactly to the place where this cell was declared. And somewhere nearby there is a closure that captures a strong reference to the SearchResultsVC and doesn't release it from memory. Make it weak and you're done. 🏄‍♂️
+
 #### Battery
 
 

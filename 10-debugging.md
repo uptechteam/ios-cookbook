@@ -138,11 +138,24 @@ Tapping on that small arrow will take us exactly to the place where this cell wa
 
 #### Battery
 
-
+It's pretty obvious that you should inspect the Energy Log on a real device, but also it's best to do that wirelessly. You can either connect the device via network (Xcode -> Devices and simulators -> Connect via network), but for the most accurate results you can save the energy log on the device and then import it into Xcode. 
+For info on how to do that, check this [Instruments Help](https://help.apple.com/instruments/mac/current/#/dev03a7149d) page
 
 ### 4. Logging
 
 ### 5. Useful tools
+
+Charles / Proxyman
+
+Chisel (to lldb)
+
+NetFox
+
+Pusher
+
+ControlRoom
+
+
 
 ---
 

@@ -29,9 +29,36 @@ LLDB
 
 #### Breakpoints
 
+*Sometimes, a simple breakpoint is not enough.* © Albert Einstein
+
+The simple breakpoints in Xcode are pretty powerful. Just by setting a breakpoint on a specific line and editing its propperties we can:
+
+- trigger it only on a certain **condition**.
+- **ignore** the breakpoint a number of times before stopping.
+- run an **action**, like a shell command or a simple lldb command.
+- **continue after execution**, which is useful when combined with actions, since we may have some actions which shouldn’t pause the app.
+
+But Xcode generic breakpoints can do even more. They can pause the app before something bad happens, and you don't even need to know which line contains an error. Is this magic? 
+
+These breakpoints are defined in the Breakpoints tab of the Debug navigator pane.
+
+**Swift error breakpoints** are great for debugging your defined errors. Instead of just terminating the app on error throw, Xcode pauses the app and lets you see what went wrong.
+
+**Exception breakpoints** can be used to handle UIKit, or other exceptions that are a bit "out of our hands". Sometimes the debugger just points us to the AppDelegate after terminating our app, and we are not able to understand where the problem is. In this case, set an exception breakpoint and Xcode will, again, pause your app before shooting it in the face.
+
+**Symbolic breakpoints** are very useful if we want to pause the execution when a specific method is called. To do so,   enter `ClassName.MethodName` into the `Symbol` field of the breakpoint options. NO NON ON ONON ON ON ON ON 
+
+Aditionaly, you can **share** a breakpoint by right clicking it and hitting "share". This will create a separate file with breakpoints that could be added to git and used by other developers working on your project.
+
+Also, if you created a breakpoint so awesome that you want to use it in all of your projects, you can add the breakpoint to the current user (right click -> move to -> User)
+
+A list of great breakpoints that can be used in every project can be found [here](resources/debugging/breakpoints.md). Feel free to add more!
+
 #### Expressions
 
 
+
+The full list of LLDB commands can be found [here](https://lldb.llvm.org/use/map.html).
 
 ### 3. Xcode Instruments
 

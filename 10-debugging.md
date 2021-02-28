@@ -46,7 +46,7 @@ These breakpoints are defined in the Breakpoints tab of the Debug navigator pane
 
 **Exception breakpoints** can be used to handle UIKit, or other exceptions that are a bit "out of our hands". Sometimes the debugger just points us to the AppDelegate after terminating our app, and we are not able to understand where the problem is. In this case, set an exception breakpoint and Xcode will, again, pause your app before shooting it in the face.
 
-**Symbolic breakpoints** are very useful if we want to pause the execution when a specific method is called. To do so,   enter `ClassName.MethodName` into the `Symbol` field of the breakpoint options. NO NON ON ONON ON ON ON ON 
+**Symbolic breakpoints** are very useful if we want to pause the execution when a specific method is called. To do so,   enter the method name in objc into the `Symbol` field of the breakpoint options. E.g. `-[UIViewController viewDidLoad]`
 
 Aditionaly, you can **share** a breakpoint by right clicking it and hitting "share". This will create a separate file with breakpoints that could be added to git and used by other developers working on your project.
 
@@ -56,7 +56,15 @@ A list of great breakpoints that can be used in every project can be found [here
 
 #### Expressions
 
+By using lldb expressions you can inject code in your project on the fly
 
+You can inspect objects with:
+
+- `po` - if it is a pointer to an ObjC or Core Foundation object - prints its "description" parameter, or does ` p ourObject`  if not one of those
+- `p` - takes the arguments, compiles it, executes it, prints the result of the evaluation. Equivalent of `expression --`
+- `e` - evaluates the given expression, displays any returned values
+
+You can do this while the app is paused on a breakpoint, or you can configure a breakpoint to run a Debugger Command + "Automatically continue after execution". This way you can make changes flawlessly, without stopping and rebuilding the app.
 
 The full list of LLDB commands can be found [here](https://lldb.llvm.org/use/map.html).
 

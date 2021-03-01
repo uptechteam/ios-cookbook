@@ -25,7 +25,7 @@ Something about this
 
 ### 2. LLDB
 
-LLDB
+By using LLDB, you can inspect your app at runtime, evaluate expressions from the command line, inject code seamlessly, debug your UI components and much more.
 
 #### Breakpoints
 
@@ -35,7 +35,7 @@ The simple breakpoints in Xcode are pretty powerful. Just by setting a breakpoin
 
 - trigger it only on a certain **condition**.
 - **ignore** the breakpoint a number of times before stopping.
-- run an **action**, like a shell command or a simple lldb command.
+- run an **action**, like a shell command or a simple LLDB command.
 - **continue after execution**, which is useful when combined with actions, since we may have some actions which shouldn’t pause the app.
 
 But Xcode generic breakpoints can do even more. They can pause the app before something bad happens, and you don't even need to know which line contains an error. Is this magic? 
@@ -56,7 +56,7 @@ A list of great breakpoints that can be used in every project can be found [here
 
 #### Expressions
 
-By using lldb expressions you can inject code in your project on the fly
+By using LLDB expressions you can inject code in your project on the fly
 
 You can inspect objects with:
 
@@ -67,6 +67,11 @@ You can inspect objects with:
 You can do this while the app is paused on a breakpoint, or you can configure a breakpoint to run a Debugger Command + "Automatically continue after execution". This way you can make changes flawlessly, without stopping and rebuilding the app.
 
 The full list of LLDB commands can be found [here](https://lldb.llvm.org/use/map.html).
+
+Writing LLDB commands by hand can get really tedious, so the good <sub>(we don't know for sure)</sub> people at Facebook created a collection of LLDB commands called **[Chisel](https://github.com/facebook/chisel)**.
+Install it using the instructions in the repo and you can use the commands just like the standard ones. 
+
+💡 Sometimes, Chisel commands can stop working. In this case instead of rebuilding the project / reopening Xcode – run `command source ~/.lldbinit` to reload them again.
 
 ### 3. Xcode Instruments
 
@@ -182,8 +187,6 @@ For info on how to do that, check this [Instruments Help](https://help.apple.com
 
 Charles / Proxyman
 
-Chisel (to lldb)
-
 NetFox
 
 Pusher
@@ -197,3 +200,4 @@ ControlRoom
 Further Reading:
 
 - https://www.raywenderlich.com/16126261-instruments-tutorial-with-swift-getting-started
+- https://medium.com/uptech-team/tips-tricks-for-ios-app-debugging-d715a02dc7d9#1967

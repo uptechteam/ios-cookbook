@@ -140,7 +140,7 @@ The Presentation layer can contain a lot of logic too. If your ViewController be
 
 Apply design patterns as they are needed during the application evolution (growth of codebase) following the [YAGNI (you ain’t gonna need it)](https://en.wikipedia.org/wiki/You_aren%27t_gonna_need_it) principle, instead of choosing architecture and then trying to fit your application into it.
 
-Rembmer that **Obvious code > Clever code.**
+Remember that **Obvious code > Clever code.**
 
 ## 6. Rx as a tool for asynchronous programming
 

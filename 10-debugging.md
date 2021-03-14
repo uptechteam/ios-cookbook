@@ -183,15 +183,36 @@ For info on how to do that, check this [Instruments Help](https://help.apple.com
 
 ### 4. Logging
 
+At WWDC 2020 Apple rolled out the new `Logger`, a replacement for the `os_log` logger. 
+It's a new unified logging API to gather, process log messages, and help debug unexpected behavior.
+
+Has different logging types:
+
+- Debug - Useful only during debugging. Not persisted
+- Info - Helpful but not essential for troubleshooting. Persisted only with `log collect` option
+- Notice (default) - Essential for troubleshooting. Persisted
+- Error - Error seen during execution. Persisted
+- Fault - Bug in the app. Persisted
+
+Supports string interpolation out of box and is generaly easy to use. But there's a catch, to access the logs, one would need to use `OSLogStore`, which works ok on the Mac, but is not yet available on iOS. It's a fun story actually, check it out [here](https://steipete.com/posts/logging-in-swift/).
+
+The most commonly used Logging 3-d party solutions are [SwiftyBeaver](https://github.com/SwiftyBeaver/SwiftyBeaver) and [CocoaLumberjack](https://github.com/CocoaLumberjack/CocoaLumberjack).
+
 ### 5. Useful tools
 
-Charles / Proxyman
+A list of commonly used frameworks for iOS projects
 
-NetFox
+#### Proxyman/Charles/NetFox
 
-Pusher
+[Proxyman](https://proxyman.io) and [Charles](https://www.charlesproxy.com) are both macOS apps, which enable developers to view HTTP/HTTPS requests from apps and domains, including iOS devices and iOS Simulators. They are pretty similar in functionality, check out a small comparison [here](https://proxyman.io/blog/2019/10/Alternatives-for-charles-proxy-and-wireshark.html).
 
-ControlRoom
+How to setup Proxyman for [iOS device](https://docs.proxyman.io/debug-devices/ios-device) and [Simulators](https://docs.proxyman.io/debug-devices/ios-simulator)
+
+[NetFox](https://github.com/kasketis/netfox) is a framework with similar functionality, but it has to be integrated into your app. 
+
+#### ControlRoom
+
+[Control Room](https://github.com/twostraws/ControlRoom) is a nice macOS app that gives you great control over the iOS simulators. Change the appearance, send notifications, record videos and change locaiton + locale.
 
 
 

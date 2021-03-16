@@ -21,7 +21,27 @@ This is a chapter about debugging tools, best practices and how we debug iOS app
 
 ### 1. Best Practices
 
-Something about this
+Most of the time we work with code - we're debugging something. It's useful to do that efficiently to save our time and  mental health.
+
+- Search the project efficiently
+
+You can use Regex in the search bars, but also you can insert patterns with ⌃⌥⌘P like, for example, searching for force unwraps in the whole project
+
+<img src="resources/debugging/search1.png" style="zoom:50%;" />
+
+Also, you can use scopes to your advantage, for example, by excluding third party libraries, or using `File name` -> `Contains` -> "ViewController" to search only your ViewControllers (if you follow naming conventions, of course)
+
+- Harness the simulator
+
+Use the `Debug` -> `Slow animations` option in the simulator to debug your animations. This is useful to catch skips, jumps and other animation glitches that are hard to notice in normal speed.
+
+In the Xcode menu, you can toggle the `Debug` -> `View debugging` -> `Show view frames` to inspect the frames of your UI elements without pausing the app.
+
+Install the `Network Link Conditioner` from the [Adittional Xcode tools](https://developer.apple.com/download/more/?q=Additional%20Tools) package (Hardware folder) to test your app under different network conditions. The UI looks like a joke from Apple, but the functionality is solid. Choose between different profiles like Edge (for a very poor connection), 100% loss etc.
+
+- Ask for help
+
+This may sound obvious, but **do** ask for help if you're stuck with some sticky issue. It might feel better to find and fix the issue by yourself, but the wasted time might not be worth it. We're sure that anyone will be glad to help a teammate in need. 🐱
 
 ### 2. LLDB
 
@@ -186,17 +206,18 @@ For info on how to do that, check this [Instruments Help](https://help.apple.com
 At WWDC 2020 Apple rolled out the new `Logger`, a replacement for the `os_log` logger. 
 It's a new unified logging API to gather, process log messages, and help debug unexpected behavior.
 
-Has different logging types:
-
-- Debug - Useful only during debugging. Not persisted
-- Info - Helpful but not essential for troubleshooting. Persisted only with `log collect` option
-- Notice (default) - Essential for troubleshooting. Persisted
-- Error - Error seen during execution. Persisted
-- Fault - Bug in the app. Persisted
-
 Supports string interpolation out of box and is generaly easy to use. But there's a catch, to access the logs, one would need to use `OSLogStore`, which works ok on the Mac, but is not yet available on iOS. It's a fun story actually, check it out [here](https://steipete.com/posts/logging-in-swift/).
 
+Usualy, loggers have some different logging types that look something like this: 
+
+- Debug - Useful only during debugging
+- Info - Helpful but not essential for troubleshooting
+- Notice - Essential for troubleshooting
+- Error - Error seen during execution
+- Fault - Bug in the app
+
 The most commonly used Logging 3-d party solutions are [SwiftyBeaver](https://github.com/SwiftyBeaver/SwiftyBeaver) and [CocoaLumberjack](https://github.com/CocoaLumberjack/CocoaLumberjack).
+On many Uptech projects [Sentry](https://sentry.io) is used as a crash logging tool. It automaticaly captures the crash info with the stack trace and all the good stuff and sends it to the server.
 
 ### 5. Useful tools
 

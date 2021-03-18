@@ -1,5 +1,6 @@
 # UIKit In Code
 
+- [Intro](#intro)
 - [Advantages](#advantages-of-ui-in-code)
 - [Code formatting document for the project](#code-formatting-document-for-the-project)
 - [Best practices](#best-practices)
@@ -9,6 +10,9 @@
     - [Example G](#example-from-project-G)
     - [Compare with StackView VS without StackView](#compare-with-stackView-vs-without-stackView)
 - [References](#references)
+
+## Intro
+At UpTech we encourage everyone to write UI in code. We believe that defining UI exclusively in code helps to achieve best long-term results on our projects. We've seen how strict discipline of writing UI in code helps to keep it readable, code review friendly, reusable and how much more we can achieve using this technique compared to classic storyboard/xib style. This document contains everything you need to know about this approach to start using its full potential, including best practices and code examples.
 
 ## Advantages of UI in code
 
@@ -58,7 +62,7 @@
 
 ## **Code formatting document** for the project
 
-The mail goal of this cookbook page is to give you some advice on how to set up code style on your own project. Creating a guideline how to write UI in code have its benefits:
+The main goal of this cookbook page is to give you some advice on how to set up code style on your own project. Creating a guideline how to write UI in code have its benefits:
 
 - One source of truth.
 - Each developer knows and uses same code style across project.
@@ -150,6 +154,7 @@ private func setupCalendarButton() {
 - Define consistent order of constraint addition and follow it. The constraints to position are: top, leading, trailing, bottom;
 centerY, centerX;
 height, width.
+- Never use left and right anchors, because when iOS language changes from left-to-right to right-to-left, your layour won't change. With leading and trailing anchors UI will be flipped horizontally, as it should.
 - Use custom wrappers for subview addition and insert:
 
 ```swift

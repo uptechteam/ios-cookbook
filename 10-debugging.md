@@ -235,6 +235,10 @@ How to setup Proxyman for [iOS device](https://docs.proxyman.io/debug-devices/io
 
 [Control Room](https://github.com/twostraws/ControlRoom) is a nice macOS app that gives you great control over the iOS simulators. Change the appearance, send notifications, record videos and change locaiton + locale.
 
+#### RocketSim
+
+[RocketSim](https://www.rocketsim.app) is another great app that extends the capabilities of you simulators. It records videos (lets you save them as mp4 or GIF 👍), shows touches and has an awesome feature that lets you compare your screens with designs. Just copy a screen from somewhere (Figma, Sketch) and paste it in the simulator - and the screen will split in half so you can easily see where your UI is a bit off. The free version lets you do this only 10 times, but the pro version is just $14 per year. Totaly worth it. Also, its developed by the creator of SwiftLee, check out his article [here](https://www.avanderlee.com/workflow/rocketsim-simulator-recording/)
+
 
 
 ---

@@ -25,13 +25,13 @@ Most of the time we work with code - we're debugging something. It's useful to d
 
 - Search the project efficiently
 
-You can use Regex in the search bars, but also you can insert patterns with ⌃⌥⌘P like, for example, searching for force unwraps in the whole project
+The search project feature in Xcode is not that basic as it seems. You can insert patterns with ⌃⌥⌘P, these can help you filter out unwanted stuff if searching for something generic. E.g. - find emojis by simply inserting the non-ASCII pattern, locate URLs, emails, or combine patterns with plain text to save yourself from using regular expressions and losing your mind.
 
 <img src="resources/debugging/search1.png" style="zoom:50%;" />
 
 Also, you can use scopes to your advantage, for example, by excluding third-party libraries, or using `File name` -> `Contains` -> "ViewController" to search only your ViewControllers (if you follow naming conventions, of course)
 
-- Harness the simulator
+- Use the full potential of the simulator
 
 Use the `Debug` -> `Slow animations` option in the simulator to debug your animations. This is useful to catch skips, jumps, and other animation glitches that are hard to notice at normal speed.
 
@@ -239,6 +239,10 @@ How to setup Proxyman for [iOS device](https://docs.proxyman.io/debug-devices/io
 
 [RocketSim](https://www.rocketsim.app) is another great app that extends the capabilities of your simulators. It records videos (lets you save them as mp4 or GIF 👍), shows touches, and has an awesome feature that lets you compare your screens with designs. Just copy a screen from somewhere (Figma, Sketch) and paste it in the simulator - and the screen will split in half so you can easily see where your UI is a bit off. The free version lets you do this only 10 times, but the pro version is just $14 per year. Totally worth it. Also, it's developed by the creator of SwiftLee, check out his article [here](https://www.avanderlee.com/workflow/rocketsim-simulator-recording/)
 
+### Reveal
+
+[Reveal](https://revealapp.com) is a powerful runtime view debugging library. It’s great for quickly trying out different colors or constraint offsets and allows you to adjust your running app on the fly. It can be attached using CocoaPods or a specialized breakpoint in Xcode. It is paid, but has a free trial. Check out this [article](https://cocoacasts.com/view-debugging-with-reveal) for more info.
+
 
 
 ---
@@ -249,3 +253,4 @@ Further Reading:
 - https://medium.com/uptech-team/tips-tricks-for-ios-app-debugging-d715a02dc7d9#1967
 - https://developer.apple.com/videos/play/wwdc2016/410/
 - https://developer.apple.com/videos/play/wwdc2018/412/
+- https://www.avanderlee.com/category/debugging/

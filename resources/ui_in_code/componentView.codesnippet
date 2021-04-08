@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDECodeSnippetCompletionPrefix</key>
+	<string>componentView</string>
+	<key>IDECodeSnippetCompletionScopes</key>
+	<array>
+		<string>All</string>
+		<string>TopLevel</string>
+	</array>
+	<key>IDECodeSnippetContents</key>
+	<string>import RxSwift
+
+final class &lt;#View#&gt;: UIView {
+    // MARK: - Private Properties
+
+    private let privateView = UIView()
+    fileprivate let exposedButton = UIButton()
+
+    // MARK: - Lifecycle
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupUI()
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: - Private Methods
+
+    private func setupUI() {
+        setupView()
+        setupPrivateView()
+        setupExposedButton()
+    }
+
+    private func setupView() {
+        backgroundColor = .clear
+        directionalLayoutMargins = .init(top: .zero, leading: 32, bottom: .zero, trailing: 32)
+    }
+
+    private func setupPrivateView() {
+        privateView.backgroundColor = .white
+
+        privateView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(privateView)
+        NSLayoutConstraint.activate([
+            privateView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            privateView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
+            privateView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
+            privateView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor)
+        ])
+    }
+
+    private func setupExposedButton() {
+        exposedButton.translatesAutoresizingMaskIntoConstraints = false
+        privateView.addSubview(exposedButton)
+        NSLayoutConstraint.activate([
+            exposedButton.topAnchor.constraint(equalTo: privateView.topAnchor),
+            exposedButton.leadingAnchor.constraint(equalTo: privateView.leadingAnchor),
+            exposedButton.trailingAnchor.constraint(equalTo: privateView.trailingAnchor),
+            exposedButton.bottomAnchor.constraint(equalTo: privateView.bottomAnchor),
+            exposedButton.heightAnchor.constraint(equalToConstant: 48)
+        ])
+    }
+}
+
+extension Reactive where Base: &lt;#View#&gt; {
+    var exposedButtonTap: Observable&lt;Void&gt; { base.exposedButton.rx.tap.asObservable() }
+}
+
+// MARK: - Declarations
+
+extension &lt;#View#&gt; {
+    struct Props {}
+    private enum Constants {}
+    private enum Attributes {}
+}</string>
+	<key>IDECodeSnippetIdentifier</key>
+	<string>34D8EC6A-B97C-4B4D-9D79-C70FBEB6B5D9</string>
+	<key>IDECodeSnippetLanguage</key>
+	<string>Xcode.SourceCodeLanguage.Swift</string>
+	<key>IDECodeSnippetPlatformFamily</key>
+	<string>iphoneos</string>
+	<key>IDECodeSnippetSummary</key>
+	<string>Generic View component</string>
+	<key>IDECodeSnippetTitle</key>
+	<string>View</string>
+	<key>IDECodeSnippetUserSnippet</key>
+	<true/>
+	<key>IDECodeSnippetVersion</key>
+	<integer>2</integer>
+</dict>
+</plist>

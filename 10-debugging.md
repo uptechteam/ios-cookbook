@@ -219,6 +219,32 @@ Usually, loggers have some different logging types that look something like this
 The most commonly used Logging 3-d party solutions are [SwiftyBeaver](https://github.com/SwiftyBeaver/SwiftyBeaver) and [CocoaLumberjack](https://github.com/CocoaLumberjack/CocoaLumberjack).
 On many Uptech projects, [Sentry](https://sentry.io) is used as a crash logging tool. It automatically captures the crash info with the stack trace and all the good stuff and sends it to the server.
 
+### MetricKit
+
+MetricKit is an Apple framework for collecting and processing battery, performance, and other useful metrics.
+
+In order to implement and start using MetricKit, we need a place in our app that never gets destroyed and is always there, receiving system events. A good candidate for this is our AppDelegate. All we need to do is to register ourselves to the `MXMetricManager` object, extend our AppDelegate to conform to `MXMetricManagerSubscriber`, and implement the `didReceive(_:)` method of this protocol.
+
+```swift
+func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    MXMetricManager.shared.add(self)
+    return true
+}
+
+// An extension to conform to MXMetricManagerSubscriber
+extension AppDelegate: MXMetricManagerSubscriber {
+    func didReceive(_ payloads: [MXMetricPayload]) {
+        // Handle payloads here
+    }
+}
+```
+
+Around every 24 hours, MetricKit will call the `didReceive(_:)` method and it will handle us many *payloads*. A Payload is simply an object that wraps certain metric data (animationMetrics, applicationLaunchMetrics, cellularConditionMetrics etc.). 
+Xcode also has a way to simulate metrics (you don't want to wait 24h to test). To do so, go to the `Debug` menu in Xcode, and then click `Simulate MetricKit Payloads`.
+
+You can also manually log critical sections of your app if you know a place with a heavy operation and suspect that it can cause issues. 
+If you still have any doubts, all metrics have a `jsonRepresentation` property you can use to easily send this over to a custom web service.
+
 ### 5. Useful tools
 
 A list of commonly used frameworks for iOS projects

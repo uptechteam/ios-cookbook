@@ -18,18 +18,27 @@
     - [5.4 Installation](#54-installation)
 
 ### 0. SwiftLint
-We use [SwiftLint](https://github.com/realm/SwiftLint) to enforce Swift style and conventions. Recommended config file [.swiftlint.yml](https://gist.github.com/romanfurman6/c40443e8b337832bd91beb8fd81ed1aa)
+We use [SwiftLint](https://github.com/realm/SwiftLint) to enforce Swift style and conventions. Recommended config file [.swiftlint.yml](https://gist.github.com/romanfurman6/c40443e8b337832bd91beb8fd81ed1aa).
 ### 1. Code Generation
 We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappers for images, colors and localized strings.
 ### 2. Code Formatting
 - Make sure you are familiar with [Apple's API Design Guidelines](https://swift.org/documentation/api-design-guidelines/).
-- Use **4 spaces** for tab & indent width. This can be enforced for the whole project by setting it in **File inspector -> Text Settings** at its scope.
-    <img src="resources/illustrations/7.2.tabs_preferences.png" alt="Xcode -> Preferences -> Text Editing -> Indentation" width="70.6%"/>
+- 
+    <details>
+    <summary>Use <b>4 spaces</b> for tab & indent width. This can be enforced for the whole project by setting it in <b>File inspector -> Text Settings</b> at its scope.</summary>
+    <img src="resources/illustrations/7.2.tabs_preferences.png" alt="Xcode -> Preferences -> Text Editing -> Indentation" width="70%"/>
     <img src="resources/illustrations/7.2.text_settings.png" alt="Project -> File inspector -> Text Settings" width="29%"/>
-- Line character limit is **120 symbols**:
-    ![Xcode -> Preferences -> Text Editing -> Display -> Page guide at column](resources/illustrations/7.2.line_character_limit.png)
-- Enable automatic trimming of trailing whitespaces and leading whitespaces for empty lines:
-    ![Xcode -> Preferences -> Text Editing -> Editing -> While Editing](resources/illustrations/7.3.png)
+    </details>    
+- 
+    <details>
+    <summary>Line character limit is <b>120 symbols</b>.</summary>
+    <img src="resources/illustrations/7.2.line_character_limit.png" alt="Xcode -> Preferences -> Text Editing -> Display -> Page guide at column" width="80%"/>
+    </details>
+- 
+    <details>
+    <summary>Enable automatic trimming of trailing whitespaces and leading whitespaces for empty lines.</summary>
+    <img src="resources/illustrations/7.2.empty_lines.png" alt="Xcode -> Preferences -> Text Editing -> Editing -> While Editing" width="80%"/>
+    </details>
 - Add new line at the end of every file.
 - Don't put opening braces on new lines ([1TBS style](https://en.m.wikipedia.org/wiki/Indentation_style#1TBS)):
     ```swift
@@ -62,8 +71,8 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
     ```swift
     testFunc(
         firstArgument: 1,
-        secondArgument: 1,
-        thirdArgument: 1
+        secondArgument: 2,
+        thirdArgument: 3
     )
     ```
 - Put spaces after comma:
@@ -104,7 +113,7 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
         // code
     }
     ```
-- Do not put empty line at the beginning of a type:
+- Do not put an empty line at the beginning and end of a type:
     ```swift
     // Preferred
     class MyView: UIView {
@@ -115,6 +124,7 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
     class MyView: UIView {
 
         private let someLabel = UILabel()
+
     }
     ```
 - Name members of tuples for extra clarity when it's hard to infer their purpose otherwise:
@@ -157,11 +167,11 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
     ```
 - Do not use return in single-line functions/computed properties: 
     ``` swift
-    func doSomething() -> Int {
-        self.price * self.count
+    func canExchangeAssets(for exchangeValue: Double) -> Bool {
+        self.availableAssetsValue > exchangeValue
     }
 
-    var doSomething: Int {
+    var availableAssetsValue: Double {
         self.price * self.count
     }
     ```

@@ -5,179 +5,200 @@
 - [2. Code Formatting](#2-code-formatting)
 - [3. Naming](#3-naming)
 - [4. Coding Style](#4-coding-style)
-  - [4.1 General](#41-general)
-  - [4.2 Switch statements and enums](#42-switch-statements-and-enums)
-  - [4.3 Optionals](#43-optionals)
-  - [4.4 Protocols](#44-protocols)
-  - [4.5 Closures](#45-closures)
-  - [4.6 guard statements](#46-guard-statements)
+    - [4.1 General](#41-general)
+    - [4.2 Switch statements and enums](#42-switch-statements-and-enums)
+    - [4.3 Optionals](#43-optionals)
+    - [4.4 Protocols](#44-protocols)
+    - [4.5 Closures](#45-closures)
+    - [4.6 guard statements](#46-guard-statements)
 - [5. Tagged](#5-tagged)
-  - [5.1 Problem](#51-problem)
-  - [5.2 Solution](#52-solution)
-  - [5.3 Features](#53-features)
-  - [5.4 Installation](#54-installation)
+    - [5.1 Problem](#51-problem)
+    - [5.2 Solution](#52-solution)
+    - [5.3 Features](#53-features)
+    - [5.4 Installation](#54-installation)
 
 ### 0. SwiftLint
-In our projects we are using [SwiftLint](https://github.com/realm/SwiftLint), a tool to enforce Swift style and conventions.
-Recommended config file [.swiftlint.yml](https://gist.github.com/romanfurman6/c40443e8b337832bd91beb8fd81ed1aa)
+We use [SwiftLint](https://github.com/realm/SwiftLint) to enforce Swift style and conventions. Recommended config file [.swiftlint.yml](https://gist.github.com/romanfurman6/c40443e8b337832bd91beb8fd81ed1aa)
 ### 1. Code Generation
-In our projects we are using [SwiftGen](https://github.com/SwiftGen/SwiftGen), a tool for generation of images and colors stored in the assets.
+We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappers for images, colors and localized strings.
 ### 2. Code Formatting
-Make sure you are familiar with [Apple's API Design Guidelines](https://swift.org/documentation/api-design-guidelines/)
-- We are using 2 tabs (Xcode -> Preferences -> Text Editing -> Indentation -> Tab width & Indent width)
-- Line character limit is 80 symbols (Xcode -> Preferences -> Text Editing -> Page guide at column)
-- Add new line at the end of every file
-- Don't put opening braces on new lines - we use [1TBS style](https://en.m.wikipedia.org/wiki/Indentation_style#1TBS):
-```swift
-class TestClass {
-  func testFunc(value: Int) {
-    if value != 0 {
-      //..code..//
-    } else if value == 0 {
-      //..code..//
+- Make sure you are familiar with [Apple's API Design Guidelines](https://swift.org/documentation/api-design-guidelines/).
+- Use **4 spaces** for tab & indent width. This can be enforced for the whole project by setting it in **File inspector -> Text Settings** at its scope.
+    <img src="resources/illustrations/7.2.tabs_preferences.png" alt="Xcode -> Preferences -> Text Editing -> Indentation" width="70.6%"/>
+    <img src="resources/illustrations/7.2.text_settings.png" alt="Project -> File inspector -> Text Settings" width="29%"/>
+- Line character limit is **120 symbols**:
+    ![Xcode -> Preferences -> Text Editing -> Display -> Page guide at column](resources/illustrations/7.2.line_character_limit.png)
+- Enable automatic trimming of trailing whitespaces and leading whitespaces for empty lines:
+    ![Xcode -> Preferences -> Text Editing -> Editing -> While Editing](resources/illustrations/7.3.png)
+- Add new line at the end of every file.
+- Don't put opening braces on new lines ([1TBS style](https://en.m.wikipedia.org/wiki/Indentation_style#1TBS)):
+    ```swift
+    class TestClass {
+        func testFunc(value: Int) {
+            guard value != .zero else {
+                // code
+                return
+            }
+
+            if value.isMultiple(of: 2) {
+                // code
+            } else {
+                // code
+            }
+        }
     }
-  }
-}
-```
-- When declaring a function and it doesn't fit in 1 line then put it's parameters on separate lines. Each argument and the return value should be on it's own line:
-```swift
-func testFunc(
-  firstArgument: Int, 
-  secondArgument: Int, 
-  thirdArgument: Int
-  ) -> Int {
-  
-  //..code..//
-}
-```
-- When calling a function and it doesn't fit in 1 line then put each argument on a separate line with a single extra indentation.
-```swift
-testFunc(
-  firstArgument: 1,
-  secondArgument: 1,
-  thirdArgument: 1
-)
-```
-- Put spaces after comma
-```swift
-let array = [1, 2, 3, 4, 5]
-```
-- Prefer using local constants or other mitigation techniques to avoid multi-line predicates where possible.
-```swift
-// PREFERRED
-let firstCondition = x == firstReallyReallyLongPredicateFunction()
-let secondCondition = y == secondReallyReallyLongPredicateFunction()
-let thirdCondition = z == thirdReallyReallyLongPredicateFunction()
-if firstCondition && secondCondition && thirdCondition {
-  //..code here..//
-}
+    ```
+- When declaring a function that doesn't fit in 1 line - put its parameters on separate lines. Each argument and the return value should be on its line:
+    ```swift
+    func testFunc(
+        firstArgument: Int, 
+        secondArgument: Int, 
+        thirdArgument: Int
+    ) -> Int {
+        // code
+    }
+    ```
+- When calling a function that doesn't fit in 1 line - put each argument on a separate line with a single extra indentation:
+    ```swift
+    testFunc(
+        firstArgument: 1,
+        secondArgument: 1,
+        thirdArgument: 1
+    )
+    ```
+- Put spaces after comma:
+    ```swift
+    let array = [1, 2, 3, 4, 5]
+    ```
+- Prefer using local constants or other mitigation techniques to avoid multi-line predicates where possible:
+    ```swift
+    // Preferred
+    let firstCondition = x == firstReallyReallyLongPredicateFunction()
+    let secondCondition = y == secondReallyReallyLongPredicateFunction()
+    let thirdCondition = z == thirdReallyReallyLongPredicateFunction()
+    if firstCondition && secondCondition && thirdCondition {
+        // code
+    }
 
-// NOT PREFERRED
-if x == firstReallyReallyLongPredicateFunction()
-  && y == secondReallyReallyLongPredicateFunction()
-  && z == thirdReallyReallyLongPredicateFunction() {
-  //..code here..//
-}
-```
+    // Not Preferred
+    if x == firstReallyReallyLongPredicateFunction()
+        && y == secondReallyReallyLongPredicateFunction()
+        && z == thirdReallyReallyLongPredicateFunction() {
+        // code
+    }
+    ```
 - Nested types should be located at the top of a parent type:
-```swift
-struct Foo {
-   struct Bar {}
+    ```swift
+    struct Foo {
+        struct Bar {}
    
-   let bar: Bar
-   let name: String 
-}
+        let bar: Bar
+        let name: String 
+    }
 
-class ViewController: UIViewController {
-  struct Props {}
-  (private) enum Constants {}
-  
-  ###
-  
-  code here
-  
-  ###
-}
-```
+    class ViewController: UIViewController {
+        struct Props {}
+
+        enum Constants {}
+
+        // code
+    }
+    ```
 - Do not put empty line at the beginning of a type:
-```swift
-// Preferred
-class MyView: UIView {
-  private let ...
-}
+    ```swift
+    // Preferred
+    class MyView: UIView {
+        private let someLabel = UILabel()
+    }
 
-// Not Preferred
-class MyView: UIView {
+    // Not Preferred
+    class MyView: UIView {
 
-  private let ...
-}
-```
-- Name members of tuples for extra clarity:
-```swift
-// Preferred
-func doSomething() -> (x: Int, y: Int) {
-  return (x: 0, y: 0)
-}
+        private let someLabel = UILabel()
+    }
+    ```
+- Name members of tuples for extra clarity when it's hard to infer their purpose otherwise:
+    ```swift
+    // Preferred
+    func analyze(numbers: [Int]) -> (average: Double, containsDuplicates: Bool) {
+        // code
+    }
 
-// Not Preferred
-func doSomething() -> (Int, Int) {
-  return (0, 0)
-}
-```
-- Names of all types for a given screen usually contain the same prefix (e.g. TemplatesPageListViewModel, TemplatesPageListViewController, TemplatesPageListView etc). Sometimes the names are too long and we use prefixes to name them (e.g. TPLViewModel, TPLViewController, TPLView).
+    // Not Preferred
+    func analyze(numbers: [Int]) -> (Double, Bool) {
+        // code
+    }
+    ```
+- Names of all types for a given screen usually contain the same prefix (e.g. `TemplatesPageListViewModel`, `TemplatesPageListViewController`, `TemplatesPageListView` etc). Sometimes the names are too long, so we use prefix abbreviations to name them (e.g. `TPLViewModel`, `TPLViewController`, `TPLView`).
 
-Alternative approach is to use namespacing enums (e.g. TemplatesPageList), but this approach has some problems. One of them is when we put a controller in namespacing extension, we are not able to see type information in memory debugger, only a bunch of ViewControllers.
-```swift
-// Preferred
-class TPLViewModel {}
-class TPLViewController: UIViewController {}
+    An alternative approach uses namespacing enums (e.g. `TemplatesPageList`), but this approach has a significant downside. When we put a controller in the namespacing extension, we cannot see enclosing type information in the memory debugger, only a bunch of `ViewController` objects.
+    ```swift
+    // Preferred
+    class TPLViewModel {
+        // code
+    }
 
-// Not Preferred
-enum TemplatesPageList {}
+    class TPLViewController: UIViewController {
+        // code
+    }
 
-extension TemplatesPageList {
-  class ViewModel {}
-  class ViewController: UIViewController {}
-}
-```
+    // Not Preferred
+    enum TemplatesPageList {}
+
+    extension TemplatesPageList {
+        class ViewModel {
+            // code
+        }
+
+        class ViewController: UIViewController {
+            // code
+        }
+    }
+    ```
 - Do not use return in single-line functions/computed properties: 
-``` swift
-func doSomething() -> Int {
-  self.price * self.count
-}
+    ``` swift
+    func doSomething() -> Int {
+        self.price * self.count
+    }
 
-var doSomething: Int {
-  self.price * self.count
-}
-```
+    var doSomething: Int {
+        self.price * self.count
+    }
+    ```
 ### 3. Naming
-- We are using `PascalCase` for `struct`, `enum`, `class`, `associatedtype`, `protocol`, etc.).
-```swift
-class SomeTestClass {
-  //..code here..//
-}
-```
-- We are using `camelCase` for functions, properties, variables, argument names, enum cases, etc.
+- We use `PascalCase` for `struct`, `enum`, `class`, `associatedtype`, `protocol`, etc.).
+    ```swift
+    class SomeTestClass {
+        // code
+    }
+    ```
+- We use `camelCase` for functions, properties, variables, argument names, enum cases, etc.
 - Do not abbreviate, use shortened names, or single letter names.
-```swift
-// PREFERRED
-class RoundAnimatingButton: UIButton {
-  let animationDuration: NSTimeInterval
+    ```swift
+    // PREFERRED
+    final class RoundAnimatingButton: UIButton {
+        private let animationDuration: NSTimeInterval
   
-  func startAnimating() {
-    let firstSubview = subviews.first
-  }
-}
+        func startAnimating() {
+            let firstSubview = subviews.first
+            // code
+        }
 
-// NOT PREFERRED
-class RoundAnimating: UIButton {
-  let aniDur: NSTimeInterval
+        // code
+    }
+
+    // NOT PREFERRED
+    final class RoundAnimating: UIButton {
+        private let aniDur: NSTimeInterval
   
-  func srtAnmating() {
-    let v = subviews.first
-  }
-}
-```
+        func srtAnmating() {
+            let v = subviews.first
+            // code
+        }
+
+        // code
+    }
+    ```
 - Include type information in constant or variable names when it is not obvious otherwise.
 ```swift
 class TestViewController: UIViewController {
@@ -427,38 +448,37 @@ doSomething(
 })
 ```
 #### 4.6 `guard` statements
-- **4.6.1** In general, we prefer to use an `early return` strategy where applicable as opposed to nesting code in if statements.
-```swift
-	struct Params {
-	  let var1: Int
-	  let var2: String?
-	  let var3: CustomType?
+- **4.6.1** In general, we prefer to use an `early return` strategy where applicable instead of nesting code in `if` statements.
+    ```swift
+	struct FailableConfig {
+	    let value: Int
+	    let description: String?
+	    let someCustomTypeValue: CustomType?
 	}
 	
-	init?(params: Params) {
-	  guard 
-	    let var2 = params.var2,
-	    let var3: params.var3 else
-	  {
-	    // Early return
-	    return nil
-	  }
+	init?(config: FailableConfig) {
+	    guard let description = config.description,
+              let someCustomTypeValue = config.someCustomTypeValue 
+        else {
+	        // early return
+	        return nil
+	    }
 	  
-	  // Continue initialization
+	    // code
 	}
-```
+    ```
 - **4.6.2** When you need to check if a condition is true `guard` is preferred.
-``` swift
+    ``` swift
 	// Preferred
 	guard users.indices.contains(index) else {
-	  return 
+	    return 
 	}	
 
 	// Not Preffered
 	if users.indices.contains(index) {
-	  ...
+        // code
 	}
-```
+    ```
 - **4.6.3** For control flows `if` is preferred. And you should also use `guard` only if a failure should result in exiting the current context.
  ``` swift
 	// Preferred

@@ -39,7 +39,6 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
     <summary>Enable automatic trimming of trailing whitespaces and leading whitespaces for empty lines.</summary>
     <img src="resources/illustrations/7.2.empty_lines.png" alt="Xcode -> Preferences -> Text Editing -> Editing -> While Editing" width="80%"/>
     </details>
-- Add new line at the end of every file.
 - Don't put opening braces on new lines ([1TBS style](https://en.m.wikipedia.org/wiki/Indentation_style#1TBS)):
     ```swift
     class TestClass {
@@ -55,6 +54,23 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
                 // code
             }
         }
+    }
+    ```
+- Nested types should be located at the top of a parent type:
+    ```swift
+    struct Foo {
+        struct Bar {}
+   
+        let bar: Bar
+        let name: String 
+    }
+
+    class ViewController: UIViewController {
+        struct Props {}
+
+        enum Constants {}
+
+        // code
     }
     ```
 - When declaring a function that doesn't fit in 1 line - put its parameters on separate lines. Each argument and the return value should be on its line:
@@ -96,23 +112,6 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
         // code
     }
     ```
-- Nested types should be located at the top of a parent type:
-    ```swift
-    struct Foo {
-        struct Bar {}
-   
-        let bar: Bar
-        let name: String 
-    }
-
-    class ViewController: UIViewController {
-        struct Props {}
-
-        enum Constants {}
-
-        // code
-    }
-    ```
 - Do not put an empty line at the beginning and end of a type:
     ```swift
     // Preferred
@@ -139,6 +138,42 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
         // code
     }
     ```
+- When extracting multiple values from the enum case, prefer placing a single `var` or `let` annotation before the case name. You can also stick to this positioning for single associated value cases to keep the `case let` pattern consistent across the app:
+    ```swift
+    // Preferred
+    switch value {
+    case let .multiple(first, second, third):
+        // code
+    case let .single(first):
+        // code
+    }
+
+    // Not Preferred
+    switch value {
+    case .multiple(let first, let second, let third):
+        // code
+    case .single(let first):
+        // code
+    }
+    ```
+- Do not use return in single-line functions/computed properties: 
+    ``` swift
+    func canExchangeAssets(for exchangeValue: Double) -> Bool {
+        self.availableAssetsValue > exchangeValue
+    }
+
+    var availableAssetsValue: Double {
+        self.price * self.count
+    }
+    ```
+### 3. Naming
+- We use `PascalCase` for `struct`, `enum`, `class`, `associatedtype`, `protocol`, etc.).
+    ```swift
+    class SomeTestClass {
+        // code
+    }
+    ```
+- We use `camelCase` for functions, properties, variables, argument names, enum cases, etc.
 - Names of all types for a given screen usually contain the same prefix (e.g. `TemplatesPageListViewModel`, `TemplatesPageListViewController`, `TemplatesPageListView` etc). Sometimes the names are too long, so we use prefix abbreviations to name them (e.g. `TPLViewModel`, `TPLViewController`, `TPLView`).
 
     An alternative approach uses namespacing enums (e.g. `TemplatesPageList`), but this approach has a significant downside. When we put a controller in the namespacing extension, we cannot see enclosing type information in the memory debugger, only a bunch of `ViewController` objects.
@@ -165,24 +200,6 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
         }
     }
     ```
-- Do not use return in single-line functions/computed properties: 
-    ``` swift
-    func canExchangeAssets(for exchangeValue: Double) -> Bool {
-        self.availableAssetsValue > exchangeValue
-    }
-
-    var availableAssetsValue: Double {
-        self.price * self.count
-    }
-    ```
-### 3. Naming
-- We use `PascalCase` for `struct`, `enum`, `class`, `associatedtype`, `protocol`, etc.).
-    ```swift
-    class SomeTestClass {
-        // code
-    }
-    ```
-- We use `camelCase` for functions, properties, variables, argument names, enum cases, etc.
 - Do not abbreviate, use shortened names, or single letter names.
     ```swift
     // PREFERRED

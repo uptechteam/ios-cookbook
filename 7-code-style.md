@@ -167,42 +167,29 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
     }
     ```
 ### 3. Naming
-- We use `PascalCase` for `struct`, `enum`, `class`, `associatedtype`, `protocol`, etc.).
-    ```swift
-    class SomeTestClass {
-        // code
-    }
-    ```
+- We use `PascalCase` for `struct`, `enum`, `class`, `associatedtype`, `protocol`, etc.
 - We use `camelCase` for functions, properties, variables, argument names, enum cases, etc.
 - Names of all types for a given screen usually contain the same prefix (e.g. `TemplatesPageListViewModel`, `TemplatesPageListViewController`, `TemplatesPageListView` etc). Sometimes the names are too long, so we use prefix abbreviations to name them (e.g. `TPLViewModel`, `TPLViewController`, `TPLView`).
 
     An alternative approach uses namespacing enums (e.g. `TemplatesPageList`), but this approach has a significant downside. When we put a controller in the namespacing extension, we cannot see enclosing type information in the memory debugger, only a bunch of `ViewController` objects.
     ```swift
     // Preferred
-    class TPLViewModel {
-        // code
-    }
+    class TPLViewModel {}
 
-    class TPLViewController: UIViewController {
-        // code
-    }
+    class TPLViewController: UIViewController {}
 
     // Not Preferred
     enum TemplatesPageList {}
 
     extension TemplatesPageList {
-        class ViewModel {
-            // code
-        }
+        class ViewModel {}
 
-        class ViewController: UIViewController {
-            // code
-        }
+        class ViewController: UIViewController {}
     }
     ```
-- Do not abbreviate, use shortened names, or single letter names.
+- Do not use non-descriptive, shortened or single-letter names:
     ```swift
-    // PREFERRED
+    // Preferred
     final class RoundAnimatingButton: UIButton {
         private let animationDuration: NSTimeInterval
   
@@ -210,36 +197,47 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
             let firstSubview = subviews.first
             // code
         }
-
-        // code
     }
 
-    // NOT PREFERRED
+    // Not Preferred
     final class RoundAnimating: UIButton {
         private let aniDur: NSTimeInterval
   
-        func srtAnmating() {
-            let v = subviews.first
+        func anim() {
+            let a = subviews.first
             // code
         }
-
-        // code
     }
     ```
-- Include type information in constant or variable names when it is not obvious otherwise.
-```swift
-class TestViewController: UIViewController {
-  // when working with a subclass of `UIViewController` such as a table view
-  // controller, collection view controller, split view controller, etc.,
-  // fully indicate the type in the name.
-  let popupTableViewController: UITableViewController
+- Include type information in constant/variable names when working with a subclass of `UIViewController` or `UIView`:
+    ```swift
+    // Preferred
+    final class TestViewController: UIViewController {
+        private let popupTableViewController: UITableViewController
   
-  // when working with outlets, make sure to specify the outlet type in the property name.
-  @IBOutlet weak var submitButton: UIButton!
-  @IBOutlet weak var emailTextField: UITextField!
-  @IBOutlet weak var nameLabel: UILabel!
-}
-```
+        private let submitButton = UIButton()
+        private let emailTextField = UITextField()
+        private let nameLabel = UILabel()
+    }
+
+    // Not Preferred
+    final class TestViewController: UIViewController {
+        private let popup: UITableViewController
+  
+        private let submit = UIButton()
+        private let email = UITextField()
+        private let name = UILabel()
+    }
+    ```
+- When dealing with an acronym or other name usually written in all caps: use `Uppercase` if an abbreviation is in the middle of a name and `lowercase` if a `camelCase` name starts with it:
+    ```swift
+    final class URLFinder {}
+
+    let htmlBodyContent = "<p>Hello, World!</p>"
+    let profileID = 1
+    ```
+### 4. Coding Style
+#### 4.1 General
 - Constants that are used two or more times should be `static` and put in an enum named `Constants`. It should be located at the bottom of the type declaration or the file:
 ```swift
 class TestClass {
@@ -259,19 +257,6 @@ enum Constants {
   static let constant = 1
 }
 ```
-- When dealing with an acronym or other name that is usually written in all caps, actually use all caps in any names that use this in code. The exception is if this word is at the start of a name that needs to start with lowercase - in this case, use all lowercase for the acronym.
-```swift
-// "HTML" is at the start of a constant name, so we use lowercase "html"
-let htmlBodyContent: String = "<p>Hello, World!</p>"
-// Prefer using ID to Id
-let profileID: Int = 1
-// Prefer URLFinder to UrlFinder
-class URLFinder {
-  //..code here..//
-}
-```
-### 4. Coding Style
-#### 4.1 General
 - **4.1.1** Add a line break after if or guard statement
 ```swift
 // Preferred 

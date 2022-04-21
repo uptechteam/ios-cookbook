@@ -126,45 +126,47 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
 
     }
     ```
-- Name members of tuples for extra clarity when it's hard to infer their purpose otherwise:
+- Add a line break after `if` and `guard` statement:
+    ```swift
+    // Preferred 
+    if condition {
+        // code
+    }
+
+    guard condition else {
+        return
+    }
+
+    // Not Preffered 
+    if condition { // code }
+
+    guard condition else { return }
+    ```
+- Put an empty line after `if` and `guard` closing bracket:
     ```swift
     // Preferred
-    func analyze(numbers: [Int]) -> (average: Double, containsDuplicates: Bool) {
+    if condition {
         // code
     }
+
+    // code
+
+    guard condition else {
+        return
+    }
+
+    // code
 
     // Not Preferred
-    func analyze(numbers: [Int]) -> (Double, Bool) {
+    if condition {
         // code
     }
-    ```
-- When extracting multiple values from the enum case, prefer placing a single `var` or `let` annotation before the case name. You can also stick to this positioning for single associated value cases to keep the `case let` pattern consistent across the app:
-    ```swift
-    // Preferred
-    switch value {
-    case let .multiple(first, second, third):
-        // code
-    case let .single(first):
-        // code
-    }
+    // code
 
-    // Not Preferred
-    switch value {
-    case .multiple(let first, let second, let third):
-        // code
-    case .single(let first):
-        // code
+    guard condition else {
+        return
     }
-    ```
-- Do not use return in single-line functions/computed properties: 
-    ``` swift
-    func canExchangeAssets(for exchangeValue: Double) -> Bool {
-        self.availableAssetsValue > exchangeValue
-    }
-
-    var availableAssetsValue: Double {
-        self.price * self.count
-    }
+    // code
     ```
 ### 3. Naming
 - We use `PascalCase` for `struct`, `enum`, `class`, `associatedtype`, `protocol`, etc.
@@ -229,12 +231,25 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
         private let name = UILabel()
     }
     ```
+- Provide labels for tuple members when it's hard to infer their purpose otherwise:
+    ```swift
+    // Preferred
+    func analyze(numbers: [Int]) -> (average: Double, containsDuplicates: Bool) {
+        // code
+    }
+
+    // Not Preferred
+    func analyze(numbers: [Int]) -> (Double, Bool) {
+        // code
+    }
+    ```
 - When dealing with an acronym or other name usually written in all caps: use `Uppercase` if an abbreviation is in the middle of a name and `lowercase` if a `camelCase` name starts with it:
     ```swift
     final class URLFinder {}
 
     let htmlBodyContent = "<p>Hello, World!</p>"
-    let profileID = 1
+
+    func setupUI() {}
     ```
 ### 4. Coding Style
 #### 4.1 General
@@ -257,23 +272,17 @@ enum Constants {
   static let constant = 1
 }
 ```
-- **4.1.1** Add a line break after if or guard statement
-```swift
-// Preferred 
-if condition {
-  //..code here..//
-}
 
-guard condition else {
-  return
-}
+- Do not use `return` in single-line functions and computed properties: 
+    ``` swift
+    func canExchangeAssets(for exchangeValue: Double) -> Bool {
+        self.availableAssetsValue > exchangeValue
+    }
 
-// Not Preffered 
-if condition { //..code here..// }
-
-guard condition else { return }
-
-```
+    var availableAssetsValue: Double {
+        self.price * self.count
+    }
+    ```
 - **4.1.2** Prefer let to var whenever possible
 ```swift
 // Preferred
@@ -358,67 +367,50 @@ attributedString.boundingRect(with: size, options: NSStringDrawingOptions.usesLi
 ```
 - **4.1.9** If a variable or class isn't intended to be overridden apply `final` to it.
 - **4.1.10** When writing public methods, keep in mind whether the method is intended to be overridden or not. If not, mark is as `final`, through keep in mind that this will prevent the method from being overwritten. In general, `final` methods result in improved compilation times, so it is good to use this when applicable.
-- **4.1.11** Put an empty line after if/guard closing bracket
-```swift
-// Preferred
-if condition {
-  // Code
-}
-
-// Code
-
-guard condition else {
-  return
-}
-
-// Code
-
-// Not Preferred
-if condition {
-  // Code
-}
-// Code
-
-guard condition else {
-  return
-}
-// Code
-```
 
 #### 4.2 Switch statements and enums
-- **4.2.1** When defining a case that has an associated value which isn't obvious, make sure that this value is appropriately labeled as opposed to just types. Otherwise, skip the name.
-```swift
-// Preferred
-enum Result<Value, Error: Swift.Error> {
-  case success(Value) // associated values are obvious and don't need to be named
-  case error(Error)
-}
+- When defining a case with an associated value that isn't obvious, make sure that this value is appropriately labeled:
+    ```swift
+    // Preferred
+    enum ViewState {
+        case question(isUserActive: Bool)
+    }
 
-enum ViewState {
-  case question(isUserActive: Bool)
-}
+    // Not Preferred 
+    enum ViewState {
+        case question(Bool)
+    }
+    ``` 
+- When extracting an associated value from an enum case, skip its label:
+- When extracting multiple values from the enum case, prefer placing a single `var` or `let` annotation before the case name. You can also stick to this positioning for single associated value cases to keep the `case let` pattern consistent across the app:
+    ```swift
+    // Preferred
+    switch value {
+    case let .multiple(first, second, third):
+        // code
+    case let .single(first):
+        // code
+    }
 
-// Not Preferred 
-enum Result<Value, Error: Swift.Error> {
-  case success(response: Value) // additional names are redundant
-  case error(error: Error)
-}
+    // Not Preferred
+    switch value {
+    case .multiple(let first, let second, let third):
+        // code
+    case .single(let first):
+        // code
+    }
+    ```
+- Do not include a `default` case for `switch` statements with a finite set of cases. Instead, place unused cases at the bottom of it and add `break`:
+    ```swift
+    switch value {
+    case .doWork:
+        // code
 
-enum ViewState {
-  case question(Bool) // Without a name it's not obvious what this assosiated value means.
-}
-``` 
-- **4.2.2** When using a switch statement that has a finite set of possibilities, do not include a `default` case. Instead, place unused cases at the bottom and use the `break` keyword to prevent execution.
-```swift
-switch value {
-case .doWork:
-  ...
-
-case .ignoreThis, .ignoreThatToo, .andMe:
-  break
-}
+    case .ignoreThis, .ignoreThatToo, .andMe:
+        break
+    }
 ```
-- **4.2.3** Prefer lists of possibilities (e.g. `case .a, .b, .c:`) to using the `fall through` keyword.
+- **4.2.3** Prefer lists of possibilities (e.g. `case .a, .b, .c:`) to using the `fallthrough` keyword.
 
 #### 4.3 Optionals
 - **4.3.1** The only time you should be using `implicitly unwrapped optionals` is with `@IBOutlet` and when resulting crash is a programmer's error (e.g. when resolving dependencies using dip or creating regular expressions).

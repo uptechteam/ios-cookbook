@@ -95,6 +95,16 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
     ```swift
     let array = [1, 2, 3, 4, 5]
     ```
+- Put an extra line break before the next `case` in a `switch`:
+    ```swift
+    switch task {
+    case .doWork:
+        // code
+
+    case .ignoreThis, .ignoreThatToo:
+        break
+    }
+    ```
 - Prefer using local constants or other mitigation techniques to avoid multi-line predicates where possible:
     ```swift
     // Preferred
@@ -169,8 +179,8 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
     // code
     ```
 ### 3. Naming
-- We use `PascalCase` for `struct`, `enum`, `class`, `associatedtype`, `protocol`, etc.
-- We use `camelCase` for functions, properties, variables, argument names, enum cases, etc.
+- We use `PascalCase` for `struct`, `enum`, `class`, `protocol`, `associatedtype` and `typealias` names.
+- We use `camelCase` for functions, properties, variables, argument names and enum cases.
 - Names of all types for a given screen usually contain the same prefix (e.g. `TemplatesPageListViewModel`, `TemplatesPageListViewController`, `TemplatesPageListView` etc). Sometimes the names are too long, so we use prefix abbreviations to name them (e.g. `TPLViewModel`, `TPLViewController`, `TPLView`).
 
     An alternative approach uses namespacing enums (e.g. `TemplatesPageList`), but this approach has a significant downside. When we put a controller in the namespacing extension, we cannot see enclosing type information in the memory debugger, only a bunch of `ViewController` objects.
@@ -238,9 +248,21 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
         // code
     }
 
-    // Not Preferred
+    
     func analyze(numbers: [Int]) -> (Double, Bool) {
         // code
+    }
+    ```
+- Avoid using multiple shorthand argument names in a single closure - provide argument names for clarity:
+    ```swift
+    // Preferred
+    applyChanges { currentValue, positiveDelta in
+        currentValue + positiveDelta
+    }
+
+    // Not Preferred
+    applyChanges {
+        $0 + $1
     }
     ```
 - When dealing with an acronym or other name usually written in all caps: use `Uppercase` if an abbreviation is in the middle of a name and `lowercase` if a `camelCase` name starts with it:
@@ -253,26 +275,51 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
     ```
 ### 4. Coding Style
 #### 4.1 General
-- Constants that are used two or more times should be `static` and put in an enum named `Constants`. It should be located at the bottom of the type declaration or the file:
-```swift
-class TestClass {
-  ...
-  
-  // MARK: - Inner Declarations -
-  enum Constants {
-    static let constant = 1
-  }
-}
+- Prefer `let` to `var` whenever possible.
+- Do not explicitly declare types for constants or variables if they can be inferred. *But be aware that inferring a chain of closures will result in slower compilation time:*
+    ```swift
+    // Preferred
+    let age = user.age
+    let name = "John"
 
-class TestClass {
-  ...
-}
+    // Not Preferred
+    let age: Int = user.age
+    let name: String = "John"
+    ```
+- Avoid writing out an enum type or nesting type of static variables where possible - use shorthand notation instead:
+    ```swift
+    // Preferred
+    tableView.contentInset = .zero
+    let textBounds = attributedString.boundingRect(
+        with: size, 
+        options: .usesLineFragmentOrigin, 
+        context: nil
+    )
 
-enum Constants {
-  static let constant = 1
-}
-```
+    // Not Preferred
+    tableView.contentInset = UIEdgeInsets.zero
+    let textBounds = attributedString.boundingRect(
+        with: size, 
+        options: NSStringDrawingOptions.usesLineFragmentOrigin, 
+        context: nil
+    )
+    ```
+- Prefer the composition of `map`, `filter`, `reduce`, etc over iterating when transforming collections:
+    ```swift
+    // Preferred
+    let evenNumbersSum = [4, 7, 10, 11, 13, 14, 18, 26]
+        .filter({ number in number.isMultiple(of: 2) })
+        .reduce(.zero, +)
 
+    // Not Preferred
+    var evenNumbersSum: Int = .zero
+    let numbers = [4, 7, 10, 11, 13, 14, 18, 26]
+    for number in numbers {
+        if number % 2 == .zero {
+            evenNumbersSum += number
+        }
+    }
+    ```
 - Do not use `return` in single-line functions and computed properties: 
     ``` swift
     func canExchangeAssets(for exchangeValue: Double) -> Bool {
@@ -283,91 +330,21 @@ enum Constants {
         self.price * self.count
     }
     ```
-- **4.1.2** Prefer let to var whenever possible
-```swift
-// Preferred
-let age: Int // Constants can be initialized later
-
-if condition {
-  age = 1
-} else {
-  age = 2
-}
-
-// Not Preferred
-var age: Int = 0
-
-if condition {
-  age = 1
-} else {
-  age = 2
-}
-```
-- **4.1.3** Prefer the composition of `map`, `filter`, `reduce`, etc. over iterating when transforming collections.
-```swift
-// Preferred
-let evenNumbers = [4, 7, 10, 11, 13, 14, 18, 26].filter { $0 % 2 == 0 }
-
-// Not Preferred
-var evenNumbers: [Int] = []
-let numbers = [4, 7, 10, 11, 13, 14, 18, 26]
-for value in numbers {
-  if value % 2 == 0 {
-    evenNumbers.append(value)
-  }
-}
-```
-- **4.1.4** Prefer not declaring types for constants or variables if they can be inferred. *Exception: chain of closures. It may take some time for Swift to infer types which results in slower compilation time.*
-```swift
-// Preferred
-let age = user.age
-let name = "John"
-
-// Not Preferred
-let age: Int = user.age
-let name: String = "John"
-```
-- **4.1.5** Be careful when calling `self` from an `escaping closure` as this can cause a retain cycle - use `capture list` when this might be the case.
-```swift
-{ [weak self] in ...} // you can do this
-{ [unowned self] in ...} // and this
-```
-- **4.1.6** Try not to capture self if you don't need it. You can capture individual variables.
-```swift
-class ViewController: UIViewController {
-  private let dataSource = ...
-
-  func setupBindings() {
-    viewModel.purchases 
-      .observeValues { [dataSource] in ...} // It'll capture dataSource with a strong reference. It's also posible to capture it weakly with [weak dataSource] and [unowned dataSource].
+- Do not put parentheses around control flow predicates:
+    ```swift
+    // Preferred
+    if x == y {
+        // code
     }
-}
-```
-- **4.1.7** Don't place parentheses around control flow predicates
-```swift
-// Preferred
-if x == y {
-  ...
-}
 
-// Not Preferred
-if (x == y) {
-  ...
-}
-```
-- **4.1.8** Avoid writing out an enum type or static variables where possible - use shorthand.
-```swift
-// Preferred
-tableView,contentInset = .zero
-attributedString.boundingRect(with: size, options: .usesLineFragmentOrigin, context: nil)
-
-// Not Preferred
-tableView.contentInset = UIEdgeInsets.zero
-attributedString.boundingRect(with: size, options: NSStringDrawingOptions.usesLineFragmentOrigin, context: nil)
-```
-- **4.1.9** If a variable or class isn't intended to be overridden apply `final` to it.
-- **4.1.10** When writing public methods, keep in mind whether the method is intended to be overridden or not. If not, mark is as `final`, through keep in mind that this will prevent the method from being overwritten. In general, `final` methods result in improved compilation times, so it is good to use this when applicable.
-
+    // Not Preferred
+    if (x == y) {
+        // code
+    }
+    ```
+- If a variable or class is not intended to be overridden, apply `final` to it.
+- When writing public methods, keep in mind whether the user should override the method or not. If not, mark it as `final`. *In general, `final` methods improve compilation time, so it is beneficial to use this when applicable.*
+- Constants used two or more times should be `static` and stored in an `enum` named `Constants`.
 #### 4.2 Switch statements and enums
 - When defining a case with an associated value that isn't obvious, make sure that this value is appropriately labeled:
     ```swift
@@ -382,12 +359,26 @@ attributedString.boundingRect(with: size, options: NSStringDrawingOptions.usesLi
     }
     ``` 
 - When extracting an associated value from an enum case, skip its label:
+    ```swift
+    // Preferred
+    switch viewState {
+    case let .alert(message):
+        // code
+    }
+
+    // Not Preferred
+    switch value {
+    case .alert(message: let alertMessage):
+        // code
+    }
+    ```
 - When extracting multiple values from the enum case, prefer placing a single `var` or `let` annotation before the case name. You can also stick to this positioning for single associated value cases to keep the `case let` pattern consistent across the app:
     ```swift
     // Preferred
     switch value {
     case let .multiple(first, second, third):
         // code
+
     case let .single(first):
         // code
     }
@@ -396,22 +387,51 @@ attributedString.boundingRect(with: size, options: NSStringDrawingOptions.usesLi
     switch value {
     case .multiple(let first, let second, let third):
         // code
+
     case .single(let first):
         // code
     }
     ```
 - Do not include a `default` case for `switch` statements with a finite set of cases. Instead, place unused cases at the bottom of it and add `break`:
     ```swift
-    switch value {
+    // Preferred
+    switch task {
     case .doWork:
         // code
 
-    case .ignoreThis, .ignoreThatToo, .andMe:
+    case .ignoreThis, .ignoreThatToo:
         break
     }
-```
-- **4.2.3** Prefer lists of possibilities (e.g. `case .a, .b, .c:`) to using the `fallthrough` keyword.
 
+    // Not Preferred
+    switch task {
+    case .doWork:
+        // code
+
+    default:
+        break
+    }
+    ```
+- Prefer lists of cases to using the `fallthrough` keyword:
+    ```swift
+    // Preferred
+    switch order {
+    case .first, .second, .third:
+        // code
+    }
+
+    // Not Preferred
+    switch order {
+    case .first:
+        fallthrough
+
+    case .second:
+        fallthrough
+
+    case .third:
+        // code
+    }
+    ```
 #### 4.3 Optionals
 - **4.3.1** The only time you should be using `implicitly unwrapped optionals` is with `@IBOutlet` and when resulting crash is a programmer's error (e.g. when resolving dependencies using dip or creating regular expressions).
 - **4.3.2** If you don't plan to use the value stored in an optional, but need to determine whether or not it's `nil`, explicitly check this value against `nil` as opposed to using `if let` syntax.
@@ -437,6 +457,23 @@ When implementing protocols, there are two ways of organizing your code:
 When using method #2, add `// MARK:` statements anyway for easier readability.
 
 #### 4.5 Closures
+
+- **4.1.5** Be careful when calling `self` from an `escaping closure` as this can cause a retain cycle - use `capture list` when this might be the case.
+```swift
+{ [weak self] in ...} // you can do this
+{ [unowned self] in ...} // and this
+```
+- **4.1.6** Try not to capture self if you don't need it. You can capture individual variables.
+```swift
+class ViewController: UIViewController {
+  private let dataSource = ...
+
+  func setupBindings() {
+    viewModel.purchases 
+      .observeValues { [dataSource] in ...} // It'll capture dataSource with a strong reference. It's also posible to capture it weakly with [weak dataSource] and [unowned dataSource].
+    }
+}
+```
 - **4.5.1** If the types of the parameters are obvious, it is ok to omit the type. Sometimes readability is enhanced by adding clarifying detail and sometimes by taking repetitive parts away.
 - **4.5.2** Use trailing closure syntax unless the meaning of the closure is not obvious without the parameter name or function takes 2 or more closures as parameters.
 ```swift

@@ -178,6 +178,14 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
     }
     // code
     ```
+- For multi-conditioned `guard` statements, each subsequent condition should be positioned on the new line and be horizontally aligned with the preceding one:
+    ```swift
+    guard let description = config.description,
+          let someCustomTypeValue = config.someCustomTypeValue 
+    else {
+	    return nil
+    }
+    ```
 ### 3. Naming
 - We use `PascalCase` for `struct`, `enum`, `class`, `protocol`, `associatedtype` and `typealias` names.
 - We use `camelCase` for functions, properties, variables, argument names and enum cases.
@@ -433,20 +441,38 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
     }
     ```
 #### 4.3 Optionals
-- **4.3.1** The only time you should be using `implicitly unwrapped optionals` is with `@IBOutlet` and when resulting crash is a programmer's error (e.g. when resolving dependencies using dip or creating regular expressions).
-- **4.3.2** If you don't plan to use the value stored in an optional, but need to determine whether or not it's `nil`, explicitly check this value against `nil` as opposed to using `if let` syntax.
-```swift
-// Preferred
-if optionalValue != nil {
-  ...
-}
+- The only time you should be using implicitly unwrapped optionals is when the resulting crash is a programmer's error (e.g., when resolving dependencies using [Dip](https://github.com/AliSoftware/Dip) or creating regular expressions).
+- If you don't plan to use the value stored in an optional but need to check whether it is `nil` or not - explicitly check this value against `nil` instead of using the `if let` syntax:
+    ```swift
+    // Preferred
+    if optionalValue != nil {
+        // code
+    }
 
-// Not Preferred
-if let _  = optionalValue {
-  ...
-}
-```
+    // Not Preferred
+    if let _ = optionalValue {
+        // code
+    }
+    ```
+- When unwrapping optionals, prefer `guard let` statements to `if let` ones to avoid unnecessary nesting in your code.
+- Avoid unwrapping optionals where optional chaining use is sufficient:
+    ```swift
+    // Preferred
+    UIView.animate(withDuration: 0.3) { [weak animatingView] in
+        animatingView?.alpha = .zero
+        animatingView?.transform = .identity
+    }
 
+    // Not Preferred
+    UIView.animate(withDuration: 0.3) { [weak animatingView] in
+        guard let animatingView = animatingView else {
+            return
+        }
+
+        animatingView.alpha = .zero
+        animatingView.transform = .identity
+    }
+    ```
 #### 4.4 Protocols
 When implementing protocols, there are two ways of organizing your code:
 1. Using `// MARK:` comments to separate protocol implementation from the rest of your code.
@@ -489,7 +515,7 @@ doSomething(
 })
 ```
 #### 4.6 `guard` statements
-- **4.6.1** In general, we prefer to use an `early return` strategy where applicable instead of nesting code in `if` statements.
+- We prefer to use an early return strategy where applicable instead of nesting code in `if` statements:
     ```swift
 	struct FailableConfig {
 	    let value: Int
@@ -501,14 +527,13 @@ doSomething(
 	    guard let description = config.description,
               let someCustomTypeValue = config.someCustomTypeValue 
         else {
-	        // early return
 	        return nil
 	    }
 	  
 	    // code
 	}
     ```
-- **4.6.2** When you need to check if a condition is true `guard` is preferred.
+- When you need to check if a condition is true and a failure should exit the current context - use `guard`:
     ``` swift
 	// Preferred
 	guard users.indices.contains(index) else {
@@ -520,25 +545,6 @@ doSomething(
         // code
 	}
     ```
-- **4.6.3** For control flows `if` is preferred. And you should also use `guard` only if a failure should result in exiting the current context.
- ``` swift
-	// Preferred
-	if isLoggedIn {
-	  // Show main screen
-	} else {
-	  // Show registration screen
-	}
-	
-	// Not Preffered
-	guard isLoggedIn {
-	  // Show registration screen
-	  return
-	}
-
-	// Show main screen
-```
-- **4.6.4** When unwrapping optionals or checking if a condition is true, prefer `guard` statements as opposed to `if` statements to decrease the amount of nested indentation in your code.
-
 ### 5. Tagged
 `Tagged` is a wrapper for an additional layer of type-safety.
 

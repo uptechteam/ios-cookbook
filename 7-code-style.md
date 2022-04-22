@@ -474,46 +474,72 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
     }
     ```
 #### 4.4 Protocols
-When implementing protocols, there are two ways of organizing your code:
-1. Using `// MARK:` comments to separate protocol implementation from the rest of your code.
-2.  Using an extension outside of `class/struct` implementation code, but in the same source file.
-
-#2 is preferred as it allows cleaner separation of concerns. However, keep in mind that the methods in the extensions can't be overridden by a subclass.
-
-When using method #2, add `// MARK:` statements anyway for easier readability.
-
+- If a `protocol` only has one possible conforming class (e.g., if the `protocol` acts as a wrapper for a unique `ViewModel`), it should be stored in the same source file with its concrete class implementation. Otherwise, keep it in a separate dedicated file.
+- Add `// MARK: -` comments for easier readability and better file structure.
 #### 4.5 Closures
-
-- **4.1.5** Be careful when calling `self` from an `escaping closure` as this can cause a retain cycle - use `capture list` when this might be the case.
-```swift
-{ [weak self] in ...} // you can do this
-{ [unowned self] in ...} // and this
-```
-- **4.1.6** Try not to capture self if you don't need it. You can capture individual variables.
-```swift
-class ViewController: UIViewController {
-  private let dataSource = ...
-
-  func setupBindings() {
-    viewModel.purchases 
-      .observeValues { [dataSource] in ...} // It'll capture dataSource with a strong reference. It's also posible to capture it weakly with [weak dataSource] and [unowned dataSource].
+- Be careful when calling `self` from an escaping closure as this can cause a retain cycle - use a capture list when this might be the case:
+    ```swift
+    self.firstClosure = { [weak self] in 
+        // code
+    } 
+    self.secondClosure = { [unowned self] in
+        // code 
     }
-}
-```
-- **4.5.1** If the types of the parameters are obvious, it is ok to omit the type. Sometimes readability is enhanced by adding clarifying detail and sometimes by taking repetitive parts away.
-- **4.5.2** Use trailing closure syntax unless the meaning of the closure is not obvious without the parameter name or function takes 2 or more closures as parameters.
-```swift
-// Trailing closure
-UIView.animate(withDuration: 0.3) { ... }
+    ```
+- Prefer capturing individual variables to capturing `self` where applicable:
+    ```swift
+    // Preferred
+    UIView.animate(withDuration: 0.3) { [weak animatingView] in
+        animatingView?.alpha = .zero
+        animatingView?.transform = .identity
+    }
 
-// Non trailing closure 
-doSomething(
-  firstClosure: {
-  ...
-}, secondClosure: {
-  ...
-})
-```
+    // Not Preferred
+    UIView.animate(withDuration: 0.3) { [weak self] in
+        self?.animatingView.alpha = .zero
+        self?.animatingView.transform = .identity
+    }
+    ```
+- Use trailing closure syntax unless the purpose of the closure is not clear without the parameter name:
+    ```swift
+    // Preferred
+    UIView.animate(withDuration: 0.3) { [weak animatingView] in
+        animatingView?.alpha = .zero
+        animatingView?.transform = .identity
+    } completion: { _ in
+        // code
+    }
+    removeUnlinkedEntries(completion: {
+        // code
+    })
+
+    // Not Preferred
+    UIView.animate(
+        withDuration: 0.3,
+        animations: { [weak animatingView] in
+            animatingView?.alpha = .zero
+            animatingView?.transform = .identity
+        },
+        completion: { _ in
+            // code
+        }
+    )
+    removeUnlinkedEntries {
+        // code
+    }
+    ```
+- If the types of the parameters are obvious - do not specify them explicitly. *Sometimes readability is enhanced by adding clarifying detail and sometimes by taking repetitive parts away*:
+    ```swift
+    // Preferred
+    delegate.rowHeight { indexPath in
+        dataSource[indexPath].expectedHeight
+    }
+
+    // Not Preferred
+    delegate.rowHeight { (indexPath: IndexPath) -> CGFloat in
+        dataSource[indexPath].expectedHeight
+    }
+    ```
 #### 4.6 `guard` statements
 - We prefer to use an early return strategy where applicable instead of nesting code in `if` statements:
     ```swift

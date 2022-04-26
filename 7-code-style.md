@@ -256,7 +256,7 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
         // code
     }
 
-    
+    // Not Preferred
     func analyze(numbers: [Int]) -> (Double, Bool) {
         // code
     }

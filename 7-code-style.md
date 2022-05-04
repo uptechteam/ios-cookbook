@@ -95,7 +95,7 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
     ```swift
     let array = [1, 2, 3, 4, 5]
     ```
-- Put an extra line break before the next `case` in a `switch`:
+- Put an extra line break before the next `case` in a `switch` for visual logic separation:
     ```swift
     switch task {
     case .doWork:
@@ -103,23 +103,6 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
 
     case .ignoreThis, .ignoreThatToo:
         break
-    }
-    ```
-- Prefer using local constants or other mitigation techniques to avoid multi-line predicates where possible:
-    ```swift
-    // Preferred
-    let firstCondition = x == firstReallyReallyLongPredicateFunction()
-    let secondCondition = y == secondReallyReallyLongPredicateFunction()
-    let thirdCondition = z == thirdReallyReallyLongPredicateFunction()
-    if firstCondition && secondCondition && thirdCondition {
-        // code
-    }
-
-    // Not Preferred
-    if x == firstReallyReallyLongPredicateFunction()
-        && y == secondReallyReallyLongPredicateFunction()
-        && z == thirdReallyReallyLongPredicateFunction() {
-        // code
     }
     ```
 - Do not put an empty line at the beginning and end of a type:
@@ -134,6 +117,25 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
 
         private let someLabel = UILabel()
 
+    }
+    ```
+- Prefer using commas to the `&&` operator in `if` and `guard` predicates. Also, moving predicates logic to local constants dramatically improves code readability:
+    ```swift
+    // Preferred
+    let firstCondition = x == firstPredicateFunction()
+    let secondCondition = y <= secondPredicateFunction() + Constants.minimumBarrier
+    let thirdCondition = z == thirdPredicateFunction() ?? fallbackFunction()
+    if firstCondition, 
+       secondCondition, 
+       thirdCondition {
+        // code
+    }
+
+    // Not Preferred
+    if x == firstPredicateFunction()
+        && y <= secondPredicateFunction() + Constants.minimumBarrier
+        && z == thirdPredicateFunction() ?? fallbackFunction() {
+        // code
     }
     ```
 - Add a line break after `if` and `guard` statement:
@@ -400,6 +402,29 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
         // code
     }
     ```
+- Avoid creating huge `case` statements. In general, if it takes more than **5** lines per `case`, consider grouping it into the method to keep the `switch` size reasonable:
+    ```swift
+    // Preferred
+    switch viewState {
+    case let .transitioning(props):
+        renderTransitioningState(with: props)
+
+    // code
+    }
+
+    // Not Preferred
+    switch viewState {
+    case let .transitioning(props):
+        loadingIndicator.startAnimating()
+        view.backgroundColor = props.backgroundColor
+        view.alpha = props.alpha
+        view.transform = props.transform
+        view.headerView.render(with: props.headerProps)
+        view.footerView.render(with: props.footerProps)
+        
+    // code
+    }
+    ```
 - Do not include a `default` case for `switch` statements with a finite set of cases. Instead, place unused cases at the bottom of it and add `break`:
     ```swift
     // Preferred
@@ -475,7 +500,14 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
     ```
 #### 4.4 Protocols
 - If a `protocol` only has one possible conforming class (e.g., if the `protocol` acts as a wrapper for a unique `ViewModel`), it should be stored in the same source file with its concrete class implementation. Otherwise, keep it in a separate dedicated file.
-- Add `// MARK: -` comments for easier readability and better file structure.
+- Keep all protocol conformance methods in a dedicated extensions *(1 extension per 1 protocol)*. Also, you can add `// MARK: - [Protocol name]` comments for improved readability and easier file navigation:
+    ```swift
+    // MARK: - UIScrollViewDelegate
+
+    extension MyClass: UIScrollViewDelegate {
+        // code
+    }
+    ```
 #### 4.5 Closures
 - Be careful when calling `self` from an escaping closure as this can cause a retain cycle - use a capture list when this might be the case:
     ```swift

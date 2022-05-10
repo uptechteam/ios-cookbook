@@ -286,7 +286,7 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
 ### 4. Coding Style
 #### 4.1 General
 - Prefer `let` to `var` whenever possible.
-- Do not explicitly declare types for constants or variables if they can be inferred. *But be aware that inferring a chain of closures will result in slower compilation time:*
+- Do not explicitly declare types for constants or variables if they can be inferred *(but be aware that inferring a chain of closures will result in slower compilation time)*:
     ```swift
     // Preferred
     let age = user.age
@@ -318,7 +318,7 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
     ```swift
     // Preferred
     let evenNumbersSum = [4, 7, 10, 11, 13, 14, 18, 26]
-        .filter({ number in number.isMultiple(of: 2) })
+        .filter { number in number.isMultiple(of: 2) }
         .reduce(.zero, +)
 
     // Not Preferred
@@ -330,15 +330,17 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
         }
     }
     ```
-- Do not use `return` in single-line functions and computed properties: 
-    ``` swift
-    func canExchangeAssets(for exchangeValue: Double) -> Bool {
-        self.availableAssetsValue > exchangeValue
-    }
+- Omit parentheses around [HOF](https://en.wikipedia.org/wiki/Higher-order_function) arguments:
+    ```swift
+    // Preferred
+    let evenNumbersSum = [4, 7, 10, 11, 13, 14, 18, 26]
+        .filter { number in number.isMultiple(of: 2) }
+        .reduce(.zero, +)
 
-    var availableAssetsValue: Double {
-        self.price * self.count
-    }
+    // Not Preferred
+    let evenNumbersSum = [4, 7, 10, 11, 13, 14, 18, 26]
+        .filter({ number in number.isMultiple(of: 2) })
+        .reduce(.zero, +)
     ```
 - Do not put parentheses around control flow predicates:
     ```swift
@@ -350,6 +352,16 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
     // Not Preferred
     if (x == y) {
         // code
+    }
+    ```
+- Do not use `return` in single-line functions and computed properties: 
+    ``` swift
+    func canExchangeAssets(for exchangeValue: Double) -> Bool {
+        self.availableAssetsValue > exchangeValue
+    }
+
+    var availableAssetsValue: Double {
+        self.price * self.count
     }
     ```
 - If a variable or class is not intended to be overridden, apply `final` to it.

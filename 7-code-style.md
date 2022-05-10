@@ -364,8 +364,29 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
         self.price * self.count
     }
     ```
+- Avoid making tuples with more than **2** arguments. Instead, create a struct to store named values:
+    ``` swift
+    // Preferred
+    struct NumbersInfo {
+        let average: Double
+        let sum: Int
+        let containsDuplicates: Bool
+        let containsPrimes: Bool
+    }
+
+    func analyze(numbers: [Int]) -> NumbersInfo {
+        // code
+    }
+
+    // Not Preferred
+    func analyze(
+        numbers: [Int]
+    ) -> (average: Double, sum: Int, containsDuplicates: Bool, containsPrimes: Bool) {
+        // code
+    }
+    ```
 - If a variable or class is not intended to be overridden, apply `final` to it.
-- When writing public methods, keep in mind whether the user should override the method or not. If not, mark it as `final`. *In general, `final` methods improve compilation time, so it is beneficial to use this when applicable.*
+- When writing public methods, keep in mind whether the user should override the method or not. If not, mark it as `final`. In general, `final` methods improve compilation time, so it is beneficial to use this when applicable.
 - Constants used two or more times should be `static` and stored in an `enum` named `Constants`.
 #### 4.2 Switch statements and enums
 - When defining a case with an associated value that isn't obvious, make sure that this value is appropriately labeled:

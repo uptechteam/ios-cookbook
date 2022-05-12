@@ -330,6 +330,35 @@ We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappe
         }
     }
     ```
+- Use `defer` to avoid code duplication in early return scenarios:
+    ```swift
+    // Preferred
+    let group = DispatchGroup()
+    group.enter()
+    networkLayer.getItem(with: id) { data in
+        defer { group.leave() } 
+        
+        guard let data = data else { 
+            return 
+        }
+
+        // code
+    }
+
+    // Not Preferred
+    let group = DispatchGroup()
+    group.enter()
+    networkLayer.getItem(with: id) { data in
+        guard let data = data else { 
+            group.leave()
+            return 
+        }
+        
+        // code
+
+        group.leave()
+    }
+    ```
 - Omit parentheses around [HOF](https://en.wikipedia.org/wiki/Higher-order_function) arguments:
     ```swift
     // Preferred

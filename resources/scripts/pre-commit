@@ -1,0 +1,57 @@
+#! /bin/sh
+
+# Function to add files to SwiftLint's SCRIPT_INPUT_FILE array
+function addFilesToLint {
+    filename=""
+    count=$2
+    for item in $1
+    do
+        if [[ $item == *".swift"* ]]; then
+            filename+="$item"
+            export SCRIPT_INPUT_FILE_$count="$filename"
+            count=$((count + 1))
+            filename=""
+        else
+            filename+="$item "
+        fi
+    done
+}
+
+# Finding SwiftLint in Mint
+LINT=$(mint which swiftlint)
+if [[ -e "${LINT}" ]]; then
+    printf "SwiftLint Started...\n"
+else
+    echo "SwiftLint is not installed via Mint(https://github.com/yonaskolb/Mint)"
+    exit 1
+fi
+
+# Getting .swift files which are in the commit and haven't been pushed yet
+targets=$(git diff --stat --cached --name-only $(git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD)) | grep -F ".swift")
+
+# Populating SwiftLint's SCRIPT_INPUT_FILE array
+count=0
+addFilesToLint "${targets[0]}" $count
+export SCRIPT_INPUT_FILE_COUNT=$count
+
+# Getting lint results 
+RESULT=$($LINT lint --quiet --use-script-input-files)
+
+if [ "$RESULT" == '' ]; then
+    printf "SwiftLint Finished\n"
+else
+    printf "SwiftLint Failed:\n\n"
+
+    while read -r line; do
+        FILEPATH=$(echo $line | cut -d : -f 1)
+        L=$(echo $line | cut -d : -f 2)
+        C=$(echo $line | cut -d : -f 3)
+        TYPE=$(echo $line | cut -d : -f 4 | cut -c 2-)
+        MESSAGE=$(echo $line | cut -d : -f 5 | cut -c 2-)
+        DESCRIPTION=$(echo $line | cut -d : -f 6 | cut -c 2-)
+        printf "$TYPE:\n$FILEPATH:$L:$C\n$MESSAGE - $DESCRIPTION\n\n"
+    done <<< "$RESULT"
+
+    printf "Push aborted. Please fix them before pushing your code.\n"
+    exit 1
+fi

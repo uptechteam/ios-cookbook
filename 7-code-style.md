@@ -5,479 +5,668 @@
 - [2. Code Formatting](#2-code-formatting)
 - [3. Naming](#3-naming)
 - [4. Coding Style](#4-coding-style)
-  - [4.1 General](#41-general)
-  - [4.2 Switch statements and enums](#42-switch-statements-and-enums)
-  - [4.3 Optionals](#43-optionals)
-  - [4.4 Protocols](#44-protocols)
-  - [4.5 Closures](#45-closures)
-  - [4.6 guard statements](#46-guard-statements)
+    - [4.1 General](#41-general)
+    - [4.2 Switch statements and enums](#42-switch-statements-and-enums)
+    - [4.3 Optionals](#43-optionals)
+    - [4.4 Protocols](#44-protocols)
+    - [4.5 Closures](#45-closures)
+    - [4.6 guard statements](#46-guard-statements)
 - [5. Tagged](#5-tagged)
-  - [5.1 Problem](#51-problem)
-  - [5.2 Solution](#52-solution)
-  - [5.3 Features](#53-features)
-  - [5.4 Installation](#54-installation)
+    - [5.1 Problem](#51-problem)
+    - [5.2 Solution](#52-solution)
+    - [5.3 Features](#53-features)
+    - [5.4 Installation](#54-installation)
 
 ### 0. SwiftLint
-In our projects we are using [SwiftLint](https://github.com/realm/SwiftLint), a tool to enforce Swift style and conventions.
-Recommended config file [.swiftlint.yml](https://gist.github.com/romanfurman6/c40443e8b337832bd91beb8fd81ed1aa)
+We use [SwiftLint](https://github.com/realm/SwiftLint) to enforce Swift style and conventions. Recommended config file [.swiftlint.yml](https://gist.github.com/romanfurman6/c40443e8b337832bd91beb8fd81ed1aa). 
+
+You can add it to your project as a build phase script and a pre-commit [git hook](https://www.atlassian.com/git/tutorials/git-hooks#local-hooks) to abort commits if SwiftLint checks are failing. Recommended build phase script: [run-swiftlint.sh](resources/scripts/run-swiftlint.sh). Recommended hook: [pre-commit](resources/scripts/pre-commit).
 ### 1. Code Generation
-In our projects we are using [SwiftGen](https://github.com/SwiftGen/SwiftGen), a tool for generation of images and colors stored in the assets.
+We use [SwiftGen](https://github.com/SwiftGen/SwiftGen) to generate Swift wrappers for images, colors and localized strings.
 ### 2. Code Formatting
-Make sure you are familiar with [Apple's API Design Guidelines](https://swift.org/documentation/api-design-guidelines/)
-- We are using 2 tabs (Xcode -> Preferences -> Text Editing -> Indentation -> Tab width & Indent width)
-- Line character limit is 80 symbols (Xcode -> Preferences -> Text Editing -> Page guide at column)
-- Add new line at the end of every file
-- Don't put opening braces on new lines - we use [1TBS style](https://en.m.wikipedia.org/wiki/Indentation_style#1TBS):
-```swift
-class TestClass {
-  func testFunc(value: Int) {
-    if value != 0 {
-      //..code..//
-    } else if value == 0 {
-      //..code..//
+- Make sure you are familiar with [Apple's API Design Guidelines](https://swift.org/documentation/api-design-guidelines/).
+- 
+    <details>
+    <summary>Use <b>4 spaces</b> for tab & indent width. This can be enforced for the whole project by setting it in <b>File inspector -> Text Settings</b> at its scope.</summary>
+    <img src="resources/illustrations/7.2.tabs_preferences.png" alt="Xcode -> Preferences -> Text Editing -> Indentation" width="70%"/>
+    <img src="resources/illustrations/7.2.text_settings.png" alt="Project -> File inspector -> Text Settings" width="29%"/>
+    </details>    
+- 
+    <details>
+    <summary>Line character limit is <b>120 symbols</b>.</summary>
+    <img src="resources/illustrations/7.2.line_character_limit.png" alt="Xcode -> Preferences -> Text Editing -> Display -> Page guide at column" width="80%"/>
+    </details>
+- 
+    <details>
+    <summary>Enable automatic trimming of trailing whitespaces and leading whitespaces for empty lines.</summary>
+    <img src="resources/illustrations/7.2.empty_lines.png" alt="Xcode -> Preferences -> Text Editing -> Editing -> While Editing" width="80%"/>
+    </details>
+- Don't put opening braces on new lines ([1TBS style](https://en.m.wikipedia.org/wiki/Indentation_style#1TBS)):
+    ```swift
+    class TestClass {
+        func testFunc(value: Int) {
+            guard value != .zero else {
+                // code
+                return
+            }
+
+            if value.isMultiple(of: 2) {
+                // code
+            } else {
+                // code
+            }
+        }
     }
-  }
-}
-```
-- When declaring a function and it doesn't fit in 1 line then put it's parameters on separate lines. Each argument and the return value should be on it's own line:
-```swift
-func testFunc(
-  firstArgument: Int, 
-  secondArgument: Int, 
-  thirdArgument: Int
-  ) -> Int {
-  
-  //..code..//
-}
-```
-- When calling a function and it doesn't fit in 1 line then put each argument on a separate line with a single extra indentation.
-```swift
-testFunc(
-  firstArgument: 1,
-  secondArgument: 1,
-  thirdArgument: 1
-)
-```
-- Put spaces after comma
-```swift
-let array = [1, 2, 3, 4, 5]
-```
-- Prefer using local constants or other mitigation techniques to avoid multi-line predicates where possible.
-```swift
-// PREFERRED
-let firstCondition = x == firstReallyReallyLongPredicateFunction()
-let secondCondition = y == secondReallyReallyLongPredicateFunction()
-let thirdCondition = z == thirdReallyReallyLongPredicateFunction()
-if firstCondition && secondCondition && thirdCondition {
-  //..code here..//
-}
-
-// NOT PREFERRED
-if x == firstReallyReallyLongPredicateFunction()
-  && y == secondReallyReallyLongPredicateFunction()
-  && z == thirdReallyReallyLongPredicateFunction() {
-  //..code here..//
-}
-```
+    ```
 - Nested types should be located at the top of a parent type:
-```swift
-struct Foo {
-   struct Bar {}
+    ```swift
+    struct Foo {
+        struct Bar {}
    
-   let bar: Bar
-   let name: String 
-}
+        let bar: Bar
+        let name: String 
+    }
 
-class ViewController: UIViewController {
-  struct Props {}
-  (private) enum Constants {}
-  
-  ###
-  
-  code here
-  
-  ###
-}
-```
-- Do not put empty line at the beginning of a type:
-```swift
-// Preferred
-class MyView: UIView {
-  private let ...
-}
+    class ViewController: UIViewController {
+        struct Props {}
 
-// Not Preferred
-class MyView: UIView {
+        enum Constants {}
 
-  private let ...
-}
-```
-- Name members of tuples for extra clarity:
-```swift
-// Preferred
-func doSomething() -> (x: Int, y: Int) {
-  return (x: 0, y: 0)
-}
+        // code
+    }
+    ```
+- When declaring a function that doesn't fit in 1 line - put its parameters on separate lines. Each argument and the return value should be on its line:
+    ```swift
+    func testFunc(
+        firstArgument: Int, 
+        secondArgument: Int, 
+        thirdArgument: Int
+    ) -> Int {
+        // code
+    }
+    ```
+- When calling a function that doesn't fit in 1 line - put each argument on a separate line with a single extra indentation:
+    ```swift
+    testFunc(
+        firstArgument: 1,
+        secondArgument: 2,
+        thirdArgument: 3
+    )
+    ```
+- Put spaces after comma:
+    ```swift
+    let array = [1, 2, 3, 4, 5]
+    ```
+- Put an extra line break before the next `case` in a `switch` for visual logic separation:
+    ```swift
+    switch task {
+    case .doWork:
+        // code
 
-// Not Preferred
-func doSomething() -> (Int, Int) {
-  return (0, 0)
-}
-```
-- Names of all types for a given screen usually contain the same prefix (e.g. TemplatesPageListViewModel, TemplatesPageListViewController, TemplatesPageListView etc). Sometimes the names are too long and we use prefixes to name them (e.g. TPLViewModel, TPLViewController, TPLView).
+    case .ignoreThis, .ignoreThatToo:
+        break
+    }
+    ```
+- Do not put an empty line at the beginning and end of a type:
+    ```swift
+    // Preferred
+    class MyView: UIView {
+        private let someLabel = UILabel()
+    }
 
-Alternative approach is to use namespacing enums (e.g. TemplatesPageList), but this approach has some problems. One of them is when we put a controller in namespacing extension, we are not able to see type information in memory debugger, only a bunch of ViewControllers.
-```swift
-// Preferred
-class TPLViewModel {}
-class TPLViewController: UIViewController {}
+    // Not Preferred
+    class MyView: UIView {
 
-// Not Preferred
-enum TemplatesPageList {}
+        private let someLabel = UILabel()
 
-extension TemplatesPageList {
-  class ViewModel {}
-  class ViewController: UIViewController {}
-}
-```
-- Do not use return in single-line functions/computed properties: 
-``` swift
-func doSomething() -> Int {
-  self.price * self.count
-}
+    }
+    ```
+- Prefer using commas to the `&&` operator in `if` and `guard` predicates. Also, moving predicates logic to local constants dramatically improves code readability:
+    ```swift
+    // Preferred
+    let firstCondition = x == firstPredicateFunction()
+    let secondCondition = y <= secondPredicateFunction() + Constants.minimumBarrier
+    let thirdCondition = z == thirdPredicateFunction() ?? fallbackFunction()
+    if firstCondition, 
+       secondCondition, 
+       thirdCondition {
+        // code
+    }
 
-var doSomething: Int {
-  self.price * self.count
-}
-```
+    // Not Preferred
+    if x == firstPredicateFunction()
+        && y <= secondPredicateFunction() + Constants.minimumBarrier
+        && z == thirdPredicateFunction() ?? fallbackFunction() {
+        // code
+    }
+    ```
+- Add a line break after `if` and `guard` statement:
+    ```swift
+    // Preferred 
+    if condition {
+        // code
+    }
+
+    guard condition else {
+        return
+    }
+
+    // Not Preffered 
+    if condition { // code }
+
+    guard condition else { return }
+    ```
+- Put an empty line after `if` and `guard` closing bracket:
+    ```swift
+    // Preferred
+    if condition {
+        // code
+    }
+
+    // code
+
+    guard condition else {
+        return
+    }
+
+    // code
+
+    // Not Preferred
+    if condition {
+        // code
+    }
+    // code
+
+    guard condition else {
+        return
+    }
+    // code
+    ```
+- For multi-conditioned `guard` statements, each subsequent condition should be positioned on the new line and be horizontally aligned with the preceding one:
+    ```swift
+    guard let description = config.description,
+          let someCustomTypeValue = config.someCustomTypeValue 
+    else {
+	    return nil
+    }
+    ```
 ### 3. Naming
-- We are using `PascalCase` for `struct`, `enum`, `class`, `associatedtype`, `protocol`, etc.).
-```swift
-class SomeTestClass {
-  //..code here..//
-}
-```
-- We are using `camelCase` for functions, properties, variables, argument names, enum cases, etc.
-- Do not abbreviate, use shortened names, or single letter names.
-```swift
-// PREFERRED
-class RoundAnimatingButton: UIButton {
-  let animationDuration: NSTimeInterval
-  
-  func startAnimating() {
-    let firstSubview = subviews.first
-  }
-}
+- We use `PascalCase` for `struct`, `enum`, `class`, `protocol`, `associatedtype` and `typealias` names.
+- We use `camelCase` for functions, properties, variables, argument names and enum cases.
+- Names of all types for a given screen usually contain the same prefix (e.g. `TemplatesPageListViewModel`, `TemplatesPageListViewController`, `TemplatesPageListView` etc). Sometimes the names are too long, so we use prefix abbreviations to name them (e.g. `TPLViewModel`, `TPLViewController`, `TPLView`).
 
-// NOT PREFERRED
-class RoundAnimating: UIButton {
-  let aniDur: NSTimeInterval
-  
-  func srtAnmating() {
-    let v = subviews.first
-  }
-}
-```
-- Include type information in constant or variable names when it is not obvious otherwise.
-```swift
-class TestViewController: UIViewController {
-  // when working with a subclass of `UIViewController` such as a table view
-  // controller, collection view controller, split view controller, etc.,
-  // fully indicate the type in the name.
-  let popupTableViewController: UITableViewController
-  
-  // when working with outlets, make sure to specify the outlet type in the property name.
-  @IBOutlet weak var submitButton: UIButton!
-  @IBOutlet weak var emailTextField: UITextField!
-  @IBOutlet weak var nameLabel: UILabel!
-}
-```
-- Constants that are used two or more times should be `static` and put in an enum named `Constants`. It should be located at the bottom of the type declaration or the file:
-```swift
-class TestClass {
-  ...
-  
-  // MARK: - Inner Declarations -
-  enum Constants {
-    static let constant = 1
-  }
-}
+    An alternative approach uses namespacing enums (e.g. `TemplatesPageList`), but this approach has a significant downside. When we put a controller in the namespacing extension, we cannot see enclosing type information in the memory debugger, only a bunch of `ViewController` objects.
+    ```swift
+    // Preferred
+    class TPLViewModel {}
 
-class TestClass {
-  ...
-}
+    class TPLViewController: UIViewController {}
 
-enum Constants {
-  static let constant = 1
-}
-```
-- When dealing with an acronym or other name that is usually written in all caps, actually use all caps in any names that use this in code. The exception is if this word is at the start of a name that needs to start with lowercase - in this case, use all lowercase for the acronym.
-```swift
-// "HTML" is at the start of a constant name, so we use lowercase "html"
-let htmlBodyContent: String = "<p>Hello, World!</p>"
-// Prefer using ID to Id
-let profileID: Int = 1
-// Prefer URLFinder to UrlFinder
-class URLFinder {
-  //..code here..//
-}
-```
+    // Not Preferred
+    enum TemplatesPageList {}
+
+    extension TemplatesPageList {
+        class ViewModel {}
+
+        class ViewController: UIViewController {}
+    }
+    ```
+- Do not use non-descriptive, shortened or single-letter names:
+    ```swift
+    // Preferred
+    final class RoundAnimatingButton: UIButton {
+        private let animationDuration: NSTimeInterval
+  
+        func startAnimating() {
+            let firstSubview = subviews.first
+            // code
+        }
+    }
+
+    // Not Preferred
+    final class RoundAnimating: UIButton {
+        private let aniDur: NSTimeInterval
+  
+        func anim() {
+            let a = subviews.first
+            // code
+        }
+    }
+    ```
+- Include type information in constant/variable names when working with a subclass of `UIViewController` or `UIView`:
+    ```swift
+    // Preferred
+    final class TestViewController: UIViewController {
+        private let popupTableViewController: UITableViewController
+  
+        private let submitButton = UIButton()
+        private let emailTextField = UITextField()
+        private let nameLabel = UILabel()
+    }
+
+    // Not Preferred
+    final class TestViewController: UIViewController {
+        private let popup: UITableViewController
+  
+        private let submit = UIButton()
+        private let email = UITextField()
+        private let name = UILabel()
+    }
+    ```
+- Provide labels for tuple members when it's hard to infer their purpose otherwise:
+    ```swift
+    // Preferred
+    func analyze(numbers: [Int]) -> (average: Double, containsDuplicates: Bool) {
+        // code
+    }
+
+    // Not Preferred
+    func analyze(numbers: [Int]) -> (Double, Bool) {
+        // code
+    }
+    ```
+- Avoid using multiple shorthand argument names in a single closure - provide argument names for clarity:
+    ```swift
+    // Preferred
+    applyChanges { currentValue, positiveDelta in
+        currentValue + positiveDelta
+    }
+
+    // Not Preferred
+    applyChanges {
+        $0 + $1
+    }
+    ```
+- When dealing with an acronym or other name usually written in all caps: use `Uppercase` if an abbreviation is in the middle of a name and `lowercase` if a `camelCase` name starts with it:
+    ```swift
+    final class URLFinder {}
+
+    let htmlBodyContent = "<p>Hello, World!</p>"
+
+    func setupUI() {}
+    ```
 ### 4. Coding Style
 #### 4.1 General
-- **4.1.1** Add a line break after if or guard statement
-```swift
-// Preferred 
-if condition {
-  //..code here..//
-}
+- Prefer `let` to `var` whenever possible.
+- Do not explicitly declare types for constants or variables if they can be inferred *(but be aware that inferring a chain of closures will result in slower compilation time)*:
+    ```swift
+    // Preferred
+    let age = user.age
+    let name = "John"
 
-guard condition else {
-  return
-}
+    // Not Preferred
+    let age: Int = user.age
+    let name: String = "John"
+    ```
+- Avoid writing out an enum type or nesting type of static variables where possible - use shorthand notation instead:
+    ```swift
+    // Preferred
+    tableView.contentInset = .zero
+    let textBounds = attributedString.boundingRect(
+        with: size, 
+        options: .usesLineFragmentOrigin, 
+        context: nil
+    )
 
-// Not Preffered 
-if condition { //..code here..// }
+    // Not Preferred
+    tableView.contentInset = UIEdgeInsets.zero
+    let textBounds = attributedString.boundingRect(
+        with: size, 
+        options: NSStringDrawingOptions.usesLineFragmentOrigin, 
+        context: nil
+    )
+    ```
+- Prefer the composition of `map`, `filter`, `reduce`, etc over iterating when transforming collections:
+    ```swift
+    // Preferred
+    let evenNumbersSum = [4, 7, 10, 11, 13, 14, 18, 26]
+        .filter { number in number.isMultiple(of: 2) }
+        .reduce(.zero, +)
 
-guard condition else { return }
-
-```
-- **4.1.2** Prefer let to var whenever possible
-```swift
-// Preferred
-let age: Int // Constants can be initialized later
-
-if condition {
-  age = 1
-} else {
-  age = 2
-}
-
-// Not Preferred
-var age: Int = 0
-
-if condition {
-  age = 1
-} else {
-  age = 2
-}
-```
-- **4.1.3** Prefer the composition of `map`, `filter`, `reduce`, etc. over iterating when transforming collections.
-```swift
-// Preferred
-let evenNumbers = [4, 7, 10, 11, 13, 14, 18, 26].filter { $0 % 2 == 0 }
-
-// Not Preferred
-var evenNumbers: [Int] = []
-let numbers = [4, 7, 10, 11, 13, 14, 18, 26]
-for value in numbers {
-  if value % 2 == 0 {
-    evenNumbers.append(value)
-  }
-}
-```
-- **4.1.4** Prefer not declaring types for constants or variables if they can be inferred. *Exception: chain of closures. It may take some time for Swift to infer types which results in slower compilation time.*
-```swift
-// Preferred
-let age = user.age
-let name = "John"
-
-// Not Preferred
-let age: Int = user.age
-let name: String = "John"
-```
-- **4.1.5** Be careful when calling `self` from an `escaping closure` as this can cause a retain cycle - use `capture list` when this might be the case.
-```swift
-{ [weak self] in ...} // you can do this
-{ [unowned self] in ...} // and this
-```
-- **4.1.6** Try not to capture self if you don't need it. You can capture individual variables.
-```swift
-class ViewController: UIViewController {
-  private let dataSource = ...
-
-  func setupBindings() {
-    viewModel.purchases 
-      .observeValues { [dataSource] in ...} // It'll capture dataSource with a strong reference. It's also posible to capture it weakly with [weak dataSource] and [unowned dataSource].
+    // Not Preferred
+    var evenNumbersSum: Int = .zero
+    let numbers = [4, 7, 10, 11, 13, 14, 18, 26]
+    for number in numbers {
+        if number % 2 == .zero {
+            evenNumbersSum += number
+        }
     }
-}
-```
-- **4.1.7** Don't place parentheses around control flow predicates
-```swift
-// Preferred
-if x == y {
-  ...
-}
+    ```
+- Use `defer` to avoid code duplication in early return scenarios:
+    ```swift
+    // Preferred
+    let group = DispatchGroup()
+    group.enter()
+    networkLayer.getItem(with: id) { data in
+        defer { group.leave() } 
+        
+        guard let data = data else { 
+            return 
+        }
 
-// Not Preferred
-if (x == y) {
-  ...
-}
-```
-- **4.1.8** Avoid writing out an enum type or static variables where possible - use shorthand.
-```swift
-// Preferred
-tableView,contentInset = .zero
-attributedString.boundingRect(with: size, options: .usesLineFragmentOrigin, context: nil)
+        // code
+    }
 
-// Not Preferred
-tableView.contentInset = UIEdgeInsets.zero
-attributedString.boundingRect(with: size, options: NSStringDrawingOptions.usesLineFragmentOrigin, context: nil)
-```
-- **4.1.9** If a variable or class isn't intended to be overridden apply `final` to it.
-- **4.1.10** When writing public methods, keep in mind whether the method is intended to be overridden or not. If not, mark is as `final`, through keep in mind that this will prevent the method from being overwritten. In general, `final` methods result in improved compilation times, so it is good to use this when applicable.
-- **4.1.11** Put an empty line after if/guard closing bracket
-```swift
-// Preferred
-if condition {
-  // Code
-}
+    // Not Preferred
+    let group = DispatchGroup()
+    group.enter()
+    networkLayer.getItem(with: id) { data in
+        guard let data = data else { 
+            group.leave()
+            return 
+        }
+        
+        // code
 
-// Code
+        group.leave()
+    }
+    ```
+- Omit parentheses around [HOF](https://en.wikipedia.org/wiki/Higher-order_function) arguments:
+    ```swift
+    // Preferred
+    let evenNumbersSum = [4, 7, 10, 11, 13, 14, 18, 26]
+        .filter { number in number.isMultiple(of: 2) }
+        .reduce(.zero, +)
 
-guard condition else {
-  return
-}
+    // Not Preferred
+    let evenNumbersSum = [4, 7, 10, 11, 13, 14, 18, 26]
+        .filter({ number in number.isMultiple(of: 2) })
+        .reduce(.zero, +)
+    ```
+- Do not put parentheses around control flow predicates:
+    ```swift
+    // Preferred
+    if x == y {
+        // code
+    }
 
-// Code
+    // Not Preferred
+    if (x == y) {
+        // code
+    }
+    ```
+- Do not use `return` in single-line functions and computed properties: 
+    ``` swift
+    func canExchangeAssets(for exchangeValue: Double) -> Bool {
+        self.availableAssetsValue > exchangeValue
+    }
 
-// Not Preferred
-if condition {
-  // Code
-}
-// Code
+    var availableAssetsValue: Double {
+        self.price * self.count
+    }
+    ```
+- Avoid making tuples with more than **2** arguments. Instead, create a struct to store named values:
+    ``` swift
+    // Preferred
+    struct NumbersInfo {
+        let average: Double
+        let sum: Int
+        let containsDuplicates: Bool
+        let containsPrimes: Bool
+    }
 
-guard condition else {
-  return
-}
-// Code
-```
+    func analyze(numbers: [Int]) -> NumbersInfo {
+        // code
+    }
 
+    // Not Preferred
+    func analyze(
+        numbers: [Int]
+    ) -> (average: Double, sum: Int, containsDuplicates: Bool, containsPrimes: Bool) {
+        // code
+    }
+    ```
+- If a variable or class is not intended to be overridden, apply `final` to it.
+- When writing public methods, keep in mind whether the user should override the method or not. If not, mark it as `final`. In general, `final` methods improve compilation time, so it is beneficial to use this when applicable.
+- Constants used two or more times should be `static` and stored in an `enum` named `Constants`.
 #### 4.2 Switch statements and enums
-- **4.2.1** When defining a case that has an associated value which isn't obvious, make sure that this value is appropriately labeled as opposed to just types. Otherwise, skip the name.
-```swift
-// Preferred
-enum Result<Value, Error: Swift.Error> {
-  case success(Value) // associated values are obvious and don't need to be named
-  case error(Error)
-}
+- When defining a case with an associated value that isn't obvious, make sure that this value is appropriately labeled:
+    ```swift
+    // Preferred
+    enum ViewState {
+        case question(isUserActive: Bool)
+    }
 
-enum ViewState {
-  case question(isUserActive: Bool)
-}
+    // Not Preferred 
+    enum ViewState {
+        case question(Bool)
+    }
+    ``` 
+- When extracting an associated value from an enum case, skip its label:
+    ```swift
+    // Preferred
+    switch viewState {
+    case let .alert(message):
+        // code
+    }
 
-// Not Preferred 
-enum Result<Value, Error: Swift.Error> {
-  case success(response: Value) // additional names are redundant
-  case error(error: Error)
-}
+    // Not Preferred
+    switch value {
+    case .alert(message: let alertMessage):
+        // code
+    }
+    ```
+- When extracting multiple values from the enum case, prefer placing a single `var` or `let` annotation before the case name. You can also stick to this positioning for single associated value cases to keep the `case let` pattern consistent across the app:
+    ```swift
+    // Preferred
+    switch value {
+    case let .multiple(first, second, third):
+        // code
 
-enum ViewState {
-  case question(Bool) // Without a name it's not obvious what this assosiated value means.
-}
-``` 
-- **4.2.2** When using a switch statement that has a finite set of possibilities, do not include a `default` case. Instead, place unused cases at the bottom and use the `break` keyword to prevent execution.
-```swift
-switch value {
-case .doWork:
-  ...
+    case let .single(first):
+        // code
+    }
 
-case .ignoreThis, .ignoreThatToo, .andMe:
-  break
-}
-```
-- **4.2.3** Prefer lists of possibilities (e.g. `case .a, .b, .c:`) to using the `fall through` keyword.
+    // Not Preferred
+    switch value {
+    case .multiple(let first, let second, let third):
+        // code
 
+    case .single(let first):
+        // code
+    }
+    ```
+- Avoid creating huge `case` statements. In general, if it takes more than **5** lines per `case`, consider grouping it into the method to keep the `switch` size reasonable:
+    ```swift
+    // Preferred
+    switch viewState {
+    case let .transitioning(props):
+        renderTransitioningState(with: props)
+
+    // code
+    }
+
+    // Not Preferred
+    switch viewState {
+    case let .transitioning(props):
+        loadingIndicator.startAnimating()
+        view.backgroundColor = props.backgroundColor
+        view.alpha = props.alpha
+        view.transform = props.transform
+        view.headerView.render(with: props.headerProps)
+        view.footerView.render(with: props.footerProps)
+        
+    // code
+    }
+    ```
+- Do not include a `default` case for `switch` statements with a finite set of cases. Instead, place unused cases at the bottom of it and add `break`:
+    ```swift
+    // Preferred
+    switch task {
+    case .doWork:
+        // code
+
+    case .ignoreThis, .ignoreThatToo:
+        break
+    }
+
+    // Not Preferred
+    switch task {
+    case .doWork:
+        // code
+
+    default:
+        break
+    }
+    ```
+- Prefer lists of cases to using the `fallthrough` keyword:
+    ```swift
+    // Preferred
+    switch order {
+    case .first, .second, .third:
+        // code
+    }
+
+    // Not Preferred
+    switch order {
+    case .first:
+        fallthrough
+
+    case .second:
+        fallthrough
+
+    case .third:
+        // code
+    }
+    ```
 #### 4.3 Optionals
-- **4.3.1** The only time you should be using `implicitly unwrapped optionals` is with `@IBOutlet` and when resulting crash is a programmer's error (e.g. when resolving dependencies using dip or creating regular expressions).
-- **4.3.2** If you don't plan to use the value stored in an optional, but need to determine whether or not it's `nil`, explicitly check this value against `nil` as opposed to using `if let` syntax.
-```swift
-// Preferred
-if optionalValue != nil {
-  ...
-}
+- The only time you should be using implicitly unwrapped optionals is when the resulting crash is a programmer's error (e.g., when resolving dependencies using [Dip](https://github.com/AliSoftware/Dip) or creating regular expressions).
+- If you don't plan to use the value stored in an optional but need to check whether it is `nil` or not - explicitly check this value against `nil` instead of using the `if let` syntax:
+    ```swift
+    // Preferred
+    if optionalValue != nil {
+        // code
+    }
 
-// Not Preferred
-if let _  = optionalValue {
-  ...
-}
-```
+    // Not Preferred
+    if let _ = optionalValue {
+        // code
+    }
+    ```
+- When unwrapping optionals, prefer `guard let` statements to `if let` ones to avoid unnecessary nesting in your code.
+- Avoid unwrapping optionals where optional chaining use is sufficient:
+    ```swift
+    // Preferred
+    UIView.animate(withDuration: 0.3) { [weak animatingView] in
+        animatingView?.alpha = .zero
+        animatingView?.transform = .identity
+    }
 
+    // Not Preferred
+    UIView.animate(withDuration: 0.3) { [weak animatingView] in
+        guard let animatingView = animatingView else {
+            return
+        }
+
+        animatingView.alpha = .zero
+        animatingView.transform = .identity
+    }
+    ```
 #### 4.4 Protocols
-When implementing protocols, there are two ways of organizing your code:
-1. Using `// MARK:` comments to separate protocol implementation from the rest of your code.
-2.  Using an extension outside of `class/struct` implementation code, but in the same source file.
+- If a `protocol` only has one possible conforming class (e.g., if the `protocol` acts as a wrapper for a unique `ViewModel`), it should be stored in the same source file with its concrete class implementation. Otherwise, keep it in a separate dedicated file.
+- Keep all protocol conformance methods in a dedicated extensions *(1 extension per 1 protocol)*. Also, you can add `// MARK: - [Protocol name]` comments for improved readability and easier file navigation:
+    ```swift
+    // MARK: - UIScrollViewDelegate
 
-#2 is preferred as it allows cleaner separation of concerns. However, keep in mind that the methods in the extensions can't be overridden by a subclass.
-
-When using method #2, add `// MARK:` statements anyway for easier readability.
-
+    extension MyClass: UIScrollViewDelegate {
+        // code
+    }
+    ```
 #### 4.5 Closures
-- **4.5.1** If the types of the parameters are obvious, it is ok to omit the type. Sometimes readability is enhanced by adding clarifying detail and sometimes by taking repetitive parts away.
-- **4.5.2** Use trailing closure syntax unless the meaning of the closure is not obvious without the parameter name or function takes 2 or more closures as parameters.
-```swift
-// Trailing closure
-UIView.animate(withDuration: 0.3) { ... }
+- Be careful when calling `self` from an escaping closure as this can cause a retain cycle - use a capture list when this might be the case:
+    ```swift
+    self.firstClosure = { [weak self] in 
+        // code
+    } 
+    self.secondClosure = { [unowned self] in
+        // code 
+    }
+    ```
+- Prefer capturing individual variables to capturing `self` where applicable:
+    ```swift
+    // Preferred
+    UIView.animate(withDuration: 0.3) { [weak animatingView] in
+        animatingView?.alpha = .zero
+        animatingView?.transform = .identity
+    }
 
-// Non trailing closure 
-doSomething(
-  firstClosure: {
-  ...
-}, secondClosure: {
-  ...
-})
-```
+    // Not Preferred
+    UIView.animate(withDuration: 0.3) { [weak self] in
+        self?.animatingView.alpha = .zero
+        self?.animatingView.transform = .identity
+    }
+    ```
+- Use trailing closure syntax unless the purpose of the closure is not clear without the parameter name:
+    ```swift
+    // Preferred
+    UIView.animate(withDuration: 0.3) { [weak animatingView] in
+        animatingView?.alpha = .zero
+        animatingView?.transform = .identity
+    } completion: { _ in
+        // code
+    }
+    removeUnlinkedEntries(completion: {
+        // code
+    })
+
+    // Not Preferred
+    UIView.animate(
+        withDuration: 0.3,
+        animations: { [weak animatingView] in
+            animatingView?.alpha = .zero
+            animatingView?.transform = .identity
+        },
+        completion: { _ in
+            // code
+        }
+    )
+    removeUnlinkedEntries {
+        // code
+    }
+    ```
+- If the types of the parameters are obvious - do not specify them explicitly. *Sometimes readability is enhanced by adding clarifying detail and sometimes by taking repetitive parts away*:
+    ```swift
+    // Preferred
+    delegate.rowHeight { indexPath in
+        dataSource[indexPath].expectedHeight
+    }
+
+    // Not Preferred
+    delegate.rowHeight { (indexPath: IndexPath) -> CGFloat in
+        dataSource[indexPath].expectedHeight
+    }
+    ```
 #### 4.6 `guard` statements
-- **4.6.1** In general, we prefer to use an `early return` strategy where applicable as opposed to nesting code in if statements.
-```swift
-	struct Params {
-	  let var1: Int
-	  let var2: String?
-	  let var3: CustomType?
+- We prefer to use an early return strategy where applicable instead of nesting code in `if` statements:
+    ```swift
+	struct FailableConfig {
+	    let value: Int
+	    let description: String?
+	    let someCustomTypeValue: CustomType?
 	}
 	
-	init?(params: Params) {
-	  guard 
-	    let var2 = params.var2,
-	    let var3: params.var3 else
-	  {
-	    // Early return
-	    return nil
-	  }
+	init?(config: FailableConfig) {
+	    guard let description = config.description,
+              let someCustomTypeValue = config.someCustomTypeValue 
+        else {
+	        return nil
+	    }
 	  
-	  // Continue initialization
+	    // code
 	}
-```
-- **4.6.2** When you need to check if a condition is true `guard` is preferred.
-``` swift
+    ```
+- When you need to check if a condition is true and a failure should exit the current context - use `guard`:
+    ``` swift
 	// Preferred
 	guard users.indices.contains(index) else {
-	  return 
+	    return 
 	}	
 
 	// Not Preffered
 	if users.indices.contains(index) {
-	  ...
+        // code
 	}
-```
-- **4.6.3** For control flows `if` is preferred. And you should also use `guard` only if a failure should result in exiting the current context.
- ``` swift
-	// Preferred
-	if isLoggedIn {
-	  // Show main screen
-	} else {
-	  // Show registration screen
-	}
-	
-	// Not Preffered
-	guard isLoggedIn {
-	  // Show registration screen
-	  return
-	}
-
-	// Show main screen
-```
-- **4.6.4** When unwrapping optionals or checking if a condition is true, prefer `guard` statements as opposed to `if` statements to decrease the amount of nested indentation in your code.
-
+    ```
 ### 5. Tagged
 `Tagged` is a wrapper for an additional layer of type-safety.
 

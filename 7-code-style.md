@@ -18,7 +18,7 @@
     - [5.4 Installation](#54-installation)
 
 ### 0. SwiftLint
-We use [SwiftLint](https://github.com/realm/SwiftLint) to enforce Swift style and conventions. Recommended config file [.swiftlint.yml](https://gist.github.com/romanfurman6/c40443e8b337832bd91beb8fd81ed1aa). 
+We use [SwiftLint](https://github.com/realm/SwiftLint) to enforce Swift style and conventions. Recommended config file [.swiftlint.yml](resources/.swiftlint.yml).
 
 You can add it to your project as a build phase script and a pre-commit [git hook](https://www.atlassian.com/git/tutorials/git-hooks#local-hooks) to abort commits if SwiftLint checks are failing. Recommended build phase script: [run-swiftlint.sh](resources/scripts/run-swiftlint.sh). Recommended hook: [pre-commit](resources/scripts/pre-commit).
 ### 1. Code Generation

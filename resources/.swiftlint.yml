@@ -1,4 +1,4 @@
-# Revised for 0.47.1
+# Revised for 0.48.0
 opt_in_rules:
   - anonymous_argument_in_multiline_closure
   - anyobject_protocol

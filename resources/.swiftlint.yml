@@ -139,6 +139,7 @@ identifier_name:
   excluded:
     - i
     - id
+    - ID
     - x
     - y
 

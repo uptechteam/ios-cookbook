@@ -29,7 +29,6 @@ opt_in_rules:
   - fallthrough
   - fatal_error_message
   - file_name_no_space
-  - file_types_order
   - first_where
   - flatmap_over_map_reduce
   - force_unwrapping
@@ -94,6 +93,7 @@ disabled_rules:
   - explicit_type_interface
   - file_header
   - file_name
+  - file_types_order
   - large_tuple
   - missing_docs
   - nesting
@@ -142,6 +142,12 @@ identifier_name:
     - ID
     - x
     - y
+    - h1
+    - h2
+    - h3
+    - h4
+    - h5
+    - h6
 
 line_length:
   warning: 120

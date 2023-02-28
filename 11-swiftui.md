@@ -4,15 +4,15 @@ Welcome to the SwiftUI Cookbook! In this cookbook, we will explore various techn
 
 ## Table of Contents
 
-- [1. Keep your code clean and organized](#1-code-clean)
-- [2. Configuring SwiftUI views](#2-configure-view)
-- [3. Use ViewModifiers to reuse styling logic](#3-view-modifiers)
-- [4. Use structs for data modeling](#4-use-structs)
-- [5. Use environment objects for shared state](#5-use-environment-objects)
-- [6. Accesability](#6-accesability)
+- [Keep your code clean and organized](#keep-your-code-clean-and-organized)
+- [Configuring SwiftUI views](#configuring-swiftui-views)
+- [Use ViewModifiers to reuse styling logic](#use-viewmodifiers-to-reuse-styling-logic)
+- [Use structs for data modeling](#use-structs-for-data-modeling)
+- [Use environment objects for shared state](#use-environment-objects-for-shared-state)
+- [Accesability](#accesability)
 ---
 
-### 1. Keep your code clean and organized
+### Keep your code clean and organized
 Use white space and indentation to make your code easy to read. Also, separate your code into logical blocks using extensions or subviews. Add each modifier on newline.
 ```swift
 struct ContentView: View {
@@ -70,7 +70,7 @@ struct HomeContentView: View {
 ```
 ---
 
-### 2. Configuring SwiftUI views
+### Configuring SwiftUI views
 In case when **View** have more than 3 variables inside we can use addition **struct** to initialize. Avoid long initialization block. 
 ```swift
 struct HomeView: View {
@@ -125,7 +125,7 @@ struct ContentView: View {
 ```
 ---
 
-### 3.  Use ViewModifiers to reuse styling logic
+### Use ViewModifiers to reuse styling logic
 In SwiftUI, modifiers are used to style views. They allow you to change the appearance and behavior of a view without changing its underlying properties. Modifiers can be powerful, but they can also slow down your app if overused. Try to use modifiers only when necessary and avoid using them excessively.
 ```swift
 struct ContentView: View {
@@ -158,7 +158,7 @@ extension View {
 ```
 ---
 
-### 4. Use structs for data modeling
+### Use structs for data modeling
 SwiftUI works best with structs. Use structs to model your data and pass it between views. This allows you to take advantage of SwiftUI's data binding and state management features.
 ```swift
 struct Person: Identifiable {
@@ -183,7 +183,7 @@ struct ContentView: View {
 ```
 ---
 
-### 5. Use environment objects for shared state
+### Use environment objects for shared state
 Environment objects are a way to share state between views in your app. Use environment objects to manage shared state, such as user preferences or app settings.
 ```swift
 class UserSettings: ObservableObject {
@@ -207,7 +207,7 @@ struct ContentView: View {
 }
 ```
 
-### 6. Accesability
+### Accesability
 Accessibility is an important aspect of building inclusive apps that can be used by everyone. In this section, we will explore how to make your SwiftUI app more accessible.
 
 You can make your SwiftUI app more accessible by using several techniques, such as providing labels and hints for views, adjusting font sizes and colors, and enabling voiceover and other assistive technologies.

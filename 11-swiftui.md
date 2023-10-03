@@ -9,7 +9,7 @@ Welcome to the SwiftUI Cookbook! In this cookbook, we will explore various techn
 - [Use ViewModifiers to reuse styling logic](#use-viewmodifiers-to-reuse-styling-logic)
 - [Use structs for data modeling](#use-structs-for-data-modeling)
 - [Use environment objects for shared state](#use-environment-objects-for-shared-state)
-- [Accesability](#accesability)
+- [Accessibility](#accessibility)
 ---
 
 ### Keep your code clean and organized
@@ -24,7 +24,7 @@ struct ContentView: View {
             Button(action: {
                 print("Button tapped") 
              }) { 
-                 Text("Tap me!") 
+                Text("Tap me!") 
              } 
         } 
     } 
@@ -71,7 +71,8 @@ struct HomeContentView: View {
 ---
 
 ### Configuring SwiftUI views
-In case when **View** have more than 3 variables inside we can use addition **struct** to initialize. Avoid long initialization block. 
+If a **View** contains more than three variables, it is advisable to employ an additional **struct** for initialization.
+- Avoid long initialization block. 
 ```swift
 struct HomeView: View {
 
@@ -99,7 +100,7 @@ struct HomeView: View {
 }
 ```
 
-Use `enum` when `View` has multiple callbacks
+- Use `enum` when `View` has multiple callbacks
 ```swift 
 struct ContentView: View {
 
@@ -184,9 +185,9 @@ struct ContentView: View {
 ---
 
 ### Use environment objects for shared state
-Environment objects are a way to share state between views in your app. Use environment objects to manage shared state, such as user preferences or app settings.
+Environment objects are a way to share state between views in your app. Use environment objects to manage shared state, such as user preferences or app settings. Note: use `@EnvironmentObject` for app-wide purposes only and prefer `@ObservedObject` and `@StateObject` for VMs and view-specific logic items.
 ```swift
-class UserSettings: ObservableObject {
+final class UserSettings: ObservableObject {
     @Published var darkMode = false
 }
 
@@ -210,7 +211,7 @@ struct ContentView: View {
 ### Accesability
 Accessibility is an important aspect of building inclusive apps that can be used by everyone. In this section, we will explore how to make your SwiftUI app more accessible.
 
-You can make your SwiftUI app more accessible by using several techniques, such as providing labels and hints for views, adjusting font sizes and colors, and enabling voiceover and other assistive technologies.
+You can make your SwiftUI app more accessible by using several techniques, such as providing labels and hints for views, adjusting font sizes and colours, and enabling voiceover and other assistive technologies.
 ```swift
 struct ContentView: View {
     var body: some View {

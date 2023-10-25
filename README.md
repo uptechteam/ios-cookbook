@@ -1,5 +1,9 @@
-# ios-cookbook
-Recipes for building the greatest products
+# Uptech iOS Cookbook
+[![Made in Ukraine](https://img.shields.io/badge/made_in-ukraine-ffd700.svg?labelColor=0057b7)](https://stand-with-ukraine.pp.ua)
+
+We’re international mobile and web development company that helps develop ideas from napkin sketches to full-fledged products. Combining our creativity, domain expertise, and product development approach, we deliver products that matter to users and businesses.
+
+Recipes for building the greatest products:
 
 - [Git flow](https://github.com/uptechteam/ios-cookbook/blob/master/1-git-flow.md)
 - [Code Signing](https://github.com/uptechteam/ios-cookbook/blob/master/2-code-signing.md)

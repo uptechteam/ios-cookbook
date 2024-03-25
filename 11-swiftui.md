@@ -13,7 +13,9 @@ Welcome to the SwiftUI Cookbook! In this cookbook, we will explore various techn
 ---
 
 ### Keep your code clean and organized
-Use white space and indentation to make your code easy to read. Also, separate your code into logical blocks using extensions or subviews. Add each modifier on newline.
+1. **Whitespace and Indentation**: Use whitespace and proper indentation to make your code more readable. This helps in distinguishing between different blocks of code and makes it easier to navigate through your codebase.
+2. **Logical Code Separation**: Separate your code into logical blocks. This can be achieved by using extensions or by breaking down complex views into smaller subviews. This approach not only makes your code cleaner but also more modular and easier to maintain.
+3. **Modifiers on New Lines**: Place each modifier on a new line. This practice enhances readability, especially when you are using multiple modifiers on a single view. It makes it easier to track which modifiers are applied and in what order.
 ```swift
 struct ContentView: View {
     var body: some View {
@@ -34,39 +36,74 @@ When creating a view with a lot of instances inside, it's important to keep perf
 
 To improve performance, you can follow these best practices:
 
-1. Use reusable views: If you have a lot of instances of the same view, consider creating a reusable view instead of creating a new instance for each item. For example, if you have a list of items, create a single item view and reuse it for each item.
-2.  Use lazy loading (`LazyVStack/LazyHStack` and `LazyHGrid/LazyVGrid`): If you have a lot of data to display, consider using lazy loading to only load and display the data that is currently visible on the screen. This can significantly improve performance, especially for large data sets.
-3.  Avoid complex view hierarchies: Try to keep your view hierarchy as simple as possible. If you have a complex view hierarchy, consider breaking it down into smaller views or using a different layout. Avoid computed `View` property.
+1. **Use Reusable Views**: For repeated elements, create a reusable view instead of new instances for each item. This reduces memory usage and improves performance.
+Example:
 ```swift
-// Not Preferred
-struct HomeView: View {
-    var body: some View {
-        content
-    }
+struct ItemView: View {
+	let item: Item
+	
+	var body: some View {
+		Text(item.name)
+		// Other view components 
+	} 
+} 
 
-    var content: some View {
-        VStack {
-            Text("Content")
-        }
-    }
+struct ItemsListView: View {
+	let items: [Item]
+	var body: some View {
+		List(items) { item in
+			ItemView(item: item)
+		} 
+	}
+}
+```
+2.  **Use Lazy Loading**: For large datasets, use `LazyVStack`, `LazyHStack`, `LazyHGrid`, and `LazyVGrid`. These structures load views on demand, improving performance for large collections. But be aware that these structures load data once and do not reuse cells. If you will have a large number of cells you should use `List`.
+3.  **Avoid Complex View Hierarchies**: To enhance rendering performance and maintain readability in SwiftUI, it's important to manage the complexity of view hierarchies effectively:
+- **Simplify View Hierarchies**: Aim to keep your view hierarchies as simple as possible. A complex hierarchy can slow down rendering and make your code harder to understand and maintain.
+- **Break Down When Necessary**: When your view hierarchy exceeds four levels of nesting, consider refactoring further nested views into separate, dedicated views. This "healthy nesting" rule helps in balancing the need for simplicity without fragmenting your codebase into too many small, unique components.
+- **Limit Computed `View` Properties**: Be cautious with the use of computed `View` properties. While they can be useful, excessive use may inadvertently increase complexity and impact performance. They are best used when they contribute to reducing overall view complexity or are essential for dynamic view updates.
+- **Strategic Refactoring**: Refactoring into smaller views is recommended, but only when it logically makes sense. This approach helps in avoiding an excessive number of small, unique views, which can be as detrimental as overly complex hierarchies.
+By following these guidelines, you can create a well-structured and performant SwiftUI application. The key is to strike a balance: simplify and refactor where necessary, but avoid unnecessary fragmentation of your views.
+Example:
+```swift
+// Complex hierarchy (Avoid)
+struct ComplexView: View {
+    var body: some View {
+        VStack {
+            Text("Title")
+            
+            Text("Subtitles")
+            
+            Image("Logo")
+            
+            Text("Description")
+            
+	        Button("Login") {
+		        // Action
+	        }
+        }
+    }
 }
 
-// Preferred
-struct HomeView: View {
-    var body: some View {
-        HomeContentView(text: "Content")
-    }
+// Simplified hierarchy (Preferred)
+struct SimpleView: View {
+    var body: some View {
+        VStack {
+            HeaderView()
+            // Other subviews
+        }
+    }
 }
 
-struct HomeContentView: View {
-    var text: String
-
-    var body: some View {
-        VStack {
-            Text(text)
-        }
-    }
+struct HeaderView: View {
+    var body: some View {
+        Text("Title")
+        
+        Text("Subtitles")
+        // Other subviews
+    }
 }
+
 ```
 ---
 
@@ -185,47 +222,78 @@ struct ContentView: View {
 ---
 
 ### Use environment objects for shared state
-Environment objects are a way to share state between views in your app. Use environment objects to manage shared state, such as user preferences or app settings. Note: use `@EnvironmentObject` for app-wide purposes only and prefer `@ObservedObject` and `@StateObject` for VMs and view-specific logic items.
+Environment objects in SwiftUI are powerful tools for sharing state across multiple views. However, their use should be carefully considered. Here are the guidelines:
+- **App-Wide Shared State**: Use `@EnvironmentObject` for state that is truly global or app-wide, such as user preferences, themes, or authentication states. This should be used sparingly, as overuse can lead to tightly coupled components and makes tracking data flow more difficult.
+- **View Models (VMs) and View-Specific Logic**: Prefer using `@ObservedObject` and `@StateObject` for state that is specific to a particular view or its closely related components. This approach promotes better encapsulation and makes your views more reusable and easier to test.
 ```swift
+// Global state using @EnvironmentObject
 final class UserSettings: ObservableObject {
-    @Published var darkMode = false
+	@Published var darkMode = false
 }
 
+struct AppView: View {
+	var body: some View {
+		ContentView()
+			.environmentObject(UserSettings()) 
+	} 
+} 
+
+// Local state using @StateObject or @ObservedObject 
 struct ContentView: View { 
-    @EnvironmentObject var userSettings: UserSettings 
-    
-    var body: some View { 
-        VStack { 
-            Toggle(isOn: $userSettings.darkMode) {
-                Text("Dark mode")
-            } 
-            Text("Hello, world!") 
-                .padding() 
-                .foregroundColor(userSettings.darkMode ? .white : .black)
-                .background(userSettings.darkMode ? .black : .white) 
-        } 
-    }
+	@StateObject var viewModel = ContentViewModel()
+	var body: some View {
+		// View implementation 
+	} 
+} 
+
+final class ContentViewModel: ObservableObject {
+	// View-specific state 
 }
 ```
 
-### Accesability
+### Enhancing Accessibility with SwiftLint Rules
 Accessibility is an important aspect of building inclusive apps that can be used by everyone. In this section, we will explore how to make your SwiftUI app more accessible.
+
+In addition to the standard SwiftUI accessibility features, it's beneficial to enforce certain accessibility best practices using SwiftLint, a widely-used tool for maintaining Swift code quality. Specific `SwiftLint` rules that are particularly useful for accessibility are:
+1. **`accessibility_label_for_text` Rule**: This rule ensures that all text elements have accessibility labels, especially when the text is not self-explanatory or when additional context is needed for screen readers.  
+2. **`accessibility_custom_action` Rule**: Use this rule to ensure that custom actions are provided for interactive elements that perform non-standard functions. This is crucial for users who rely on assistive technologies to understand what actions they can perform on a UI element.
+3. **`accessibility_dynamic_type_text` Rule**: This rule checks that your app's text elements support dynamic type. This is important for users who need larger text sizes, ensuring that your app's UI adjusts text size based on the user's settings.
+4. **`accessibility_highlighted_elements` Rule**: Ensure that elements which are highlighted or selected have appropriate accessibility traits, so that their state is clear to users with visual impairments.
+5. **`accessibility_minimum_tappable_area` Rule**: Enforce a minimum tappable area for buttons and other interactive elements, ensuring they are easily accessible for users with motor impairments.
 
 You can make your SwiftUI app more accessible by using several techniques, such as providing labels and hints for views, adjusting font sizes and colours, and enabling voiceover and other assistive technologies.
 ```swift
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Text("Hello, World!")
-                .font(.largeTitle)
-                .foregroundColor(.blue)
-                .padding()
-                .accessibility(label: Text("Greeting"))
-                .accessibility(hint: Text("Double tap to say hello")) 
-        } 
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .accessibilityElement()
-        .accessibility(addTraits: .isHeader)
+        VStack { 
+	        Text("Welcome")
+		        .accessibilityLabel("Welcome greeting")
+		        // Ensures that the text has an accessibility label 
+		        
+		    Button(action: customAction) {
+			    Text("More Info")
+			}
+			.accessibilityAction(named: "Get More Information", customAction)
+			// Adds a custom accessibility action 
+			
+			Text("Adjustable Text")
+				.font(.system(size: 16))
+				.accessibilityDynamicTypeText()
+			// Ensures support for dynamic type 
+			
+			Button("Selected Item") { 
+				// Action
+			}
+			.accessibility(addTraits: [.isButton, .isSelected])
+			// Marks the button as selected 
+			
+			Button("Tap Me") { 
+				// Action 
+			} 
+			.frame(minWidth: 44, minHeight: 44)
+			.accessibilityMinimumTappableArea() 
+			// Ensures a minimum tappable area
+		}
     }
 }
 ```

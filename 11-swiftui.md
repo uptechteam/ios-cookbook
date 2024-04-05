@@ -45,22 +45,22 @@ Example:
 
     ```swift
     struct ItemView: View {
-	    let item: Item
-	
-	    var body: some View {
-		    Text(item.name)
-		    // Other view components 
-	    }
+        let item: Item
+    
+        var body: some View {
+            Text(item.name)
+            // Other view components 
+        }
     }
 
     struct ItemsListView: View {
-	    let items: [Item]
-	
+        let items: [Item]
+    
         var body: some View {
-		    List(items) { item in
-			    ItemView(item: item)
-		    }
-	    }
+            List(items) { item in
+                ItemView(item: item)
+            }
+        }
     }
     ```
 2.  **Use Lazy Loading**: For large datasets, use `LazyVStack`, `LazyHStack`, `LazyHGrid`, and `LazyVGrid`. These structures load views on demand, improving performance for large collections. But be aware that these structures load data once and do not reuse cells. If you have a large number of cells you should use `List`.
@@ -86,9 +86,9 @@ Example:
 
                 Text("Description")
 
-	            Button("Login") {
-		            // Action
-	            }
+                Button("Login") {
+                    // Action
+                }
             }
         }
     }
@@ -120,14 +120,6 @@ If a **View** contains more than three variables, it is advisable to employ an a
 
     ```swift
     struct HomeView: View {
-
-        struct HomeViewConfig {
-            var title: String
-            var header: String
-            var content: String
-            var caption: String
-        }
-
         var config: HomeViewConfig
 
         var body: some View {
@@ -143,18 +135,21 @@ If a **View** contains more than three variables, it is advisable to employ an a
             }
         }
     }
+
+    extension HomeView {
+        struct HomeViewConfig {
+            var title: String
+            var header: String
+            var content: String
+            var caption: String
+        }
+    }
     ```
 
 - Use `enum` when `View` has multiple callbacks:
     
     ```swift
     struct ContentView: View {
-
-        enum ContentViewAction {
-            case edit
-            case itemId(Int)
-        }
-
         var callback: (ContentViewAction) -> Void
 
         var body: some View {
@@ -167,6 +162,13 @@ If a **View** contains more than three variables, it is advisable to employ an a
                     callback(.itemId(0))
                 }
             }
+        }
+    }
+
+    extension ContentView {
+        enum ContentViewAction {
+            case edit
+            case itemId(Int)
         }
     }
     ```
@@ -237,26 +239,26 @@ Environment objects in SwiftUI are powerful tools for sharing state across multi
 ```swift
 // Global state using @EnvironmentObject
 final class UserSettings: ObservableObject {
-	@Published var darkMode = false
+    @Published var darkMode = false
 }
 
 struct AppView: View {
-	var body: some View {
-		ContentView()
-			.environmentObject(UserSettings())
-	}
+    var body: some View {
+        ContentView()
+            .environmentObject(UserSettings())
+    }
 }
 
 // Local state using @StateObject or @ObservedObject
 struct ContentView: View {
-	@StateObject var viewModel = ContentViewModel()
-	var body: some View {
-		// View implementation
-	}
+    @StateObject var viewModel = ContentViewModel()
+    var body: some View {
+        // View implementation
+    }
 }
 
 final class ContentViewModel: ObservableObject {
-	// View-specific state
+    // View-specific state
 }
 ```
 ---
@@ -276,34 +278,34 @@ You can make your SwiftUI app more accessible by using several techniques, such 
 struct ContentView: View {
     var body: some View {
         VStack {
-	        Text("Welcome")
-		        .accessibilityLabel("Welcome greeting")
-		        // Ensures that the text has an accessibility label
+            Text("Welcome")
+                .accessibilityLabel("Welcome greeting")
+                // Ensures that the text has an accessibility label
 
-		    Button(action: customAction) {
-			    Text("More Info")
-			}
-			.accessibilityAction(named: "Get More Information", customAction)
-			// Adds a custom accessibility action
+            Button(action: customAction) {
+                Text("More Info")
+            }
+            .accessibilityAction(named: "Get More Information", customAction)
+            // Adds a custom accessibility action
 
-			Text("Adjustable Text")
-				.font(.system(size: 16))
-				.accessibilityDynamicTypeText()
-			// Ensures support for dynamic type
+            Text("Adjustable Text")
+                .font(.system(size: 16))
+                .accessibilityDynamicTypeText()
+            // Ensures support for dynamic type
 
-			Button("Selected Item") {
-				// Action
-			}
-			.accessibility(addTraits: [.isButton, .isSelected])
-			// Marks the button as selected
+            Button("Selected Item") {
+                // Action
+            }
+            .accessibility(addTraits: [.isButton, .isSelected])
+            // Marks the button as selected
 
-			Button("Tap Me") {
-				// Action
-			}
-			.frame(minWidth: 44, minHeight: 44)
-			.accessibilityMinimumTappableArea()
-			// Ensures a minimum tappable area
-		}
+            Button("Tap Me") {
+                // Action
+            }
+            .frame(minWidth: 44, minHeight: 44)
+            .accessibilityMinimumTappableArea()
+            // Ensures a minimum tappable area
+        }
     }
 }
 ```

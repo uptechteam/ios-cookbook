@@ -4,13 +4,13 @@ Welcome to the SwiftUI Cookbook! In this cookbook, we will explore various techn
 
 ## Table of Contents
 
-- [1. Keep your code clean and organized](#1.-keep-your-code-clean-and-organized)
-- [2. Keep performance in mind](#2.-keep-performance-in-mind)
-- [3. Configuring SwiftUI views](#3.-configuring-swiftui-views)
-- [4. Use ViewModifiers to reuse styling logic](#4.-use-viewmodifiers-to-reuse-styling-logic)
-- [5. Use structs for data modeling](#5.-use-structs-for-data-modeling)
-- [6. Use environment objects for shared state](#6.-use-environment-objects-for-shared-state)
-- [7. Enhancing Accessibility with SwiftLint Rules](#7.-enhancing-accessibility-with-swiftlint-rules)
+- [1. Keep your code clean and organized](#1-keep-your-code-clean-and-organized)
+- [2. Keep performance in mind](#2-keep-performance-in-mind)
+- [3. Configuring SwiftUI views](#3-configuring-swiftui-views)
+- [4. Use ViewModifiers to reuse styling logic](#4-use-viewmodifiers-to-reuse-styling-logic)
+- [5. Use structs for data modeling](#5-use-structs-for-data-modeling)
+- [6. Use environment objects for shared state](#6-use-environment-objects-for-shared-state)
+- [7. Enhancing Accessibility with SwiftLint Rules](#7-enhancing-accessibility-with-swiftlint-rules)
 ---
 
 ### 1. Keep your code clean and organized

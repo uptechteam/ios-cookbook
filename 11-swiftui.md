@@ -63,12 +63,12 @@ Example:
 	    }
     }
     ```
-2.  **Use Lazy Loading**: For large datasets, use `LazyVStack`, `LazyHStack`, `LazyHGrid`, and `LazyVGrid`. These structures load views on demand, improving performance for large collections. But be aware that these structures load data once and do not reuse cells. If you will have a large number of cells you should use `List`.
+2.  **Use Lazy Loading**: For large datasets, use `LazyVStack`, `LazyHStack`, `LazyHGrid`, and `LazyVGrid`. These structures load views on demand, improving performance for large collections. But be aware that these structures load data once and do not reuse cells. If you have a large number of cells you should use `List`.
 3.  **Avoid Complex View Hierarchies**: To enhance rendering performance and maintain readability in SwiftUI, it's important to manage the complexity of view hierarchies effectively:
     - **Simplify View Hierarchies**: Aim to keep your view hierarchies as simple as possible. A complex hierarchy can slow down rendering and make your code harder to understand and maintain.
     - **Break Down When Necessary**: When your view hierarchy exceeds four levels of nesting, consider refactoring further nested views into separate, dedicated views. This "healthy nesting" rule helps in balancing the need for simplicity without fragmenting your codebase into too many small, unique components.
     - **Limit Computed `View` Properties**: Be cautious with the use of computed `View` properties. While they can be useful, excessive use may inadvertently increase complexity and impact performance. They are best used when they contribute to reducing overall view complexity or are essential for dynamic view updates.
-    - **Strategic Refactoring**: Refactoring into smaller views is recommended, but only when it logically makes sense. This approach helps in avoiding an excessive number of small, unique views, which can be as detrimental as overly complex hierarchies.
+    - **Strategic Refactoring**: Refactoring into smaller views is recommended, but only when it logically makes sense. This approach helps to avoid an excessive number of small, unique views, which can be as detrimental as overly complex hierarchies.
 
     By following these guidelines, you can create a well-structured and performant SwiftUI application. The key is to strike a balance: simplify and refactor where necessary, but avoid unnecessary fragmentation of your views. 
     Example:
@@ -232,8 +232,8 @@ struct ContentView: View {
 
 ### 6. Use environment objects for shared state
 Environment objects in SwiftUI are powerful tools for sharing state across multiple views. However, their use should be carefully considered. Here are the guidelines:
-- **App-Wide Shared State**: Use `@EnvironmentObject` for state that is truly global or app-wide, such as user preferences, themes, or authentication states. This should be used sparingly, as overuse can lead to tightly coupled components and makes tracking data flow more difficult.
-- **View Models (VMs) and View-Specific Logic**: Prefer using `@ObservedObject` and `@StateObject` for state that is specific to a particular view or its closely related components. This approach promotes better encapsulation and makes your views more reusable and easier to test.
+- **App-Wide Shared State**: Use `@EnvironmentObject` for a state that is truly global or app-wide, such as user preferences, themes, or authentication states. This should be used sparingly, as overuse can lead to tightly coupled components and make tracking data flow more difficult.
+- **View Models (VMs) and View-Specific Logic**: Prefer using `@ObservedObject` and `@StateObject` for a state that is specific to a particular view or its closely related components. This approach promotes better encapsulation and makes your views more reusable and easier to test.
 ```swift
 // Global state using @EnvironmentObject
 final class UserSettings: ObservableObject {
@@ -264,14 +264,14 @@ final class ContentViewModel: ObservableObject {
 ### 7. Enhancing Accessibility with SwiftLint Rules
 Accessibility is an important aspect of building inclusive apps that can be used by everyone. In this section, we will explore how to make your SwiftUI app more accessible.
 
-In addition to the standard SwiftUI accessibility features, it's beneficial to enforce certain accessibility best practices using SwiftLint, a widely-used tool for maintaining Swift code quality. Specific `SwiftLint` rules that are particularly useful for accessibility are:
+In addition to the standard SwiftUI accessibility features, it's beneficial to enforce certain accessibility best practices using SwiftLint, an industry-standard tool for maintaining Swift code quality. Specific `SwiftLint` rules that are particularly useful for accessibility are:
 1. **`accessibility_label_for_text` Rule**: This rule ensures that all text elements have accessibility labels, especially when the text is not self-explanatory or when additional context is needed for screen readers.
 2. **`accessibility_custom_action` Rule**: Use this rule to ensure that custom actions are provided for interactive elements that perform non-standard functions. This is crucial for users who rely on assistive technologies to understand what actions they can perform on a UI element.
 3. **`accessibility_dynamic_type_text` Rule**: This rule checks that your app's text elements support dynamic type. This is important for users who need larger text sizes, ensuring that your app's UI adjusts text size based on the user's settings.
-4. **`accessibility_highlighted_elements` Rule**: Ensure that elements which are highlighted or selected have appropriate accessibility traits, so that their state is clear to users with visual impairments.
+4. **`accessibility_highlighted_elements` Rule**: Ensure that elements that are highlighted or selected have appropriate accessibility traits so that their state is clear to users with visual impairments.
 5. **`accessibility_minimum_tappable_area` Rule**: Enforce a minimum tappable area for buttons and other interactive elements, ensuring they are easily accessible for users with motor impairments.
 
-You can make your SwiftUI app more accessible by using several techniques, such as providing labels and hints for views, adjusting font sizes and colours, and enabling voiceover and other assistive technologies.
+You can make your SwiftUI app more accessible by using several techniques, such as providing labels and hints for views, adjusting font sizes and colors, and enabling voiceover and other assistive technologies.
 ```swift
 struct ContentView: View {
     var body: some View {

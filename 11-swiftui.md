@@ -112,7 +112,6 @@ Example:
         }
     }
     ```
----
 
 ### 3. Configuring SwiftUI views
 If a **View** contains more than three variables, it is advisable to employ an additional **struct** for initialization.
@@ -172,7 +171,6 @@ If a **View** contains more than three variables, it is advisable to employ an a
         }
     }
     ```
----
 
 ### 4. Use ViewModifiers to reuse styling logic
 In SwiftUI, modifiers are used to style views. They allow you to change the appearance and behavior of a view without changing its underlying properties. Modifiers can be powerful, but they can also slow down your app if overused. Try to use modifiers only when necessary and avoid using them excessively.
@@ -205,7 +203,6 @@ extension View {
     }
 }
 ```
----
 
 ### 5. Use structs for data modeling
 SwiftUI works best with structs. Use structs to model your data and pass it between views. This allows you to take advantage of SwiftUI's data binding and state management features.
@@ -230,7 +227,6 @@ struct ContentView: View {
     }
 }
 ```
----
 
 ### 6. Use environment objects for shared state
 Environment objects in SwiftUI are powerful tools for sharing state across multiple views. However, their use should be carefully considered. Here are the guidelines:
@@ -261,7 +257,6 @@ final class ContentViewModel: ObservableObject {
     // View-specific state
 }
 ```
----
 
 ### 7. Enhancing Accessibility with SwiftLint Rules
 Accessibility is an important aspect of building inclusive apps that can be used by everyone. In this section, we will explore how to make your SwiftUI app more accessible.

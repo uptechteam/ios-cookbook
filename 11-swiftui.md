@@ -224,8 +224,8 @@ struct ContentView: View {
     ]
 
     var body: some View {
-        List(people) {
-            person in Text(person.name)
+        List(people) { person in
+            Text(person.name)
         }
     }
 }

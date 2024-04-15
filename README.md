@@ -16,6 +16,7 @@ This Cookbook compiles best practices and proven recipes for building exceptiona
 - [How to make Estimations](https://github.com/uptechteam/ios-cookbook/blob/master/6-estimates.md)
 - [Code Style](https://github.com/uptechteam/ios-cookbook/blob/master/7-code-style.md)
   - [UIKit In Code](https://github.com/uptechteam/ios-cookbook/blob/master/7-1-ui-in-code.md)
+  - [SwiftUI](https://github.com/uptechteam/ios-cookbook/blob/master/7-2-swiftui.md)
 - [UI Tests](https://github.com/uptechteam/ios-cookbook/blob/master/8-ui-tests.md)
 - [Security](https://github.com/uptechteam/ios-cookbook/blob/master/9-security.md)
 - [Debugging](https://github.com/uptechteam/ios-cookbook/blob/master/10-debugging.md)

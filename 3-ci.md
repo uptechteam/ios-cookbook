@@ -75,6 +75,90 @@ curl -u {TOKEN}: \
 
 > Please, refer to the [config.yml documentation](https://circleci.com/docs/2.0/configuration-reference/) for more information about the structure of the configuration file.
 
+## 2. Configure the Github Actions
+### Overview
+GitHub Actions allows us to automate, customize, and execute software development workflows directly in our GitHub repositories. It supports CI/CD, helping in building, testing, and deploying code.
+### Prerequisites
+Before you start, ensure you have:
+
+* A GitHub repository for your iOS project.
+* Fastlane set up in your project. Follow the iOS getting started guide to initialize [Fastlane](http://docs.fastlane.tools/getting-started/ios/setup/).
+  Prerequisites:
+
+First of all you need to set up fastlane, you can do that with that link: 
+You’ll end up with a fastlane directory, a Fastfile, and an Appfile.
+
+### Step 1: Set Up Fastlane
+
+1. The Appfile contains essential information about your app and your Apple developer account. Update the Appfile with your application's bundle identifier and Apple ID:
+```
+    app_identifier "awesomeproject.uptech.team"
+    apple_id "username@uptech.team"
+```
+
+#### 2. Next update Fastfile
+
+1. The Fastfile defines the lanes for our CI/CD tasks. Rename your custom lane to something more descriptive, such as testflight_lane.
+
+```
+default_platform(:ios)
+
+platform :ios do
+  desc "Builds, archives, and uploads IPA to TestFlight"
+  lane :testflight_lane do
+      cert
+      sigh
+  end
+end
+
+# Note: If you don't have permission to edit the Fastfile, change file permissions using:
+* chmod -R u+w "/pathToYourFastlaneFolder"
+* sudo chown -R $(whoami) "/pathToYourFastlaneFolder"
+
+```
+cert - automates the creation and renewal of iOS code signing certificates.  
+sigh - automates the creation and renewal of provisioning profiles.
+
+This is simple example of simple fastlane file you can use [code signing tutorial using match](2-code-signing.md) or run fastlane ```fastlane testflight_lane``` in terminal.
+When you launch Fastlane, it will ask you to enter your account password, enter it.
+
+You will only need to do this once - fastlane will remember it and you won't need to enter anything the next time you launch it.
+
+Now the certificate and provision profiles are downloaded and installed. It remains to specify the desired target in the Xcode General tab.
+
+We have prefilled 2 files [basic Fastfile](resources/Fastfile-Basic) and [advanced Fastfile example](resources/Fastfile-Advanced) there you can observe advanced settings of fastfile.
+
+#### 3. Set Up Gemfile
+A Gemfile is crucial for managing Ruby dependencies in your project, including Fastlane and other required gems. Create a Gemfile in your project directory with the following content:
+
+```
+source "https://rubygems.org"
+
+gem "fastlane"
+```
+Then, run bundle install to install the specified gems. This ensures that the correct versions of all dependencies are used.
+
+
+### Step 2: Configure GitHub Actions
+Full documentation you can see here: [GitHubActions](https://docs.github.com/en/actions/quickstart)
+
+Create Workflow Directory
+
+Create a directory for your GitHub Actions workflows in your repository. 
+
+Navigate to your GitHub repository, select the "Create new file" option, and enter the following path: .github/workflows/pullRequest.yml.
+
+Note: The filename pullRequest.yml is an example and can be customized to reflect the purpose of your workflow. For instance, you might name it ci.yml for continuous integration tasks, but another part should be exactly ``` .github/workflows ```.
+
+* Here is an example of basic job: [GitHubAction Basic file](resources/gitHubAction-Basic.yml), this job will run unit tests each time you make PR into develop branch.
+* You can do more actions if you want, here is file of advanced:   [GitHubAction Basic file](resources/gitHubAction-Advanced.yml) it wont be triggered automatically, it is need to be triggered manuallyfrom github.
+
+#### Final Steps
+* Commit and Push: Commit your workflow files and push them to your repository.
+* Trigger Workflows: Open a pull request to the develop branch to see the pull request workflow in action. Manually trigger the deployment workflow from the Actions tab on GitHub.
+
+![](resources/ci/ci_done_jobs.png)
+
 ### 3. PROFIT 🚀
 
 - we've automated part of our workflow;

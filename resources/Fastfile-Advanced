@@ -118,6 +118,42 @@ platform :ios do
     )
   end
 
+  desc "Zip .ipa file"
+  lane :create_zip do |options|
+    scheme = get_scheme(build_configuration: options[:build_configuration])
+
+    version = get_version_number(xcodeproj: "AwesomeProject.xcodeproj")
+    build_number = get_build_number(xcodeproj: AwesomeProject.xcodeproj)
+
+    zip_name = "#{"AwesomeProject"} #{scheme} v#{version}(#{build_number}).zip"
+
+    zip(
+        path: "#{"AwesomeProject"}.ipa",
+        output_path: "fastlane/#{zip_name}"
+    )
+  end
+
+  desc "Post zip to slack"
+  lane :post_zip do
+    ENV['SLACK_API_TOKEN'] = ""
+    zip_files = Dir.glob("*.zip")
+
+    if zip_files.empty?
+      UI.user_error!("No zip files found.")
+    else
+      zip_file_path = zip_files.first
+      zip_name = File.basename(zip_file_path)
+
+      file_upload_to_slack(
+        initial_comment: "Latest #{"AwesomeProject"} build",
+        file_path: "fastlane/#{zip_name}",
+        file_name: zip_name,
+        channels: "@U25689074A, # Channels or users ids in slack
+        file_type: "zip"
+      )
+    end
+  end
+
   desc "Fetches certificates and profiles from the ios-certificates repository by HTTPS"
   lane :sync_profiles do
     match(

@@ -1,50 +1,48 @@
-name: Pull Request
+name: Build and test
 
 on:
   pull_request:
-    branches:
-      - develop
-  workflow_dispatch:
+    types: [opened, synchronize]
 
 jobs:
-  test:
-    runs-on: macos-11
+  build_and_lint:
+    runs-on: macos-14
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.9.1
+        uses: styfle/cancel-workflow-action@0.11.0
         with:
           access_token: ${{ github.token }}
 
-      - uses: maxim-lobanov/setup-xcode@v1
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: latest-stable
+          xcode-version: '15.3'
 
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '2.7.6'
 
       - name: Install Bundler
-          run: gem install bundler -v 2.4.7
+        run: gem install bundler -v 2.4.7
 
       - name: Install gems
         run: bundle install
 
-      - name: Swift Packages Cache
-        uses: actions/cache@v2
-        id: cache
-        with:
-          path: |
-            Build/SourcePackages
-            Build/Build/Products
-          key: ${{ runner.os }}-deps-v1-${{ hashFiles('BILDsolid.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
-          restore-keys: ${{ runner.os }}-deps-v1-
+      - name: Build
+        run: bundle exec fastlane build build_configuration:development
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
 
-      - name: Run Tests (No Cache)
-        if: steps.setup.outputs.cache-hit != 'true'
-        run: bundle exec fastlane test
+      - name: Setup Mint Swift Package Manager
+        uses: irgaly/setup-mint@v1.1.1
 
-      - name: Run Tests (Cache)
-        if: steps.setup.outputs.cache-hit == 'true'
-        run: bundle exec fastlane test skip_package_dependencies_resolution:true
+      - name: Test
+        run: bundle exec fastlane tests

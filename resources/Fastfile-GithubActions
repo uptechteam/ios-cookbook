@@ -1,0 +1,129 @@
+default_platform(:ios)
+
+APPNAME = "githubActions"
+XCODEPROJ = "#{APPNAME}.xcodeproj"
+
+platform :ios do
+  # MARK: - Set up
+  
+  before_all do
+    ENV["FASTLANE_XCODEBUILD_SETTINGS_RETRIES"] = "5"
+  end
+
+  desc "Run's swiftlint"
+  lane :lint do
+    swiftlint_executable = mint_which(package: "swiftlint")
+
+    UI.user_error!("SwiftLint not found. Please install SwiftLint using Mint.") if swiftlint_executable.empty?
+
+    swiftlint(
+      executable: swiftlint_executable,
+      strict: true,
+      quiet: true,
+      reporter: "emoji"
+    )
+  end
+
+  desc "Build project"
+  lane :build do |options|
+    setup_ci if ENV['CI']
+    scheme = get_scheme(build_configuration: options[:build_configuration])
+    match(type: "development", readonly: true)
+    build_app(
+      scheme: APPNAME,
+      silent: true,
+      skip_archive: true,
+      skip_profile_detection: true
+    )
+  end
+
+ desc "Runs all the tests"
+  lane :tests do
+    run_tests(
+      scheme: 'APPNAME',
+      device: 'iPhone 15 Pro',
+      skip_slack: true,
+      output_types: "junit",
+      output_files: "results.xml"
+    )
+  end
+
+  desc "Deploy given scheme to Testflight"
+  lane :deploy do |options|
+    setup_ci if ENV['CI']
+    # Fetch provisioning profiles
+    match(type: "appstore", readonly: true)
+
+    # Bump build number before the build
+    build_number = get_build_number(xcodeproj: XCODEPROJ).to_i + 1
+    increment_build_number(build_number: build_number)
+
+    # Build the project with given scheme
+    build_configuration = options[:build_configuration]
+    scheme = get_scheme(build_configuration: build_configuration)
+    build_app(
+      scheme: APPNAME,
+      silent: true,
+      export_method: "app-store"
+    )
+
+    # Upload the build
+    app_store_connect_api_key
+    upload_to_testflight(
+      username: "oleksiygumenykk@gmail.com",
+      skip_waiting_for_build_processing: true
+    )
+
+    # Commit bump build number, add a tag and push
+    commit_version_bump(
+      force: true,
+      message: "Bump build number #{build_number} [ci skip]"
+    )
+    push_to_git_remote(
+      remote: "origin",
+      local_branch: "develop",
+      remote_branch: "develop"
+    )
+
+    version = get_version_number(xcodeproj: XCODEPROJ)
+    add_git_tag(
+      tag: "#{build_configuration}/v#{version}/#{build_number}"
+    )
+    push_git_tags
+  end
+
+  desc "Zip .ipa file"
+  lane :create_zip do |options|
+    scheme = get_scheme(build_configuration: options[:build_configuration])
+
+    version = get_version_number(xcodeproj: XCODEPROJ)
+    build_number = get_build_number(xcodeproj: XCODEPROJ)
+
+    zip_name = "#{APPNAME} #{scheme} v#{version}(#{build_number}).zip"
+
+    zip(
+        path: "#{APPNAME}.ipa",
+        output_path: "fastlane/#{zip_name}"
+    )
+  end
+
+  desc "Get project scheme (dev, staging or prod)"
+  private_lane :get_scheme do |options|
+    build_configuration = options[:build_configuration]
+    if !build_configuration 
+      UI.build_failure!("No build configuration was passed!")
+    end
+
+    case build_configuration
+    when "development"
+      "Development"
+    when "staging"
+      "Staging"
+    when "production"
+      "Production"
+    else
+      UI.build_failure!("Couldn't recognize passed build configuration!")
+    end
+  end
+
+end

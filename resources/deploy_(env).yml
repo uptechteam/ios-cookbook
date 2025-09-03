@@ -1,0 +1,57 @@
+# replace (env) with environment this workflow will deploy everywhere in this file, including name
+name: Deploy (env)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy_(env):
+    runs-on: macos-15
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Cancel Previous Runs
+      uses: styfle/cancel-workflow-action@0.11.0
+      with:
+        access_token: ${{ github.token }}
+
+    - name: Set up Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '2.7.6'
+
+    - name: Install Bundler
+      run: gem install bundler -v 2.4.7
+
+    - name: Install gems
+      run: bundle install
+
+    - name: Set git identity for CI
+      run: |
+        git config --global user.name "CI Bot"
+        git config --global user.email "ci-bot@uptech.team"
+
+    - name: Build and deploy (env)
+      run: bundle exec fastlane deploy build_configuration:(env)
+      env:
+        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+        MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+        APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY_ID }}
+        APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+        APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY }}
+        FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+        SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }} # remove if Sentry isn't used on your project
+
+    # remove next two steps if sending zip archive with ipa isn't required for your proejct
+    - name: Create zip
+      run: bundle exec fastlane create_zip build_configuration:(env)
+
+    - name: Send zip to Slack
+      run: bundle exec fastlane post_zip
+      env:
+        SLACK_API_TOKEN: ${{ secrets.SLACK_API_TOKEN }}

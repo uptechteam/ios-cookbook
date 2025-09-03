@@ -1,0 +1,20 @@
+name: Cache
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  populate_cache:
+    runs-on: macos-15
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup Mint Swift Package Manager
+      uses: irgaly/setup-mint@v1
+      with:
+        cache-prefix: mint-${{ hashFiles('**/Mintfile') }}
+
+    # you can also cache SPM and/or Derived Data, if needed. more info here: https://nowham.dev/posts/github_actions_caching_strategies/

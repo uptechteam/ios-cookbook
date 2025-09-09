@@ -17,9 +17,11 @@ If you are using Sentry on your project sending dSYM files can be really helpful
 ### Step 3. Update Fastfile and deployment workflows
 1. There is one line from [Fastfile-Advanced](/resources/Fastfile-Advanced) that should be added to your Fastfile:
 * sendDSYM
-2. Fill out **org_slug** and **project_slug** parameters if you think it is ok to store them there, or update this lane to get them from ENV variables.
-3. Make sure lane sendDSYM is called at the end of deploy lane.
-4. In your deploy workflow file add SENTRY_AUTH_TOKEN ENV variable to **Build and deploy (env)** step from your secrets (example in [deploy_(env).yml](/resources/deploy_(env).yml)) and optionally, if you added **org_slug** and **project_slug** to secrets, dont forget to add them as well.
+2. Make sure lane sendDSYM is called at the end of deploy lane.
+3. Configure **org_slug** and **project_slug**. You have two options:
+* GitHub Actions Secrect (preferred)
+* Directly in Fastfile
+4. In your deploy workflow file add ENV variables (SENTRY_AUTH_TOKEN, SENTRY_ORG_SLUG, SENTRY_PROJECT_SLUG) to **Build and deploy (env)** step from your secrets (example in [deploy_(env).yml](/resources/deploy_(env).yml)).
 
 ### Step 4. Test!
 Try running your deployment workflow. After it finished your dSYM files should appear in **Debug Information Files** section in Sentry. URL usually looks like this: https://{org_slug}.sentry.io/settings/projects/{project_slug}/debug-symbols/. 

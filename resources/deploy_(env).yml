@@ -46,8 +46,10 @@ jobs:
         APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY }}
         FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
         SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }} # remove if Sentry isn't used on your project
+        SENTRY_ORG_SLUG: ${{ secrets.SENTRY_ORG_SLUG }} # remove if Sentry isn't used on your project or if you added org_slug in Fastfile
+        SENTRY_PROJECT_SLUG: ${{ secrets.SENTRY_PROJECT_SLUG }} # remove if Sentry isn't used on your project or if you added project_slug in Fastfile
 
-    # remove next two steps if sending zip archive with ipa isn't required for your proejct
+    # remove next two steps if sending zip archive with ipa isn't required for your project
     - name: Create zip
       run: bundle exec fastlane create_zip build_configuration:(env)
 

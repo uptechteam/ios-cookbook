@@ -151,9 +151,11 @@ platform :ios do
 
   desc "Sends dSYM file to Sentry"
   private_lane :sendDSYM do
+  org_slug = ENV['SENTRY_ORG_SLUG'] # name of organization in Sentry. if not added to secrets you can add it here directly
+  project_slug = ENV['SENTRY_PROJECT_SLUG'] # name of project in Sentry. if not added to secrets you can add it here directly
   sentry_debug_files_upload(
-    org_slug: 'org-name', # name of organization in Sentry. can be stored in secrets if preferred
-    project_slug: 'project-name', # name of project in Sentry. can be stored in secrets if preferred
+    org_slug: org_slug,
+    project_slug: project_slug,
     include_sources: true
   )
   end

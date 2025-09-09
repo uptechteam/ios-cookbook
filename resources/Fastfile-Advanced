@@ -1,141 +1,122 @@
+import("custom_slack_upload.rb") # needed for post_zip, remove if not used
+
 default_platform(:ios)
 
+# helper properties
+APPNAME = "your_project_name"
+XCODEPROJ = "#{APPNAME}.xcodeproj"
+
 platform :ios do
+  # MARK: - Set up
+  
   before_all do
-    setup_circle_ci
-    ENV["SLACK_URL"] = ""
+    ENV["FASTLANE_XCODEBUILD_SETTINGS_RETRIES"] = "5"
   end
 
+  # if SwftLint is used on the project
+  desc "Run's SwiftLint"
+  lane :lint do
+    swiftlint_executable = mint_which(package: "swiftlint")
+
+    UI.user_error!("SwiftLint not found. Please install SwiftLint using Mint.") if swiftlint_executable.empty?
+
+    swiftlint(
+      executable: swiftlint_executable,
+      strict: true,
+      quiet: true,
+      reporter: "emoji"
+    )
+  end
+
+  # use this for projects without tests
+  desc "Build project"
+  lane :build do |options|
+    setup_ci if ENV['CI']
+    scheme = get_scheme(build_configuration: options[:build_configuration])
+    match(type: "development", readonly: true)
+    build_app(
+      scheme: scheme,
+      silent: true,
+      skip_archive: true,
+      skip_profile_detection: true
+    )
+  end
+
+  # use tis for projects with tests
   desc "Runs all the tests"
   lane :test do |options|
+    setup_ci if ENV['CI']
     scheme = get_scheme(build_configuration: options[:build_configuration])
-    run_tests(
-      scheme: scheme,
-      device: 'iPhone 6s',
-      skip_slack: true,
-      output_types: "junit",
-      output_files: "results.xml"
-    )
+    match(type: "development", readonly: true)
+    scan(scheme: scheme)
   end
 
-  lane :test_and_staging do |options|
-    test(build_configuration: "staging")
-    deploy_staging
-  end
-
-  lane :test_and_production do
-    test(build_configuration: "production")
-    deploy_production
-  end
-
-  lane :deploy_staging do
+  desc "Deploy given scheme to TestFlight"
+  lane :deploy do |options|
+    setup_ci if ENV['CI']
     # Fetch provisioning profiles
-    match(
-      type: "adhoc",
-      readonly: true
-    )
+    match_all
 
     # Bump build number before the build
-    build_number = get_build_number(xcodeproj: "AwesomeProject.xcodeproj").to_i + 1
+    build_number = get_build_number(xcodeproj: XCODEPROJ).to_i + 1
     increment_build_number(build_number: build_number)
 
-    # Build the project
-    scheme = get_scheme(build_configuration: "staging")
-    build_ios_app(
+    # Build the project with given scheme
+    build_configuration = options[:build_configuration]
+    scheme = get_scheme(build_configuration: build_configuration)
+    build_app(
       scheme: scheme,
-      export_method: "ad-hoc"
+      silent: true,
+      export_method: "app-store"
     )
 
-    # Deploy to your builds distributor
+    # Upload the build
+    app_store_connect_api_key
     upload_to_testflight(
-      username: "username@uptech.team",
-      app_identifier: "awesomeproject.uptech.team"
+      username: "your_email_for_appleID@uptech.com", # can be stored in secrets if preferred
+      skip_waiting_for_build_processing: true
     )
 
     # Commit bump build number, add a tag and push
-    original_commit = last_git_commit
-    clean_build_artifacts
     commit_version_bump(
-      xcodeproj: "AwesomeProject.xcodeproj",
+      force: true,
       message: "Bump build number #{build_number} [ci skip]"
     )
+    push_to_git_remote
+
+    version = get_version_number(
+      xcodeproj: XCODEPROJ,
+      target: APPNAME
+    )
     add_git_tag(
-      grouping: "builds",
-      prefix: "v",
-      build_number: build_number
+      tag: "#{build_configuration}/v#{version}/#{build_number}"
     )
-
-    push_to_git_remote(
-      remote: "origin",
-      local_branch: "develop",
-      remote_branch: "develop",
-      tags: true
-    )
-
-    version = get_version_number(xcodeproj: "AwesomeProject.xcodeproj")
-    slack(
-      message: "New Staging iOS build *#{version}* (#{build_number}) has been submitted to HockeyApp!",
-      use_webhook_configured_username_and_icon: true,
-      success: true,
-      default_payloads: [],
-      payload: {
-        "Git Commit": original_commit[:message],
-        "Git Author": original_commit[:author]
-      }
-    )
+    push_git_tags
+    sendDSYM # can be removed if Sentry is not used
   end
 
-  lane :deploy_production do
-    # Fetch provisioning profiles
-    match(
-      type: "adhoc",
-      readonly: true
-    )
-
-    # Build the project
-    scheme = get_scheme(build_configuration: "production")
-    build_ios_app(
-      scheme: scheme,
-      export_method: "ad-hoc"
-    )
-
-    upload_to_testflight(
-      username: "username@uptech.team",
-      app_identifier: "awesomeproject.uptech.team"
-    )
-
-    version = get_version_number(xcodeproj: "AwesomeProject.xcodeproj")
-    build_number = get_build_number(xcodeproj: "AwesomeProject.xcodeproj")
-    slack(
-      message: "New Production iOS build *#{version}* (#{build_number}) has been submitted to HockeyApp!",
-      use_webhook_configured_username_and_icon: true,
-      success: true,
-      default_payloads: [],
-      payload: {
-        "Git Commit": last_git_commit[:message],
-        "Git Author": last_git_commit[:author]
-      }
-    )
-  end
-
+  # creates zip archive with .ipa file. needed if Slack integration is setup
   desc "Zip .ipa file"
   lane :create_zip do |options|
     scheme = get_scheme(build_configuration: options[:build_configuration])
 
-    version = get_version_number(xcodeproj: "AwesomeProject.xcodeproj")
-    build_number = get_build_number(xcodeproj: AwesomeProject.xcodeproj)
+    version = get_version_number(
+      xcodeproj: XCODEPROJ,
+      target: APPNAME
+    )
+    build_number = get_build_number(xcodeproj: XCODEPROJ)
 
-    zip_name = "#{"AwesomeProject"} #{scheme} v#{version}(#{build_number}).zip"
+    zip_name = "#{APPNAME} #{scheme} v#{version}(#{build_number}).zip"
 
     zip(
-        path: "#{"AwesomeProject"}.ipa",
+        path: "#{APPNAME}.ipa",
         output_path: "fastlane/#{zip_name}"
     )
   end
 
   desc "Post zip to slack"
   lane :post_zip do
-    ENV['SLACK_API_TOKEN'] = ""
+    SLACK_API_TOKEN = ENV['SLACK_API_TOKEN']
     zip_files = Dir.glob("*.zip")
 
     if zip_files.empty?
@@ -144,25 +125,21 @@ platform :ios do
       zip_file_path = zip_files.first
       zip_name = File.basename(zip_file_path)
 
-      file_upload_to_slack(
-        initial_comment: "Latest #{"AwesomeProject"} build",
-        file_path: "fastlane/#{zip_name}",
-        file_name: zip_name,
-        channels: "@U25689074A, # Channels or users ids in slack
-        file_type: "zip"
+      zip_path = File.expand_path(zip_name)
+
+      my_file_upload_to_slack(
+        initial_comment: "Latest #{APPNAME} build",
+        file_path: zip_path,
+        channels: "C0000000000", # channel ID where zip should be posted. can be stored in secrets if preferred
+        api_token: SLACK_API_TOKEN
       )
     end
   end
 
-  desc "Fetches certificates and profiles from the ios-certificates repository by HTTPS"
-  lane :sync_profiles do
+  desc "Match all app_identifier/type combinations"
+  private_lane :match_all do
     match(
       type: "development",
-      readonly: true
-    )
-
-    match(
-      type: "adhoc",
       readonly: true
     )
 
@@ -172,33 +149,19 @@ platform :ios do
     )
   end
 
-  lane :add_device do
-    device_name = prompt(text: "Enter the device name: ")
-    device_udid = prompt(text: "Enter the device UDID: ")
-    device_hash = {}
-    device_hash[device_name] = device_udid
-    register_devices(devices: device_hash)
-    match(
-      type: "development",
-      force_for_new_devices: true
-    )
-    match(
-      type: "adhoc",
-      force_for_new_devices: true
-    )
+  desc "Sends dSYM file to Sentry"
+  private_lane :sendDSYM do
+  org_slug = ENV['SENTRY_ORG_SLUG'] # name of organization in Sentry. if not added to secrets you can add it here directly
+  project_slug = ENV['SENTRY_PROJECT_SLUG'] # name of project in Sentry. if not added to secrets you can add it here directly
+  sentry_debug_files_upload(
+    org_slug: org_slug,
+    project_slug: project_slug,
+    include_sources: true
+  )
   end
 
-  error do |lane, exception, options|
-    slack_train_crash
-
-    slack(
-      message: "*#{lane}* lane crashed: #{exception}",
-      use_webhook_configured_username_and_icon: true,
-      success: false,
-      default_payloads: [:last_git_commit_message, :git_author]
-    )
-  end
-
+  # helper lane to convert environment to scheme in project, if needed. adjust for your need (add/remove/rename schemes)
+  desc "Get project scheme (dev, staging or prod)"
   private_lane :get_scheme do |options|
     build_configuration = options[:build_configuration]
     if !build_configuration 
@@ -207,11 +170,11 @@ platform :ios do
 
     case build_configuration
     when "development"
-      "AwesomeProject Development"
+      "Development"
     when "staging"
-      "AwesomeProject Staging"
+      "Staging"
     when "production"
-      "AwesomeProject Production"
+      "Production"
     else
       UI.build_failure!("Couldn't recognize passed build configuration!")
     end

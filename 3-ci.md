@@ -254,7 +254,7 @@ Here is link with additional info: [Match](https://docs.fastlane.tools/actions/m
 
 	Value: API token generated in [Sentry dSYM Sending](/3-2-Sentry-dSYM-Sending.md)
 
-9. If you are running github action and this error occured: Unable to access certificates repo, try to do this add:
+9. If you are running GitHub Action and this error occurred: Unable to access certificates repo, try to do this add:
     
     KEY: SSH_PRIVATE_KEY
 
@@ -272,10 +272,10 @@ Navigate to your GitHub repository, select the "Create new file" option, and ent
 
 Note: The filename pullRequest.yml is an example and can be customized to reflect the purpose of your workflow. For instance, you might name it ci.yml for continuous integration tasks, but another part should be exactly ``` .github/workflows ```.
 
-Here are an examples of some usefull workflows:
-- [Build (or test) and lint](resources/build_test_and_lint.yml). This workflow will run on every pull request creation and update and build the project to make sure pull request does not break project build phase. If your project has tests, you can also run them here. It also runs SwiftLint to make sure pull requsts passes linter. If your project does not use SwiftLint or it is not possible to fix all linting warnings, you can remove or comment out linting step. 
+Here are an examples of some useful workflows:
+- [Build (or test) and lint](resources/build_test_and_lint.yml). This workflow will run on every pull request creation and update and build the project to make sure pull request does not break project build phase. If your project has tests, you can also run them here. It also runs SwiftLint to make sure pull requests passes linter. If your project does not use SwiftLint or it is not possible to fix all linting warnings, you can remove or comment out linting step. 
 - [Deploy (env)](resources/deploy_(env).yml). This workflow should be run manually through GitHub. Depending of number of environments of your application you can create several similar workflows for each environment. Optionally, if QA on your project need to have ipa file for each build (for example, for testing the app through automation or [BrowserStack](https://www.browserstack.com) this workflow can send zip archive with ipa file to slack channel using [custom_slack_upload.rb helper](resources/custom_slack_upload.rb). If your project is using Sentry, this workflow can upload dSYM file to Sentry.
-- [Cache resources](resources/cache.yml). This workflow will run after every new commit to develop branch. Main purpose of this workflow is recude time of running [Build (or test) and lint](resources/build_test_and_lint.yml) workflow. GitHub cache for actions is acceptable in branch where it was created and in child brances, so creating cache on develop branch makes sence for resources that are needed for workflows that are running on pull requests to develop branch, for example, Mint+SwiftLint or resolved packages.
+- [Cache resources](resources/cache.yml). This workflow will run after every new commit to develop branch. Main purpose of this workflow is reduce time of running [Build (or test) and lint](resources/build_test_and_lint.yml) workflow. GitHub cache for actions is acceptable in branch where it was created and in child branches, so creating cache on develop branch makes sense for resources that are needed for workflows that are running on pull requests to develop branch, for example, Mint+SwiftLint or resolved packages.
 
 #### Change apple account:
 Docs: [Nuke](https://docs.fastlane.tools/actions/match_nuke/)

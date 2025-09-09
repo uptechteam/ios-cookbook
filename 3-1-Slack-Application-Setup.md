@@ -18,7 +18,7 @@ In case QA on your project is asking you to send them ipa file alongside with de
 1. Open Slack as you normally do.
 2. Tap on **Channels** -> **Create channel**.
 3. Proceed with **Blank channel**.
-4. Name it similar to your internal project channel name with "ios-builds" added at the end. This will help you and your team easilly find this channel.
+4. Name it similar to your internal project channel name with "ios-builds" added at the end. This will help you and your team easily find this channel.
 5. Make it Private.
 6. In **Apps** section tap **Add apps**.
 7. Add app you created in previous step.
